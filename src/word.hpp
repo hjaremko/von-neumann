@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <iomanip>
+#include <sstream>
 #include <cstdint>
 
 namespace vnm
@@ -76,6 +77,25 @@ std::ostream& operator<<( std::ostream& t_stream, const word& t_word )
             t_stream << t_word.get_arg().get();
         }
     }
+
+    return t_stream;
+}
+
+std::istream& operator>>( std::istream& t_stream, word& t_word )
+{
+    std::string line;
+    std::string code;
+    std::string mode;
+    int16_t args;
+
+    std::getline( t_stream, line );
+    std::stringstream ss( line );
+    std::getline( ss, line, ';' );
+    ss.str( line );
+
+    ss >> code >> mode >> args;
+
+    t_word = word( code, mode, args );
 
     return t_stream;
 }

@@ -91,52 +91,23 @@ std::unordered_map<mode, std::string> mode_to_str {
 
 #include "word.hpp"
 #include "machine.hpp"
+#include "interpreter.hpp"
 
 
 int main( int argc, char const *argv[] )
 {
     vnm::machine pmc;
 
-    // vnm::word load ( 0b0'0001'01'00000'0101 );
-    vnm::word load ( "LOAD", "@", 5 );
-    vnm::word add  ( 0b0'0110'01'00000'0110 );
-    vnm::word mult ( 0b0'1000'00'00000'0010 );
-    vnm::word store( 0b0'0010'00'00000'0111 );
-    vnm::word stop ( 0b1'0000'00'00000'0000 );
-    vnm::word v5   ( 0b0'0000'00'00001'0101 );
-    vnm::word v6   ( 0b0'0000'00'00010'0010 );
-    vnm::word v7   ( 0b0'0000'00'00000'0000 );
-
-
-    pmc.put_to_memory( load, 0 );
-    pmc.put_to_memory( add, 1 );
-    pmc.put_to_memory( mult, 2 );
-    pmc.put_to_memory( store, 3 );
-    pmc.put_to_memory( stop, 4 );
-    pmc.put_to_memory( v5, 5 );
-    pmc.put_to_memory( v6, 6 );
-    pmc.put_to_memory( v7, 7 );
-    
-    pmc.print_memory();
-    pmc.print_registers();
-
-    pmc.get_from_memory();
-    pmc.execute();
-    pmc.print_registers();
-
-    pmc.get_from_memory();
-    pmc.execute();
-    pmc.print_registers();
-
-    pmc.get_from_memory();
-    pmc.execute();
-    pmc.print_registers();
-    
-    pmc.get_from_memory();
-    pmc.execute();
-    pmc.print_registers();
+    // vnm::interpreter i( "example/sum_double.vnm" );
+    vnm::interpreter i( "example/array_sum.vnm" );
+    i.interpret( pmc );
 
     pmc.print_memory();
+
+    do
+    {
+        pmc.get_from_memory();
+    } while ( pmc.execute() );
 
     return 0;
 }

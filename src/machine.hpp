@@ -47,7 +47,7 @@ class machine
         }
 
 
-        void execute()
+        bool execute()
         {
             switch ( m_instruction_reg.get_mode() )
             {
@@ -78,7 +78,10 @@ class machine
             {
                 case instruction::STOP:
                 {
+                    print_registers();
+                    print_memory();
                     // exit( 0 );
+                    return false;
 
                     break;
                 }
@@ -182,6 +185,8 @@ class machine
                     break;
                 }
             }
+
+            return true;
         }
 
         void put_to_memory( const word t_word, const word t_register )
@@ -204,7 +209,8 @@ class machine
         {
             std::cout << "-----------" << std::endl;
 
-            for ( int i = 0; i < 12; ++i )
+            // for ( int i = 0; i < 12; ++i )
+            for ( int i = 0; i < 32; ++i )
             // for ( int i = 0; i < 512; ++i )
             {
                 std::cout << "[ " << std::left << std::setw( 3 )<<  i << " ]: " << m_mem.get( word( i ) ) << std::endl;
