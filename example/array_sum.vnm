@@ -1,0 +1,26 @@
+LOAD $ 0
+STORE $ 19
+LOAD $ 21
+STORE $ 18
+LOAD $ 21
+ADD @ 20
+SUB @ 18
+JZERO $ 15
+LOAD @ 19
+ADD & 18
+STORE $ 19
+LOAD @ 18
+ADD $ 1
+STORE $ 18
+JUMP $ 4
+STOP
+
+
+
+
+5
+10
+20
+30
+40
+50
