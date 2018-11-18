@@ -38,6 +38,11 @@ class machine
             m_instruction_reg = m_mem.get( m_program_counter );
             // m_program_counter++;
             m_program_counter.set( m_program_counter.get() + 1 );
+
+            if ( m_program_counter.get() >= 512 || m_program_counter.get() < 0 )
+            {
+                throw std::runtime_error( "Address exceeds device memory! Perhaps missing STOP?" );
+            }
         }
 
         instruction decode()
@@ -78,9 +83,8 @@ class machine
             {
                 case instruction::STOP:
                 {
-                    print_registers();
-                    print_memory();
-                    // exit( 0 );
+                    // print_registers();
+                    // print_memory();
                     return false;
 
                     break;
@@ -196,27 +200,36 @@ class machine
 
         void print_registers() const
         {
-            std::cout << "-----------" << std::endl;
+            std::cout << "-------------------------------" << std::endl;
             std::cout << "IR: " << m_instruction_reg << std::endl;
             std::cout << "INS:" << m_mem.get( m_program_counter ) << std::endl << std::endl;
             std::cout << "PC: " << m_program_counter.get() << std::endl;
             std::cout << "OR: " << get_or().get() << std::endl;
             std::cout << "AC: " << get_ac().get() << std::endl;
-            std::cout << "-----------" << std::endl;
+            std::cout << "-------------------------------" << std::endl;
         }
 
         void print_memory() const
         {
-            std::cout << "-----------" << std::endl;
+            std::cout << "-------------------------------" << std::endl;
 
-            // for ( int i = 0; i < 12; ++i )
-            for ( int i = 0; i < 32; ++i )
-            // for ( int i = 0; i < 512; ++i )
+            for ( int i = 0; i < get_size(); ++i )
             {
                 std::cout << "[ " << std::left << std::setw( 3 )<<  i << " ]: " << m_mem.get( word( i ) ) << std::endl;
             }
                 
-            std::cout << "-----------" << std::endl;
+            std::cout << "-------------------------------" << std::endl;
+        }
+
+        int get_size() const
+        {
+            for ( int i = 511; i >= 0; --i )
+            {
+                if ( m_mem.get( i ).get() != 0 )
+                {
+                    return i + 2;
+                }
+            }
         }
 
     private:

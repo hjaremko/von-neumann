@@ -93,21 +93,39 @@ std::unordered_map<mode, std::string> mode_to_str {
 #include "machine.hpp"
 #include "interpreter.hpp"
 
-
 int main( int argc, char const *argv[] )
 {
     vnm::machine pmc;
 
-    // vnm::interpreter i( "example/sum_double.vnm" );
-    vnm::interpreter i( "example/array_sum.vnm" );
-    i.interpret( pmc );
-
-    pmc.print_memory();
-
-    do
+    try
     {
-        pmc.get_from_memory();
-    } while ( pmc.execute() );
+        vnm::interpreter i( argv[ 1 ] );
+        i.interpret( pmc );
+
+        pmc.print_memory();
+        // pmc.print_registers();
+
+        do
+        {
+            // pmc.print_registers();
+            pmc.get_from_memory();
+        } while ( pmc.execute() );
+
+        pmc.print_memory();
+    }
+    catch ( std::ifstream::failure e )
+    {
+    //     // help();
+        std::cout << "Error opening/reading file!" << std::endl;
+    }
+    // catch ( std::logic_error& e )
+    // {
+    //     std::cout << "Error: No input file!" << std::endl;
+    // }
+    catch ( std::exception& e )
+    {
+        std::cout << "Error: " << e.what() << std::endl;
+    }
 
     return 0;
 }

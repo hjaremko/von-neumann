@@ -1,6 +1,7 @@
 #ifndef INTERPRETER_HPP
 #define INTERPRETER_HPP
 
+#include <stdexcept>
 #include <sstream>
 #include <string>
 #include <fstream>
@@ -14,6 +15,7 @@ class interpreter
     public:
         interpreter( std::string t_file_name ) : m_file( t_file_name.c_str() )
         {
+            m_file.exceptions( std::ifstream::failbit | std::ifstream::badbit );
         }
 
         ~interpreter()
@@ -24,6 +26,8 @@ class interpreter
         bool interpret( machine& t_machine )
         {
             int i = 0;
+            m_file.exceptions( std::ifstream::goodbit );
+
 
             while ( !m_file.eof() )
             {
@@ -45,7 +49,7 @@ class interpreter
                     {
                         t_machine.put_to_memory( std::stoi( tmp ), i );
                     }
-                    else
+                    else if ( instructions_from_str.find( tmp ) != instructions_from_str.end() )
                     {
                         std::string code( tmp );
                         ss >> tmp;
@@ -62,7 +66,10 @@ class interpreter
                             }
                             else
                             {
-                                std::cout << "Line " << i + 1 << " : Expected numeral value" << std::endl;
+                                std::stringstream error_stream;
+                                error_stream << "Line " << i + 1 << " : Expected numeral value";
+
+                                throw std::runtime_error( error_stream.str() );
                             }
                         }
                         else
@@ -73,9 +80,20 @@ class interpreter
                             }
                             else
                             {
-                                std::cout << "Line " << i + 1 << " : Invalid instruction" << std::endl;
+                                std::stringstream error_stream;
+                                error_stream << "Line " << i + 1 << " : Invalid instruction";
+
+                                throw std::runtime_error( error_stream.str() );
                             }
                         }
+                    }
+                    else
+                    {
+                        std::stringstream error_stream;
+                        error_stream << "Line " << i + 1 << " : Invalid instruction";
+
+                        throw std::runtime_error( error_stream.str() );
+
                     }
                 }
 
