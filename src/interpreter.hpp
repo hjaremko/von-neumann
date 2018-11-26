@@ -60,9 +60,11 @@ class interpreter
                             std::string args;
                             ss >> args;
 
-                            if ( ss.good() || ( ss.eof() && args.length() > 0 && std::isdigit( args.at( 0 ) ) ) )
+                            if ( ss.good() || ( ss.eof() && args.length() > 0 ) )
                             {
-                                t_machine.put_to_memory( word( code, mode, std::stoi( args ) ), i );
+                                word tmp( code, mode, std::stoi( args ) );
+                                tmp.m_instruction = true;
+                                t_machine.put_to_memory( tmp, i );
                             }
                             else
                             {
@@ -76,7 +78,9 @@ class interpreter
                         {
                             if ( tmp == "STOP" )
                             {
-                                t_machine.put_to_memory( 0b1'0000'00'000000000, i );
+                                word tmp( 0b1'0000'00'000000000 );
+                                tmp.m_instruction = true;
+                                t_machine.put_to_memory( tmp, i );
                             }
                             else
                             {

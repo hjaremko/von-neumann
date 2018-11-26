@@ -3,11 +3,22 @@
 
 #include <iostream>
 #include <iomanip>
+#include <bitset>
 #include <sstream>
 #include <cstdint>
 
 namespace vnm
 {
+
+struct int9_t
+{
+    unsigned x: 9;
+};
+
+std::ostream& operator<<( std::ostream& t_stream, const int9_t& t_word )
+{
+    return t_stream << t_word.x;
+}
 
 class word
 {
@@ -20,7 +31,7 @@ class word
 
         word( const std::string& t_code, const std::string t_mode, int16_t t_arg )
         {
-            m_word = t_arg;
+            m_word = t_arg & 0b0'0000'00'111111111;
             m_word |= static_cast<int16_t>( instructions_from_str.at( t_code ) );
             m_word |= static_cast<int16_t>( mode_from_str.at( t_mode ) );
         }
@@ -37,7 +48,7 @@ class word
 
         instruction get_code() const
         {
-            return static_cast<instruction>( m_word & 0b1'1111'00'000000000 );
+            return static_cast<instruction>( m_word & 0b0'1111'00'000000000 );
         }
 
         mode get_mode() const
@@ -52,7 +63,24 @@ class word
             return tmp;
         }
 
+        bool is_arg_negative() const
+        {
+            return ( m_word & 0b0'0000'00'100000000 );
+        }
 
+        int16_t get_complete_arg() const
+        {
+            if ( is_arg_negative() )
+            {
+                return m_word | 0b1'1111'11'000000000;
+            }
+            else
+            {
+                return m_word & 0b0'0000'00'111111111;
+            }
+        }
+
+        bool    m_instruction{ false }; //not sure if necessery
     private:
         int16_t m_word{ 0 };
 };
@@ -61,20 +89,23 @@ std::ostream& operator<<( std::ostream& t_stream, const word& t_word )
 {
     if ( t_word.get() != 0 )
     {
-        if ( t_word.get_code() != instruction::ZERO )
+        if ( t_word.m_instruction )
         {
-            t_stream << std::left << std::setw( 6 ) 
-                     << instructions_to_str.at( t_word.get_code() );
-        }
-
-        if ( t_word.get_code() != instruction::STOP )
-        {
-            if ( t_word.get_code() != instruction::ZERO )
+            if ( t_word.get_code() == instruction::STOP )
             {
-                t_stream << mode_to_str.at( t_word.get_mode() ) << ' ';
+                t_stream << "STOP";
             }
-
-            t_stream << t_word.get_arg().get();
+            else
+            {
+                t_stream << std::left << std::setw( 6 )
+                         << instructions_to_str.at( t_word.get_code() )
+                         << mode_to_str.at( t_word.get_mode() ) << ' '
+                         << t_word.get_complete_arg();
+            }
+        }
+        else
+        {
+            t_stream << t_word.get_complete_arg();
         }
     }
 

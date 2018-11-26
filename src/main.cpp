@@ -7,7 +7,8 @@ namespace vnm
 enum class instruction
 {
     ZERO  = 0b0'0000'00'000000000,
-    STOP  = 0b1'0000'00'000000000,
+    // STOP  = 0b1'0000'00'000000000,
+    STOP  = 0b0'0000'00'000000000,
     LOAD  = 0b0'0001'00'000000000,
     STORE = 0b0'0010'00'000000000,
     JUMP  = 0b0'0011'00'000000000,
@@ -102,26 +103,27 @@ int main( int argc, char const *argv[] )
         vnm::interpreter i( argv[ 1 ] );
         i.interpret( pmc );
 
-        pmc.print_memory();
+        // pmc.print_memory();
         // pmc.print_registers();
 
         do
         {
             // pmc.print_registers();
+            // pmc.print_memory();
             pmc.get_from_memory();
         } while ( pmc.execute() );
 
         pmc.print_memory();
     }
-    catch ( std::ifstream::failure e )
+    catch ( std::ifstream::failure& e )
     {
-    //     // help();
         std::cout << "Error opening/reading file!" << std::endl;
     }
-    // catch ( std::logic_error& e )
-    // {
-    //     std::cout << "Error: No input file!" << std::endl;
-    // }
+    catch ( std::logic_error& e )
+    {
+        std::cout << "Error: " << ( argv[ 1 ] ? e.what() : "No input file!" ) << std::endl;
+        // help();
+    }
     catch ( std::exception& e )
     {
         std::cout << "Error: " << e.what() << std::endl;

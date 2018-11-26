@@ -15,12 +15,26 @@ class memory
 
         word get( const word t_register ) const
         {
-            return m_mem.at( t_register.get() );
+            try
+            {
+                return m_mem.at( t_register.get() );
+            }
+            catch (...)
+            {
+                throw std::runtime_error( "Address exceeds device memory!" );
+            }
         }
 
         void set( const word t_word, const word t_register )
         {
-            m_mem.at( t_register.get() ) = t_word;
+            try
+            {
+                m_mem.at( t_register.get() ) = t_word;
+            }
+            catch (...)
+            {
+                throw std::runtime_error( "Address exceeds device memory!" );
+            }
         }
 
     private:

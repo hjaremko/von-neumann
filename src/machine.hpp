@@ -38,11 +38,6 @@ class machine
             m_instruction_reg = m_mem.get( m_program_counter );
             // m_program_counter++;
             m_program_counter.set( m_program_counter.get() + 1 );
-
-            if ( m_program_counter.get() >= 512 || m_program_counter.get() < 0 )
-            {
-                throw std::runtime_error( "Address exceeds device memory! Perhaps missing STOP?" );
-            }
         }
 
         instruction decode()
@@ -54,139 +49,144 @@ class machine
 
         bool execute()
         {
-            switch ( m_instruction_reg.get_mode() )
+            if ( m_instruction_reg.m_instruction )
             {
-                case mode::instant:
+                switch ( m_instruction_reg.get_mode() )
                 {
-                    set_or( m_instruction_reg.get_arg() );
-                    break;
+                    case mode::instant:
+                    {
+                        set_or( m_instruction_reg.get_arg() );
+                        break;
+                    }
+                    case mode::direct:
+                    {
+                        set_or( m_mem.get( m_instruction_reg.get_arg() ) );
+                        break;
+                    }
+                    case mode::indirect:
+                    {
+                        set_or( m_mem.get( m_mem.get( m_instruction_reg.get_arg() ) ) );
+                        break;
+                    }
+                    case mode::index:
+                    {
+                        // TODO operator+
+                        set_or( get_ac().get() + m_instruction_reg.get_arg().get() );
+                        break;
+                    }
                 }
-                case mode::direct:
-                {
-                    set_or( m_mem.get( m_instruction_reg.get_arg() ) );
-                    break;
-                }
-                case mode::indirect:
-                {
-                    set_or( m_mem.get( m_mem.get( m_instruction_reg.get_arg() ) ) );
-                    break;
-                }
-                case mode::index:
-                {
-                    // TODO operator+
-                    set_or( get_ac().get() + m_instruction_reg.get_arg().get() );
-                    break;
-                }
-            }
 
-            switch ( m_instruction_reg.get_code() )
-            {
-                case instruction::STOP:
+                switch ( m_instruction_reg.get_code() )
                 {
-                    // print_registers();
-                    // print_memory();
-                    return false;
+                    case instruction::STOP:
+                    {
+                        // print_registers();
+                        // print_memory();
+                        return false;
 
-                    break;
-                }
-                case instruction::LOAD:
-                {
-                    set_ac( get_or() );
-                    break;
-                }
-                case instruction::STORE:
-                {
-                    m_mem.set( get_ac(), get_or() );
-                    break;
-                }
-                case instruction::JUMP:
-                {
-                    m_program_counter = get_or();
-                    break;
-                }
-                case instruction::JNEG:
-                {
-                    if ( get_ac().get() < 0 )
+                        break;
+                    }
+                    case instruction::LOAD:
+                    {
+                        set_ac( get_or() );
+                        break;
+                    }
+                    case instruction::STORE:
+                    {
+                        m_mem.set( get_ac(), get_or() );
+                        break;
+                    }
+                    case instruction::JUMP:
                     {
                         m_program_counter = get_or();
+                        break;
                     }
-                    
-                    break;
-                }
-                case instruction::JZERO:
-                {
-                    if ( get_ac().get() == 0 )
+                    case instruction::JNEG:
                     {
-                        m_program_counter = get_or();
-                    }
-                    
-                    break;
-                }
-                case instruction::ADD:
-                {
-                    set_ac( get_ac().get() + get_or().get() );
-                    break;
-                }
-                case instruction::SUB:
-                {
-                    set_ac( get_ac().get() - get_or().get() );
-                    break;
-                }
-                case instruction::MULT:
-                {
-                    set_ac( get_ac().get() * get_or().get() );
-                    break;
-                }
-                case instruction::DIV:
-                {
-                    set_ac( get_ac().get() / get_or().get() );
-                    break;
-                }
-                case instruction::AND:
-                {
-                    set_ac( get_ac().get() & get_or().get() );
-                    break;
-                }
-                case instruction::OR:
-                {
-                    set_ac( get_ac().get() | get_or().get() );
-                    break;
-                }
-                case instruction::NOT:
-                {
-                    set_ac( !get_or().get() );
-                    break;
-                }
-                case instruction::CMP:
-                {
-                    if ( get_ac().get() == get_or().get() )
-                    {
-                        set_ac( word( -1 ) );
-                    }
-                    else
-                    {
-                        set_ac( word( 0 ) );
-                    }
+                        // if ( get_ac().get() < 0 )
+                        if ( get_ac().is_arg_negative() )
+                        {
+                            m_program_counter = get_or();
+                        }
 
-                    break;
-                }
-                case instruction::SHZ:
-                {
-                    if ( get_or().get() < 0 )
-                    {
-                        set_ac( get_ac().get() >> std::abs( get_or().get() ) );
+                        break;
                     }
-                    else if ( get_or().get() > 0 )
+                    case instruction::JZERO:
                     {
-                        set_ac( get_ac().get() << std::abs( get_or().get() ) );
-                    }
+                        if ( get_ac().get() == 0 )
+                        {
+                            m_program_counter = get_or();
+                        }
 
-                    break;
-                }
-                case instruction::SHC:
-                {
-                    // TODO
-                    break;
+                        break;
+                    }
+                    case instruction::ADD:
+                    {
+                        set_ac( get_ac().get() + get_or().get() );
+                        break;
+                    }
+                    case instruction::SUB:
+                    {
+                        set_ac( get_ac().get() - get_or().get() );
+                        break;
+                    }
+                    case instruction::MULT:
+                    {
+                        set_ac( get_ac().get() * get_or().get() );
+                        break;
+                    }
+                    case instruction::DIV:
+                    {
+                        // set_ac( get_ac().get() / get_or().get() );
+                        set_ac( get_ac().get_complete_arg() / get_or().get_complete_arg() );
+                        break;
+                    }
+                    case instruction::AND:
+                    {
+                        set_ac( get_ac().get() & get_or().get() );
+                        break;
+                    }
+                    case instruction::OR:
+                    {
+                        set_ac( get_ac().get() | get_or().get() );
+                        break;
+                    }
+                    case instruction::NOT:
+                    {
+                        set_ac( !get_or().get() );
+                        break;
+                    }
+                    case instruction::CMP:
+                    {
+                        if ( get_ac().get() == get_or().get() )
+                        {
+                            set_ac( word( -1 ) );
+                        }
+                        else
+                        {
+                            set_ac( word( 0 ) );
+                        }
+
+                        break;
+                    }
+                    case instruction::SHZ:
+                    {
+                        if ( get_or().get() < 0 )
+                        {
+                            set_ac( get_ac().get() >> std::abs( get_or().get() ) );
+                        }
+                        else if ( get_or().get() > 0 )
+                        {
+                            set_ac( get_ac().get() << std::abs( get_or().get() ) );
+                        }
+
+                        break;
+                    }
+                    case instruction::SHC:
+                    {
+                        // TODO
+                        break;
+                    }
                 }
             }
 
