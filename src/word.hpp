@@ -10,16 +10,6 @@
 namespace vnm
 {
 
-struct int9_t
-{
-    unsigned x: 9;
-};
-
-std::ostream& operator<<( std::ostream& t_stream, const int9_t& t_word )
-{
-    return t_stream << t_word.x;
-}
-
 class word
 {
     public:
@@ -106,6 +96,7 @@ std::ostream& operator<<( std::ostream& t_stream, const word& t_word )
         else
         {
             t_stream << t_word.get_complete_arg();
+            // t_stream << ' ' << std::bitset<16>( t_word.get_complete_arg() );
         }
     }
 

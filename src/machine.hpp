@@ -184,7 +184,15 @@ class machine
                     }
                     case instruction::SHC:
                     {
-                        // TODO
+                        if ( get_or().is_arg_negative() )
+                        {
+                            set_ac( get_ac().get() << std::abs ( get_or().get_complete_arg() ) | std::abs( get_or().get_complete_arg() ) >> ( 16 - std::abs( get_or().get_complete_arg() ) ) );
+                        }
+                        else
+                        {
+                            set_ac( get_ac().get() >> get_or().get_complete_arg() | get_or().get_complete_arg() << ( 16 - get_or().get_complete_arg() ) );
+                        }
+
                         break;
                     }
                 }
