@@ -28,7 +28,7 @@ $ ./von-neumann -rmf example/array_sum.vnm
   - Instruction register (`IR`)
 
 ### Available instructions
-* **`STOP `**, code: `10000`, stops the machine
+* **`STOP `**, code: `0000`, stops the machine
 * **`LOAD `**, code: `0001`, operation: `AC = OR`
 * **`STORE`**, code: `0010`, operation: `MEM[ OR ] = AC`
 * **`JUMP `**, code: `0011`, operation: `PC = OR`
@@ -102,3 +102,9 @@ $ ./von-neumann -rmf example/array_sum.vnm
 25. 50  ; last element:   array[ n - 1 ]
 
 ```
+
+### Reference
+
+Machine specification was based on `Przykładowa maszyna cyfrowa (PMC)` as defined in the book below.
+
+Kawa, R., & Lembas, J. (2017). "Wykłady z informatyki: Wstęp do informatyki". Warszawa: Wydawnictwo Naukowe PWN.
