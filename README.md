@@ -7,7 +7,17 @@ $ make
 
 ### Usage
 ```
-$ ./von-neumann <path_to_input_file>
+$ ./von-neumann [OPTION...]
+```
+```
+  -h, --help      Show help
+  -f, --file arg  Path to the VNM program file
+  -r, --register  Print register before every cycle
+  -m, --memory    Print memory before every cycle
+```
+**Example:**
+```
+$ ./von-neumann -rmf example/array_sum.vnm
 ```
 ### Machine properties
 * **Memory** of 512 16-bit words, addressed from 0 to 511.

@@ -208,25 +208,26 @@ class machine
 
         void print_registers() const
         {
-            std::cout << "-------------------------------" << std::endl;
-            std::cout << "IR: " << m_instruction_reg << std::endl;
-            std::cout << "INS:" << m_mem.get( m_program_counter ) << std::endl << std::endl;
-            std::cout << "PC: " << m_program_counter.get() << std::endl;
-            std::cout << "OR: " << get_or().get() << std::endl;
-            std::cout << "AC: " << get_ac().get() << std::endl;
-            std::cout << "-------------------------------" << std::endl;
+            std::cout << "| "  << std::setw( 6 )  << instructions_to_str.at( m_instruction_reg.get_code() );
+            std::cout << "|  " << std::setw( 4 )  << mode_to_str.at( m_instruction_reg.get_mode() );
+            std::cout << "| "  << std::setw( 5 )  << m_instruction_reg.get_complete_arg();
+            std::cout << "| "  << std::setw( 3 )  << m_program_counter.get();
+            std::cout << "| "  << std::setw( 3 )  << m_operand_reg.get();
+            std::cout << "| "  << std::setw( 3 )  << m_accumulator.get();
+            std::cout << "| "  << std::setw( 10 ) << m_mem.get( m_program_counter ) << "|" << std::endl;
+            std::cout << "--------------------------------------------------" << std::endl;
         }
 
         void print_memory() const
         {
-            std::cout << "-------------------------------" << std::endl;
+            std::cout << "--------------------------------------------------" << std::endl;
 
             for ( int i = 0; i < get_size(); ++i )
             {
                 std::cout << "[ " << std::left << std::setw( 3 )<<  i << " ]: " << m_mem.get( word( i ) ) << std::endl;
             }
                 
-            std::cout << "-------------------------------" << std::endl;
+            std::cout << "--------------------------------------------------" << std::endl;
         }
 
         int get_size() const
@@ -238,6 +239,15 @@ class machine
                     return i + 2;
                 }
             }
+        }
+
+        void print_registers_table() const
+        {
+            std::cout << "--------------------------------------------------" << std::endl;
+            std::cout << "|         IR          |    |    |    |           |" << std::endl;
+            std::cout << "----------------------| PC | OR | AC |   next    |" << std::endl;
+            std::cout << "| code  | mode | arg  |    |    |    |           |" << std::endl;
+            std::cout << "--------------------------------------------------" << std::endl;
         }
 
     private:

@@ -1,6 +1,8 @@
 #include <iostream>
 #include <unordered_map>
 
+#include "cxxopts.hpp"
+
 namespace vnm
 {
 
@@ -94,35 +96,76 @@ std::unordered_map<mode, std::string> mode_to_str {
 #include "machine.hpp"
 #include "interpreter.hpp"
 
-int main( int argc, char const *argv[] )
+cxxopts::ParseResult parse_command_line( int argc, char* argv[] )
+{
+    static cxxopts::Options options( argv[ 0 ], "Von Neumann Machine simulator" );
+
+    options.positional_help("[optional args]").show_positional_help();
+
+    options.add_options()
+        ( "h,help", "Show help" )
+        ( "f,file", "Path to the VNM program file", cxxopts::value<std::string>() )
+        // ( "s,save", "Save output to file" )
+        ( "r,register", "Print register before every cycle" )
+        ( "m,memory", "Print memory before every cycle" );
+
+    auto result = options.parse( argc, argv );
+
+    if ( result.count( "help" ) || result.arguments().size() == 0 )
+    {
+        std::cout << options.help( { "", "Group" } ) << std::endl;
+        exit( 0 );
+    }
+
+    return result;
+}
+
+int main( int argc, char *argv[] )
 {
     vnm::machine pmc;
 
     try
     {
-        vnm::interpreter i( argv[ 1 ] );
+        auto parse_result = parse_command_line( argc, argv );
+        std::string file_name;
+
+        if ( parse_result.count( "file" ) )
+        {
+            file_name = parse_result[ "file" ].as<std::string>();
+        }
+        else
+        {
+            throw std::logic_error( "No input file!" );
+        }
+
+        vnm::interpreter i( file_name );
         i.interpret( pmc );
 
-        // pmc.print_memory();
-        // pmc.print_registers();
-
-        do
+        if ( parse_result.count( "register" ) )
         {
-            // pmc.print_registers();
-            // pmc.print_memory();
+            pmc.print_registers_table();
+        }
+
+        while ( pmc.execute() )
+        {
+            if ( parse_result.count( "register" ) )
+            {
+                pmc.print_registers();
+            }
+
+            if ( parse_result.count( "memory" ) )
+            {
+                pmc.print_memory();
+            }
+                
             pmc.get_from_memory();
-        } while ( pmc.execute() );
+        }
 
         pmc.print_memory();
     }
     catch ( std::ifstream::failure& e )
     {
-        std::cout << "Error opening/reading file!" << std::endl;
-    }
-    catch ( std::logic_error& e )
-    {
-        std::cout << "Error: " << ( argv[ 1 ] ? e.what() : "No input file!" ) << std::endl;
-        // help();
+        std::cout << "Error: Can't open/read file!" << std::endl;
     }
     catch ( std::exception& e )
     {
