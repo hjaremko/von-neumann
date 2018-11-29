@@ -80,8 +80,6 @@ class machine
                 {
                     case instruction::STOP:
                     {
-                        // print_registers();
-                        // print_memory();
                         return false;
 
                         break;
@@ -206,28 +204,37 @@ class machine
             m_mem.set( t_word, t_register );
         }
 
-        void print_registers() const
+        void print_registers_table( std::ostream& t_ostream ) const
         {
-            std::cout << "| "  << std::setw( 6 )  << instructions_to_str.at( m_instruction_reg.get_code() );
-            std::cout << "|  " << std::setw( 4 )  << mode_to_str.at( m_instruction_reg.get_mode() );
-            std::cout << "| "  << std::setw( 5 )  << m_instruction_reg.get_complete_arg();
-            std::cout << "| "  << std::setw( 3 )  << m_program_counter.get();
-            std::cout << "| "  << std::setw( 3 )  << m_operand_reg.get();
-            std::cout << "| "  << std::setw( 3 )  << m_accumulator.get();
-            std::cout << "| "  << std::setw( 10 ) << m_mem.get( m_program_counter ) << "|" << std::endl;
-            std::cout << "--------------------------------------------------" << std::endl;
+            t_ostream << "--------------------------------------------------" << std::endl;
+            t_ostream << "|         IR          |    |    |    |           |" << std::endl;
+            t_ostream << "----------------------| PC | OR | AC |   next    |" << std::endl;
+            t_ostream << "| code  | mode | arg  |    |    |    |           |" << std::endl;
+            t_ostream << "--------------------------------------------------" << std::endl;
         }
 
-        void print_memory() const
+        void print_registers( std::ostream& t_ostream ) const
         {
-            std::cout << "--------------------------------------------------" << std::endl;
+            t_ostream << "| "  << std::setw( 6 )  << instructions_to_str.at( m_instruction_reg.get_code() );
+            t_ostream << "|  " << std::setw( 4 )  << mode_to_str.at( m_instruction_reg.get_mode() );
+            t_ostream << "| "  << std::setw( 5 )  << m_instruction_reg.get_complete_arg();
+            t_ostream << "| "  << std::setw( 3 )  << m_program_counter.get();
+            t_ostream << "| "  << std::setw( 3 )  << m_operand_reg.get();
+            t_ostream << "| "  << std::setw( 3 )  << m_accumulator.get();
+            t_ostream << "| "  << std::setw( 10 ) << m_mem.get( m_program_counter ) << "|" << std::endl;
+            t_ostream << "--------------------------------------------------" << std::endl;
+        }
+
+        void print_memory( std::ostream& t_ostream ) const
+        {
+            t_ostream << "--------------------------------------------------" << std::endl;
 
             for ( int i = 0; i < get_size(); ++i )
             {
-                std::cout << "[ " << std::left << std::setw( 3 )<<  i << " ]: " << m_mem.get( word( i ) ) << std::endl;
+                t_ostream << "[ " << std::left << std::setw( 3 )<<  i << " ]: " << m_mem.get( word( i ) ) << std::endl;
             }
                 
-            std::cout << "--------------------------------------------------" << std::endl;
+            t_ostream << "--------------------------------------------------" << std::endl;
         }
 
         int get_size() const
@@ -239,15 +246,6 @@ class machine
                     return i + 2;
                 }
             }
-        }
-
-        void print_registers_table() const
-        {
-            std::cout << "--------------------------------------------------" << std::endl;
-            std::cout << "|         IR          |    |    |    |           |" << std::endl;
-            std::cout << "----------------------| PC | OR | AC |   next    |" << std::endl;
-            std::cout << "| code  | mode | arg  |    |    |    |           |" << std::endl;
-            std::cout << "--------------------------------------------------" << std::endl;
         }
 
     private:

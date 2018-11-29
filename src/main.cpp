@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <unordered_map>
 
 #include "cxxopts.hpp"
@@ -9,7 +10,6 @@ namespace vnm
 enum class instruction
 {
     ZERO  = 0b0'0000'00'000000000,
-    // STOP  = 0b1'0000'00'000000000,
     STOP  = 0b0'0000'00'000000000,
     LOAD  = 0b0'0001'00'000000000,
     STORE = 0b0'0010'00'000000000,
@@ -105,8 +105,8 @@ cxxopts::ParseResult parse_command_line( int argc, char* argv[] )
     options.add_options()
         ( "h,help", "Show help" )
         ( "f,file", "Path to the VNM program file", cxxopts::value<std::string>() )
-        // ( "s,save", "Save output to file" )
-        ( "r,register", "Print register before every cycle" )
+        ( "s,save", "Save output to file" )
+        ( "r,register", "Print register values before every cycle" )
         ( "m,memory", "Print memory before every cycle" );
 
     auto result = options.parse( argc, argv );
@@ -123,6 +123,7 @@ cxxopts::ParseResult parse_command_line( int argc, char* argv[] )
 int main( int argc, char *argv[] )
 {
     vnm::machine pmc;
+    std::fstream* out_stream;
 
     try
     {
@@ -141,27 +142,36 @@ int main( int argc, char *argv[] )
         vnm::interpreter i( file_name );
         i.interpret( pmc );
 
+        if ( parse_result.count( "save" ) )
+        {
+            std::stringstream ss;
+
+            ss << "vnm-output" /*<< file_name*/ << ".txt";
+
+            out_stream = new std::fstream( ss.str().c_str(), std::ios::in | std::ios::out | std::ios::trunc );
+        }
+
         if ( parse_result.count( "register" ) )
         {
-            pmc.print_registers_table();
+            pmc.print_registers_table( out_stream ? *out_stream : std::cout );
         }
 
         while ( pmc.execute() )
         {
             if ( parse_result.count( "register" ) )
             {
-                pmc.print_registers();
+                pmc.print_registers( out_stream ? *out_stream : std::cout );
             }
 
             if ( parse_result.count( "memory" ) )
             {
-                pmc.print_memory();
+                pmc.print_memory( out_stream ? *out_stream : std::cout );
             }
                 
             pmc.get_from_memory();
         }
 
-        pmc.print_memory();
+        pmc.print_memory( out_stream ? *out_stream : std::cout );
     }
     catch ( std::ifstream::failure& e )
     {
@@ -170,6 +180,12 @@ int main( int argc, char *argv[] )
     catch ( std::exception& e )
     {
         std::cout << "Error: " << e.what() << std::endl;
+    }
+
+    if ( out_stream )
+    {
+        out_stream->close();
+        delete out_stream;
     }
 
     return 0;

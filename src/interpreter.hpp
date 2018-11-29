@@ -5,7 +5,6 @@
 #include <sstream>
 #include <string>
 #include <fstream>
-#include <cctype>
 
 namespace vnm
 {
@@ -13,7 +12,7 @@ namespace vnm
 class interpreter
 {
     public:
-        interpreter( std::string t_file_name ) : m_file( t_file_name.c_str() )
+        explicit interpreter( const std::string& t_file_name ) : m_file( t_file_name.c_str() )
         {
             m_file.exceptions( std::ifstream::failbit | std::ifstream::badbit );
         }
@@ -54,7 +53,7 @@ class interpreter
                         std::string code( tmp );
                         ss >> tmp;
 
-                        if ( tmp == "$" | tmp == "@" | tmp == "&" | tmp == "+" )
+                        if ( tmp == "$" || tmp == "@" || tmp == "&" || tmp == "+" )
                         {
                             std::string mode( tmp );
                             std::string args;
