@@ -11,4 +11,5 @@ addons:
 
 script:
   - export CC=gcc-8 && export CXX=g++-8 && cmake . && make
+  - rm CMakeCache.txt
   - export CC=clang && export CXX=clang++ && cmake . && make
