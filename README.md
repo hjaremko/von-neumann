@@ -1,4 +1,4 @@
-# Von Neumann machine emulator
+# Von Neumann machine emulator [![Build Status](https://travis-ci.org/hjaremko/von-neumann.svg?branch=master)](https://travis-ci.org/hjaremko/von-neumann)
 
 ### Building
 ```
