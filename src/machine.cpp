@@ -58,7 +58,7 @@ bool machine::execute()
             case mode::index:
             {
                 // TODO operator+
-                set_or( get_ac().get() + m_instruction_reg.get_arg().get() );
+                set_or( word( get_ac().get() + m_instruction_reg.get_arg().get() ) );
                 break;
             }
         }
@@ -107,38 +107,38 @@ bool machine::execute()
             }
             case instruction::ADD:
             {
-                set_ac( get_ac().get() + get_or().get() );
+                set_ac( word( get_ac().get() + get_or().get() ) );
                 break;
             }
             case instruction::SUB:
             {
-                set_ac( get_ac().get() - get_or().get() );
+                set_ac( word( get_ac().get() - get_or().get() ) );
                 break;
             }
             case instruction::MULT:
             {
-                set_ac( get_ac().get() * get_or().get() );
+                set_ac( word( get_ac().get() * get_or().get() ) );
                 break;
             }
             case instruction::DIV:
             {
                 // set_ac( get_ac().get() / get_or().get() );
-                set_ac( get_ac().get_complete_arg() / get_or().get_complete_arg() );
+                set_ac( word( get_ac().get_complete_arg() / get_or().get_complete_arg() ) );
                 break;
             }
             case instruction::AND:
             {
-                set_ac( get_ac().get() & get_or().get() );
+                set_ac( word( get_ac().get() & get_or().get() ) );
                 break;
             }
             case instruction::OR:
             {
-                set_ac( get_ac().get() | get_or().get() );
+                set_ac( word( get_ac().get() | get_or().get() ) );
                 break;
             }
             case instruction::NOT:
             {
-                set_ac( !get_or().get() );
+                set_ac( word( !get_or().get() ) );
                 break;
             }
             case instruction::CMP:
@@ -158,11 +158,11 @@ bool machine::execute()
             {
                 if ( get_or().get() < 0 )
                 {
-                    set_ac( get_ac().get() >> std::abs( get_or().get() ) );
+                    set_ac( word( get_ac().get() >> std::abs( get_or().get() ) ) );
                 }
                 else if ( get_or().get() > 0 )
                 {
-                    set_ac( get_ac().get() << std::abs( get_or().get() ) );
+                    set_ac( word( get_ac().get() << std::abs( get_or().get() ) ) );
                 }
 
                 break;
@@ -171,11 +171,11 @@ bool machine::execute()
             {
                 if ( get_or().is_arg_negative() )
                 {
-                    set_ac( get_ac().get() << std::abs ( get_or().get_complete_arg() ) | std::abs( get_or().get_complete_arg() ) >> ( 16 - std::abs( get_or().get_complete_arg() ) ) );
+                    set_ac( word( get_ac().get() << std::abs ( get_or().get_complete_arg() ) | std::abs( get_or().get_complete_arg() ) >> ( 16 - std::abs( get_or().get_complete_arg() ) ) ) );
                 }
                 else
                 {
-                    set_ac( get_ac().get() >> get_or().get_complete_arg() | get_or().get_complete_arg() << ( 16 - get_or().get_complete_arg() ) );
+                    set_ac( word( get_ac().get() >> get_or().get_complete_arg() | get_or().get_complete_arg() << ( 16 - get_or().get_complete_arg() ) ) );
                 }
 
                 break;
@@ -228,11 +228,13 @@ int machine::get_size() const
 {
     for ( int i = 511; i >= 0; --i )
     {
-        if ( m_mem.get( i ).get() != 0 )
+        if ( m_mem.get( word( i ) ).get() != 0 )
         {
             return i + 2;
         }
     }
+
+    return 511;
 }
 
 }

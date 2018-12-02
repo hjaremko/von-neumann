@@ -14,8 +14,8 @@ class word
 {
     public:
         word();
-        word( const int16_t );
-        word( const std::string&, const std::string&, int16_t );
+        explicit word( const int16_t );
+        explicit word( const std::string&, const std::string&, int16_t );
 
         void set( const int16_t );
         void to_instruction();

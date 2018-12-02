@@ -10,7 +10,7 @@ set( LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR} )
 include_directories( "${PROJECT_SOURCE_DIR}" )
 
 if ( "${CMAKE_CXX_COMPILER_ID}" MATCHES "(GNU|Clang)" )
-    set( CMAKE_CXX_FLAGS "-std=c++14" )
+    set( CMAKE_CXX_FLAGS "-std=c++14 -O2 -Wall -Wextra -Wshadow -Wnon-virtual-dtor -Wpedantic -Wold-style-cast -Wcast-align -Wunused -Woverloaded-virtual" )
 endif()
 
 set( TARGET_SOURCES

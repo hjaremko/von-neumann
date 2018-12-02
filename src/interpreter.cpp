@@ -2,9 +2,10 @@
 
 namespace vnm
 {
-    interpreter::interpreter( const std::string& t_file_name ) : m_file( t_file_name.c_str() )
+    interpreter::interpreter( const std::string& t_file_name )
     {
         m_file.exceptions( std::ifstream::failbit | std::ifstream::badbit );
+        m_file.open( t_file_name.c_str() );
     }
 
     interpreter::~interpreter()
@@ -36,7 +37,7 @@ namespace vnm
 
                 if ( std::isdigit( tmp.at( 0 ) ) )
                 {
-                    t_machine.put_to_memory( std::stoi( tmp ), i );
+                    t_machine.put_to_memory( word( std::stoi( tmp ) ), word( i ) );
                 }
                 else if ( instructions_from_str.find( tmp ) != instructions_from_str.end() )
                 {
@@ -51,9 +52,9 @@ namespace vnm
 
                         if ( ss.good() || ( ss.eof() && args.length() > 0 ) )
                         {
-                            word tmp( code, mode, std::stoi( args ) );
-                            tmp.to_instruction();
-                            t_machine.put_to_memory( tmp, i );
+                            word wtmp( code, mode, std::stoi( args ) );
+                            wtmp.to_instruction();
+                            t_machine.put_to_memory( wtmp, word( i ) );
                         }
                         else
                         {
@@ -67,9 +68,9 @@ namespace vnm
                     {
                         if ( tmp == "STOP" )
                         {
-                            word tmp( 0 );
-                            tmp.to_instruction();
-                            t_machine.put_to_memory( tmp, i );
+                            word wtmp( 0 );
+                            wtmp.to_instruction();
+                            t_machine.put_to_memory( wtmp, word( i ) );
                         }
                         else
                         {

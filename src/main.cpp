@@ -8,7 +8,7 @@
 
 cxxopts::ParseResult parse_command_line( int argc, char* argv[] )
 {
-    static cxxopts::Options options( argv[ 0 ], "Von Neumann Machine simulator" );
+    static cxxopts::Options options( argv[ 0 ], "Von Neumann Machine emulator" );
 
     options.positional_help("[optional args]").show_positional_help();
 
@@ -33,7 +33,7 @@ cxxopts::ParseResult parse_command_line( int argc, char* argv[] )
 int main( int argc, char *argv[] )
 {
     vnm::machine pmc;
-    std::fstream* out_stream;
+    std::fstream out_file;
 
     try
     {
@@ -58,30 +58,30 @@ int main( int argc, char *argv[] )
 
             ss << "vnm-output" /*<< file_name*/ << ".txt";
 
-            out_stream = new std::fstream( ss.str().c_str(), std::ios::in | std::ios::out | std::ios::trunc );
+            out_file.open( ss.str().c_str(), std::ios::out | std::ios::trunc );
         }
 
         if ( parse_result.count( "register" ) )
         {
-            pmc.print_registers_table( out_stream ? *out_stream : std::cout );
+            pmc.print_registers_table( parse_result.count( "save" ) ? out_file : std::cout );
         }
 
         while ( pmc.execute() )
         {
             if ( parse_result.count( "register" ) )
             {
-                pmc.print_registers( out_stream ? *out_stream : std::cout );
+                pmc.print_registers( parse_result.count( "save" ) ? out_file : std::cout );
             }
 
             if ( parse_result.count( "memory" ) )
             {
-                pmc.print_memory( out_stream ? *out_stream : std::cout );
+                pmc.print_memory( parse_result.count( "save" ) ? out_file : std::cout );
             }
                 
             pmc.get_from_memory();
         }
 
-        pmc.print_memory( out_stream ? *out_stream : std::cout );
+        pmc.print_memory( parse_result.count( "save" ) ? out_file : std::cout );
     }
     catch ( std::ifstream::failure& e )
     {
@@ -92,11 +92,7 @@ int main( int argc, char *argv[] )
         std::cout << "Error: " << e.what() << std::endl;
     }
 
-    if ( out_stream )
-    {
-        out_stream->close();
-        delete out_stream;
-    }
+    out_file.close();
 
     return 0;
 }
