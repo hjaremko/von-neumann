@@ -1,8 +1,15 @@
-# Von Neumann machine simulator
+# Von Neumann machine emulator
 
 ### Building
 ```
+$ cmake .
 $ make
+```
+
+#### Building on Windows with MinGW
+```
+$ cmake -G "MinGW Makefiles"
+$ mingw32-make
 ```
 
 ### Usage
@@ -12,7 +19,8 @@ $ ./von-neumann [OPTION...]
 ```
   -h, --help      Show help
   -f, --file arg  Path to the VNM program file
-  -r, --register  Print register before every cycle
+  -s, --save      Save output to file
+  -r, --register  Print register values before every cycle
   -m, --memory    Print memory before every cycle
 ```
 **Example:**
@@ -21,6 +29,7 @@ $ ./von-neumann -rmf example/array_sum.vnm
 ```
 ### Machine properties
 * **Memory** of 512 16-bit words, addressed from 0 to 511.
+
 * **Four 16-bit registers**
   - Accumulator (`AC`)
   - Operand register (`OR`)
