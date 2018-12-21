@@ -7,6 +7,11 @@ machine::machine()
 {
 }
 
+void machine::set_pc( const word t_word )
+{
+    m_program_counter = t_word;
+}
+
 void machine::set_or( const word t_word )
 {
     m_operand_reg = t_word;

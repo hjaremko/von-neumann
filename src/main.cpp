@@ -15,6 +15,7 @@ cxxopts::ParseResult parse_command_line( int argc, char* argv[] )
     options.add_options()
         ( "h,help", "Show help" )
         ( "f,file", "Path to the VNM program file", cxxopts::value<std::string>() )
+        ( "c,counter", "Set initial program counter value", cxxopts::value<int>() )
         ( "s,save", "Save output to file" )
         ( "r,register", "Print register values before every cycle" )
         ( "m,memory", "Print memory before every cycle" );
@@ -64,6 +65,11 @@ int main( int argc, char *argv[] )
         if ( parse_result.count( "register" ) )
         {
             pmc.print_registers_table( parse_result.count( "save" ) ? out_file : std::cout );
+        }
+
+        if ( parse_result.count( "counter" ) )
+        {
+            pmc.set_pc( vnm::word( parse_result[ "counter" ].as<int>() ) );
         }
 
         while ( pmc.execute() )

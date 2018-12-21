@@ -17,11 +17,12 @@ $ mingw32-make
 $ ./von-neumann [OPTION...]
 ```
 ```
-  -h, --help      Show help
-  -f, --file arg  Path to the VNM program file
-  -s, --save      Save output to file
-  -r, --register  Print register values before every cycle
-  -m, --memory    Print memory before every cycle
+  -h, --help         Show help
+  -f, --file arg     Path to the VNM program file
+  -c, --counter arg  Set initial program counter value
+  -s, --save         Save output to file
+  -r, --register     Print register values before every cycle
+  -m, --memory       Print memory before every cycle
 ```
 **Example:**
 ```
