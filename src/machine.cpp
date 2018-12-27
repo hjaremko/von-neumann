@@ -35,8 +35,7 @@ word machine::get_ac() const
 void machine::get_from_memory()
 {
     m_instruction_reg = m_mem.get( m_program_counter );
-    // m_program_counter++;
-    m_program_counter.set( m_program_counter.get() + 1 );
+    ++m_program_counter;
 }
 
 bool machine::execute()
@@ -62,8 +61,7 @@ bool machine::execute()
             }
             case mode::index:
             {
-                // TODO operator+
-                set_or( word( get_ac().get() + m_instruction_reg.get_arg().get() ) );
+                set_or( get_ac() + m_instruction_reg.get_arg() );
                 break;
             }
         }
@@ -93,7 +91,6 @@ bool machine::execute()
             }
             case instruction::JNEG:
             {
-                // if ( get_ac().get() < 0 )
                 if ( get_ac().is_arg_negative() )
                 {
                     m_program_counter = get_or();
@@ -112,43 +109,42 @@ bool machine::execute()
             }
             case instruction::ADD:
             {
-                set_ac( word( get_ac().get() + get_or().get() ) );
+                set_ac( get_ac() + get_or() );
                 break;
             }
             case instruction::SUB:
             {
-                set_ac( word( get_ac().get() - get_or().get() ) );
+                set_ac( get_ac() - get_or() );
                 break;
             }
             case instruction::MULT:
             {
-                set_ac( word( get_ac().get() * get_or().get() ) );
+                set_ac( get_ac() * get_or() );
                 break;
             }
             case instruction::DIV:
             {
-                // set_ac( get_ac().get() / get_or().get() );
-                set_ac( word( get_ac().get_complete_arg() / get_or().get_complete_arg() ) );
+                set_ac( get_ac() / get_or() );
                 break;
             }
             case instruction::AND:
             {
-                set_ac( word( get_ac().get() & get_or().get() ) );
+                set_ac( get_ac() & get_or() );
                 break;
             }
             case instruction::OR:
             {
-                set_ac( word( get_ac().get() | get_or().get() ) );
+                set_ac( get_ac() | get_or() );
                 break;
             }
             case instruction::NOT:
             {
-                set_ac( word( !get_or().get() ) );
+                set_ac( !get_or() );
                 break;
             }
             case instruction::CMP:
             {
-                if ( get_ac().get() == get_or().get() )
+                if ( get_ac() == get_or() )
                 {
                     set_ac( word( -1 ) );
                 }
@@ -176,11 +172,13 @@ bool machine::execute()
             {
                 if ( get_or().is_arg_negative() )
                 {
-                    set_ac( word( get_ac().get() << std::abs ( get_or().get_complete_arg() ) | std::abs( get_or().get_complete_arg() ) >> ( 16 - std::abs( get_or().get_complete_arg() ) ) ) );
+                    set_ac( word( get_ac().get() << std::abs ( get_or().get_complete_arg() ) |
+                    std::abs( get_or().get_complete_arg() ) >> ( 16 - std::abs( get_or().get_complete_arg() ) ) ) );
                 }
                 else
                 {
-                    set_ac( word( get_ac().get() >> get_or().get_complete_arg() | get_or().get_complete_arg() << ( 16 - get_or().get_complete_arg() ) ) );
+                    set_ac( word( get_ac().get() >> get_or().get_complete_arg() |
+                    get_or().get_complete_arg() << ( 16 - get_or().get_complete_arg() ) ) );
                 }
 
                 break;
@@ -223,9 +221,10 @@ void machine::print_memory( std::ostream& t_ostream ) const
 
     for ( int i = 0; i < get_size(); ++i )
     {
-        t_ostream << "[ " << std::left << std::setw( 3 )<<  i << " ]: " << m_mem.get( word( i ) ) << std::endl;
+        t_ostream << "[ " << std::left << std::setw( 3 )<<  i << " ]: "
+                  << m_mem.get( word( i ) ) << std::endl;
     }
-        
+
     t_ostream << "--------------------------------------------------" << std::endl;
 }
 

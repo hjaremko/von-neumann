@@ -10,7 +10,7 @@ cxxopts::ParseResult parse_command_line( int argc, char* argv[] )
 {
     static cxxopts::Options options( argv[ 0 ], "Von Neumann Machine emulator" );
 
-    options.positional_help("[optional args]").show_positional_help();
+    options.positional_help( "[optional args]" ).show_positional_help();
 
     options.add_options()
         ( "h,help", "Show help" )
@@ -22,7 +22,7 @@ cxxopts::ParseResult parse_command_line( int argc, char* argv[] )
 
     auto result = options.parse( argc, argv );
 
-    if ( result.count( "help" ) || result.arguments().size() == 0 )
+    if ( result.count( "help" ) || result.arguments().empty() )
     {
         std::cout << options.help( { "", "Group" } ) << std::endl;
         exit( 0 );
@@ -83,7 +83,7 @@ int main( int argc, char *argv[] )
             {
                 pmc.print_memory( parse_result.count( "save" ) ? out_file : std::cout );
             }
-                
+
             pmc.get_from_memory();
         }
 

@@ -27,6 +27,73 @@ class word
         mode get_mode() const;
         word get_arg() const;
 
+        word& operator+=( const word& rhs )
+        {
+            m_word += rhs.get();
+            return *this;
+        }
+
+        word& operator-=( const word& rhs )
+        {
+            m_word -= rhs.get();
+            return *this;
+        }
+
+        word& operator*=( const word& rhs )
+        {
+            m_word *= rhs.get();
+            return *this;
+        }
+
+        word& operator/=( const word& rhs )
+        {
+            m_word = get_complete_arg() / rhs.get_complete_arg();
+            return *this;
+        }
+
+        word& operator&=( const word& rhs )
+        {
+            m_word &= rhs.get();
+            return *this;
+        }
+
+        word& operator|=( const word& rhs )
+        {
+            m_word |= rhs.get();
+            return *this;
+        }
+
+        word operator!()
+        {
+            return word( !get() );
+        }
+
+        word& operator++()
+        {
+            ++m_word;
+            return *this;
+        }
+
+        word operator++( int )
+        {
+            word tmp( *this );
+            operator++();
+            return tmp;
+        }
+
+        word& operator--()
+        {
+            --m_word;
+            return *this;
+        }
+
+        word operator--( int )
+        {
+            word tmp( *this );
+            operator--();
+            return tmp;
+        }
+
     private:
         int16_t m_word{ 0 };
         bool    m_instruction{ false }; //not sure if necessery
@@ -34,7 +101,53 @@ class word
 
 }
 
-std::ostream& operator<<( std::ostream& t_stream, const vnm::word& t_word );
-std::istream& operator>>( std::istream& t_stream, vnm::word& t_word );
+std::ostream& operator<<( std::ostream&, const vnm::word& );
+std::istream& operator>>( std::istream&, vnm::word& );
+
+inline bool operator==( const vnm::word& lhs, const vnm::word& rhs )
+{
+    return lhs.get() == rhs.get();
+}
+
+inline bool operator!=( const vnm::word& lhs, const vnm::word& rhs )
+{
+    return !operator==( lhs, rhs );
+}
+
+inline vnm::word operator+( vnm::word lhs, const vnm::word& rhs )
+{
+    lhs += rhs;
+    return lhs;
+}
+
+inline vnm::word operator-( vnm::word lhs, const vnm::word& rhs )
+{
+    lhs -= rhs;
+    return lhs;
+}
+
+inline vnm::word operator*( vnm::word lhs, const vnm::word& rhs )
+{
+    lhs *= rhs;
+    return lhs;
+}
+
+inline vnm::word operator/( vnm::word lhs, const vnm::word& rhs )
+{
+    lhs /= rhs;
+    return lhs;
+}
+
+inline vnm::word operator&( vnm::word lhs, const vnm::word& rhs )
+{
+    lhs &= rhs;
+    return lhs;
+}
+
+inline vnm::word operator|( vnm::word lhs, const vnm::word& rhs )
+{
+    lhs |= rhs;
+    return lhs;
+}
 
 #endif
