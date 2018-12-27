@@ -196,7 +196,7 @@ namespace std
 
 namespace cxxopts
 {
-  typedef std::string String;
+  using String = std::string;
 
   template <typename T>
   T
@@ -308,13 +308,13 @@ namespace cxxopts
   class OptionException : public std::exception
   {
     public:
-    OptionException(const std::string& message)
-    : m_message(message)
+    OptionException(std::string message)
+    : m_message(std::move(message))
     {
     }
 
-    virtual const char*
-    what() const noexcept
+    const char*
+    what() const noexcept override
     {
       return m_message.c_str();
     }
@@ -763,37 +763,37 @@ namespace cxxopts
       }
 
       void
-      parse(const std::string& text) const
+      parse(const std::string& text) const override
       {
         parse_value(text, *m_store);
       }
 
       bool
-      is_container() const
+      is_container() const override
       {
         return type_is_container<T>::value;
       }
 
       void
-      parse() const
+      parse() const override
       {
         parse_value(m_default_value, *m_store);
       }
 
       bool
-      has_default() const
+      has_default() const override
       {
         return m_default;
       }
 
       bool
-      has_implicit() const
+      has_implicit() const override
       {
         return m_implicit;
       }
 
       std::shared_ptr<Value>
-      default_value(const std::string& value)
+      default_value(const std::string& value) override
       {
         m_default = true;
         m_default_value = value;
@@ -801,7 +801,7 @@ namespace cxxopts
       }
 
       std::shared_ptr<Value>
-      implicit_value(const std::string& value)
+      implicit_value(const std::string& value) override
       {
         m_implicit = true;
         m_implicit_value = value;
@@ -809,19 +809,19 @@ namespace cxxopts
       }
 
       std::string
-      get_default_value() const
+      get_default_value() const override
       {
         return m_default_value;
       }
 
       std::string
-      get_implicit_value() const
+      get_implicit_value() const override
       {
         return m_implicit_value;
       }
 
       bool
-      is_boolean() const
+      is_boolean() const override
       {
         return std::is_same<T, bool>::value;
       }
@@ -881,7 +881,7 @@ namespace cxxopts
       }
 
       std::shared_ptr<Value>
-      clone() const
+      clone() const override
       {
         return std::make_shared<standard_value<bool>>(*this);
       }
@@ -920,15 +920,15 @@ namespace cxxopts
     public:
     OptionDetails
     (
-      const std::string& short_,
-      const std::string& long_,
-      const String& desc,
+      const std::string short_,
+      const std::string long_,
+      const String desc,
       std::shared_ptr<const Value> val
     )
-    : m_short(short_)
-    , m_long(long_)
-    , m_desc(desc)
-    , m_value(val)
+    : m_short(std::move(short_))
+    , m_long(std::move(long_))
+    , m_desc(std::move(desc))
+    , m_value(std::move(val))
     , m_count(0)
     {
     }
@@ -1840,7 +1840,7 @@ inline
 String
 Options::help_one_group(const std::string& g) const
 {
-  typedef std::vector<std::pair<String, String>> OptionHelp;
+  using OptionHelp = std::vector<std::pair<String, String>>;
 
   auto group = m_help.find(g);
   if (group == m_help.end())

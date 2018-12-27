@@ -13,7 +13,7 @@ namespace vnm
 class word
 {
     public:
-        word();
+        word() = default;
         explicit word( const int16_t );
         explicit word( const std::string&, const std::string&, int16_t );
 

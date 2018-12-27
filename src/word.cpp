@@ -2,10 +2,6 @@
 
 namespace vnm
 {
-    word::word()
-    {
-    }
-
     word::word( const int16_t t_word ) : m_word( t_word )
     {
     }

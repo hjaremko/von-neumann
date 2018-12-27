@@ -9,7 +9,7 @@ namespace vnm
 class machine
 {
     public:
-        machine();
+        machine() = default;
 
         void print_registers_table( std::ostream& ) const;
         void print_registers( std::ostream& ) const;

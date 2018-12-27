@@ -3,10 +3,6 @@
 namespace vnm
 {
 
-machine::machine()
-{
-}
-
 void machine::set_pc( const word t_word )
 {
     m_program_counter = t_word;
