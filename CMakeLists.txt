@@ -8,9 +8,10 @@ set( EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR} )
 set( LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR} )
 
 include_directories( "${PROJECT_SOURCE_DIR}" )
+link_libraries( stdc++fs )
 
 if ( "${CMAKE_CXX_COMPILER_ID}" MATCHES "(GNU|Clang)" )
-    set( CMAKE_CXX_FLAGS "-std=c++14 -O2 -Wall -Wextra -Wshadow -Wnon-virtual-dtor -Wpedantic -Wold-style-cast -Wcast-align -Wunused -Woverloaded-virtual" )
+    set( CMAKE_CXX_FLAGS "-std=c++17 -O2 -Wall -Wextra -Wshadow -Wnon-virtual-dtor -Wpedantic -Wold-style-cast -Wcast-align -Wunused -Woverloaded-virtual" )
 endif()
 
 set( TARGET_SOURCES

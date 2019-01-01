@@ -1,10 +1,13 @@
 #include <iostream>
 #include <fstream>
+#include <experimental/filesystem>
 
 #include "cxxopts.hpp"
 #include "word.hpp"
 #include "machine.hpp"
 #include "interpreter.hpp"
+
+namespace fs = std::experimental::filesystem;
 
 cxxopts::ParseResult parse_command_line( int argc, char* argv[] )
 {
@@ -39,25 +42,25 @@ int main( int argc, char *argv[] )
     try
     {
         auto parse_result = parse_command_line( argc, argv );
-        std::string file_name;
+        fs::path input_path;
 
         if ( parse_result.count( "file" ) )
         {
-            file_name = parse_result[ "file" ].as<std::string>();
+            input_path /= parse_result[ "file" ].as<std::string>();
         }
         else
         {
             throw std::logic_error( "No input file!" );
         }
 
-        vnm::interpreter i( file_name );
+        vnm::interpreter i( input_path.string() );
         i.interpret( pmc );
 
         if ( parse_result.count( "save" ) )
         {
             std::stringstream ss;
 
-            ss << "vnm-output" /*<< file_name*/ << ".txt";
+            ss << "output-" << input_path.filename().string() << ".txt";
 
             out_file.open( ss.str().c_str(), std::ios::out | std::ios::trunc );
         }
