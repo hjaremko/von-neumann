@@ -201,7 +201,14 @@ void machine::print_registers_table( std::ostream& t_ostream ) const
 
 void machine::print_registers( std::ostream& t_ostream ) const
 {
-    t_ostream << "| "  << std::setw( 6 )  << instructions_to_str.at( m_instruction_reg.get_code() );
+    t_ostream << std::left;
+    t_ostream << "| "  << std::setw( 6 );
+
+    if ( m_instruction_reg.is_instruction() )
+        t_ostream << instructions_to_str.at( m_instruction_reg.get_code() );
+    else
+        t_ostream << ' ';
+
     t_ostream << "|  " << std::setw( 4 )  << mode_to_str.at( m_instruction_reg.get_mode() );
     t_ostream << "| "  << std::setw( 5 )  << m_instruction_reg.get_complete_arg();
     t_ostream << "| "  << std::setw( 3 )  << m_program_counter.get();

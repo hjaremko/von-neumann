@@ -8,7 +8,6 @@ namespace vnm
 
 enum class instruction
 {
-    ZERO  = 0b0'0000'00'000000000,
     STOP  = 0b0'0000'00'000000000,
     LOAD  = 0b0'0001'00'000000000,
     STORE = 0b0'0010'00'000000000,

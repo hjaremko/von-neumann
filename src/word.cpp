@@ -70,30 +70,28 @@ namespace vnm
 
 std::ostream& operator<<( std::ostream& t_stream, const vnm::word& t_word )
 {
-    if ( t_word.get() != 0 )
+    std::stringstream ss;
+
+    if ( t_word.is_instruction() )
     {
-        if ( t_word.is_instruction() )
+        if ( t_word.get_code() == vnm::instruction::STOP )
         {
-            if ( t_word.get_code() == vnm::instruction::STOP )
-            {
-                t_stream << "STOP";
-            }
-            else
-            {
-                t_stream << std::left << std::setw( 6 )
-                         << vnm::instructions_to_str.at( t_word.get_code() )
-                         << vnm::mode_to_str.at( t_word.get_mode() ) << ' '
-                         << t_word.get_complete_arg();
-            }
+            ss << "STOP";
         }
         else
         {
-            t_stream << t_word.get_complete_arg();
-            // t_stream << ' ' << std::bitset<16>( t_word.get_complete_arg() );
+            ss << std::left << std::setw( 6 )
+               << vnm::instructions_to_str.at( t_word.get_code() )
+               << vnm::mode_to_str.at( t_word.get_mode() ) << ' '
+               << t_word.get_complete_arg();
         }
     }
+    else if ( t_word.get() != 0 )
+    {
+        ss << t_word.get_complete_arg();
+    }
 
-    return t_stream;
+    return t_stream << ss.str();
 }
 
 std::istream& operator>>( std::istream& t_stream, vnm::word& t_word )

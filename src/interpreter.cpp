@@ -68,7 +68,7 @@ namespace vnm
                     {
                         if ( tmp == "STOP" )
                         {
-                            word wtmp( 0 );
+                            word wtmp( static_cast<int>( instructions_from_str[ "STOP" ] ) );
                             wtmp.to_instruction();
                             t_machine.put_to_memory( wtmp, word( i ) );
                         }

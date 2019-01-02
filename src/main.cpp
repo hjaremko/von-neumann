@@ -42,6 +42,7 @@ int main( int argc, char *argv[] )
     try
     {
         auto parse_result = parse_command_line( argc, argv );
+        auto out_stream = &std::cout;
         fs::path input_path;
 
         if ( parse_result.count( "file" ) )
@@ -63,11 +64,12 @@ int main( int argc, char *argv[] )
             ss << "output-" << input_path.filename().string() << ".txt";
 
             out_file.open( ss.str().c_str(), std::ios::out | std::ios::trunc );
+            out_stream = &out_file;
         }
 
         if ( parse_result.count( "register" ) )
         {
-            pmc.print_registers_table( parse_result.count( "save" ) ? out_file : std::cout );
+            pmc.print_registers_table( *out_stream );
         }
 
         if ( parse_result.count( "counter" ) )
@@ -79,18 +81,18 @@ int main( int argc, char *argv[] )
         {
             if ( parse_result.count( "register" ) )
             {
-                pmc.print_registers( parse_result.count( "save" ) ? out_file : std::cout );
+                pmc.print_registers( *out_stream );
             }
 
             if ( parse_result.count( "memory" ) )
             {
-                pmc.print_memory( parse_result.count( "save" ) ? out_file : std::cout );
+                pmc.print_memory( *out_stream );
             }
 
             pmc.get_from_memory();
         }
 
-        pmc.print_memory( parse_result.count( "save" ) ? out_file : std::cout );
+        pmc.print_memory( *out_stream );
     }
     catch ( std::ifstream::failure& e )
     {

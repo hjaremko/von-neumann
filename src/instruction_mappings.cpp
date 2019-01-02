@@ -4,7 +4,6 @@ namespace vnm
 {
 
 std::unordered_map<std::string, instruction> instructions_from_str {
-    { "ZERO",  instruction::ZERO  },
     { "STOP",  instruction::STOP  },
     { "LOAD",  instruction::LOAD  },
     { "STORE", instruction::STORE },
@@ -24,7 +23,6 @@ std::unordered_map<std::string, instruction> instructions_from_str {
 };
 
 std::unordered_map<instruction, std::string> instructions_to_str {
-    { instruction::ZERO,  "0"  },
     { instruction::STOP,  "STOP"  },
     { instruction::LOAD,  "LOAD"  },
     { instruction::STORE, "STORE" },
