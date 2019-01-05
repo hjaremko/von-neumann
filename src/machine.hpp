@@ -14,10 +14,10 @@ class machine
         void print_registers_table( std::ostream& ) const;
         void print_registers( std::ostream& ) const;
         void print_memory( std::ostream& ) const;
-        void put_to_memory( const word, const word );
-        void set_pc( const word );
-        void set_or( const word );
-        void set_ac( const word );
+        void put_to_memory( const word&, const word& );
+        void set_pc( const word& );
+        void set_or( const word& );
+        void set_ac( const word& );
         void get_from_memory();
         word get_or() const;
         word get_ac() const;

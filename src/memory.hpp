@@ -13,8 +13,8 @@ class memory
     public:
         memory();
 
-        word get( const word ) const;
-        void set( const word, const word );
+        word get( const word& ) const;
+        void set( const word&, const word& );
 
     private:
         std::vector<word> m_mem;

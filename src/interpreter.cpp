@@ -62,7 +62,7 @@ void interpreter::interpret( machine& t_machine )
                         word wtmp( token->lexeme, ( token + 1 )->lexeme, ( token + 2 )->value );
                         wtmp.to_instruction();
                         t_machine.put_to_memory( wtmp, word( ( token + 1 )->line - 1 ) );
-                        token = token + 2;
+                        token += 2;
                     }
                 }
                 else

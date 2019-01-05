@@ -5,7 +5,7 @@ namespace vnm
 
 memory::memory() : m_mem( 512 ) {}
 
-word memory::get( const word t_register ) const
+word memory::get( const word& t_register ) const
 {
     try
     {
@@ -17,7 +17,7 @@ word memory::get( const word t_register ) const
     }
 }
 
-void memory::set( const word t_word, const word t_register )
+void memory::set( const word& t_word, const word& t_register )
 {
     try
     {

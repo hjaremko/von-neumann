@@ -920,9 +920,9 @@ namespace cxxopts
     public:
     OptionDetails
     (
-      const std::string short_,
-      const std::string long_,
-      const String desc,
+      std::string short_,
+      std::string long_,
+      String desc,
       std::shared_ptr<const Value> val
     )
     : m_short(std::move(short_))
@@ -935,9 +935,9 @@ namespace cxxopts
 
     OptionDetails(const OptionDetails& rhs)
     : m_desc(rhs.m_desc)
+    , m_value(rhs.m_value->clone())
     , m_count(rhs.m_count)
     {
-      m_value = rhs.m_value->clone();
     }
 
     OptionDetails(OptionDetails&& rhs) = default;
@@ -1009,7 +1009,7 @@ namespace cxxopts
       const std::string& text
     )
     {
-      ensure_value(details);
+      ensure_value(std::move(details));
       ++m_count;
       m_value->parse(text);
     }
@@ -1017,7 +1017,7 @@ namespace cxxopts
     void
     parse_default(std::shared_ptr<const OptionDetails> details)
     {
-      ensure_value(details);
+      ensure_value(std::move(details));
       m_value->parse();
     }
 
@@ -1144,7 +1144,7 @@ namespace cxxopts
     add_to_option(const std::string& option, const std::string& arg);
 
     bool
-    consume_positional(std::string a);
+    consume_positional(const std::string& a);
 
     void
     parse_option
@@ -1498,7 +1498,7 @@ OptionAdder::operator()
     std::get<0>(option_names),
     std::get<1>(option_names),
     desc,
-    value,
+    std::move(value),
     std::move(arg_help)
   );
 
@@ -1579,7 +1579,7 @@ ParseResult::add_to_option(const std::string& option, const std::string& arg)
 
 inline
 bool
-ParseResult::consume_positional(std::string a)
+ParseResult::consume_positional(const std::string& a)
 {
   while (m_next_positional != m_positional.end())
   {
@@ -1634,7 +1634,7 @@ inline
 void
 Options::parse_positional(std::initializer_list<std::string> options)
 {
-  parse_positional(std::vector<std::string>(std::move(options)));
+  parse_positional(std::vector<std::string>(options));
 }
 
 inline

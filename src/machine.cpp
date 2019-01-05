@@ -3,17 +3,17 @@
 namespace vnm
 {
 
-void machine::set_pc( const word t_word )
+void machine::set_pc( const word& t_word )
 {
     m_program_counter = t_word;
 }
 
-void machine::set_or( const word t_word )
+void machine::set_or( const word& t_word )
 {
     m_operand_reg = t_word;
 }
 
-void machine::set_ac( const word t_word )
+void machine::set_ac( const word& t_word )
 {
     m_accumulator = t_word;
 }
@@ -185,7 +185,7 @@ bool machine::execute()
     return true;
 }
 
-void machine::put_to_memory( const word t_word, const word t_register )
+void machine::put_to_memory( const word& t_word, const word& t_register )
 {
     m_mem.set( t_word, t_register );
 }

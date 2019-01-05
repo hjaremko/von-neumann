@@ -18,10 +18,10 @@ namespace vnm
 class interpreter
 {
 public:
-    void interpret( machine& );
-
     explicit interpreter( const std::string& );
     ~interpreter();
+
+    void interpret( machine& );
 
 private:
     class scanner
