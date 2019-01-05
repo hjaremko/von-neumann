@@ -20,7 +20,7 @@ struct token
          : type_( t_type ), value( t_value ), line( t_line ) {}
 
     type type_;
-    std::string lexeme;
+    std::string lexeme{ ' ' };
     int value{ 0 };
     int line{ 0 };
 };
