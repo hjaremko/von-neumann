@@ -21,6 +21,7 @@ set( TARGET_SOURCES
     ${CMAKE_SOURCE_DIR}/interpreter.cpp
     ${CMAKE_SOURCE_DIR}/machine.cpp
     ${CMAKE_SOURCE_DIR}/memory.cpp
+    ${CMAKE_SOURCE_DIR}/scanner.cpp
 )
 
 add_executable( ${PROJECT_NAME} ${TARGET_SOURCES} )
