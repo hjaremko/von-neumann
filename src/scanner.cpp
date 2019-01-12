@@ -3,6 +3,11 @@
 namespace vnm
 {
 
+interpreter::scanner::scanner( std::string t_source )
+                             : m_source( std::move( t_source ) )
+{
+}
+
 bool interpreter::scanner::at_end() const
 {
     return m_current >= m_source.length();

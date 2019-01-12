@@ -14,10 +14,10 @@ class word
 {
     public:
         word() = default;
-        explicit word( const int16_t );
+        explicit word( int16_t );
         explicit word( const std::string&, const std::string&, int16_t );
 
-        void set( const int16_t );
+        void set( int16_t );
         void to_instruction();
         bool is_arg_negative() const;
         bool is_instruction() const;

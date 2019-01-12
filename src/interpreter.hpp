@@ -17,41 +17,41 @@ namespace vnm
 
 class interpreter
 {
-public:
-    explicit interpreter( const std::string& );
-    ~interpreter();
-
-    void interpret( machine& );
-
-private:
-    class scanner
-    {
     public:
-        explicit scanner( std::string t_source ) : m_source( std::move( t_source ) ) {}
+        explicit interpreter( const std::string& );
+        ~interpreter();
 
-        bool at_end() const;
-        void scan_token();
-        std::vector<token> scan_tokens();
+        void interpret( machine& );
 
     private:
-        char advance();
-        char peek() const;
-        void add_token( token::type );
-        void add_token( token::type, int );
-        void number();
-        void string();
+        class scanner
+        {
+            public:
+                explicit scanner( std::string );
 
-        std::string m_source;
-        std::vector<token> m_tokens;
-        unsigned m_start{ 0 };
-        unsigned m_current{ 0 };
-        unsigned m_line{ 1 };
-    };
+                bool at_end() const;
+                void scan_token();
+                std::vector<token> scan_tokens();
 
-    static void error( const std::string&, const token&, const std::string& );
+            private:
+                char advance();
+                char peek() const;
+                void add_token( token::type );
+                void add_token( token::type, int );
+                void number();
+                void string();
 
-    static unsigned m_error_count;
-    std::fstream m_file;
+                std::string m_source;
+                std::vector<token> m_tokens;
+                unsigned m_start{ 0 };
+                unsigned m_current{ 0 };
+                unsigned m_line{ 1 };
+        };
+
+        static void error( const std::string&, const token&, const std::string& );
+
+        static unsigned m_error_count;
+        std::fstream m_file;
 };
 
 }

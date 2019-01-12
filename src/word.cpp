@@ -2,7 +2,7 @@
 
 namespace vnm
 {
-    word::word( const int16_t t_word ) : m_word( t_word )
+    word::word( int16_t t_word ) : m_word( t_word )
     {
     }
 
@@ -42,7 +42,7 @@ namespace vnm
 
     bool word::is_arg_negative() const
     {
-        return ( m_word & 0b0'0000'00'100000000 );
+        return static_cast<bool>( m_word & 0b0'0000'00'100000000 );
     }
 
     bool word::is_instruction() const
