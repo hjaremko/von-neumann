@@ -3,7 +3,6 @@
 #include <experimental/filesystem>
 
 #include "cxxopts.hpp"
-#include "word.hpp"
 #include "machine.hpp"
 #include "interpreter.hpp"
 
@@ -41,7 +40,7 @@ int main( int argc, char *argv[] )
 
     try
     {
-        auto parse_result = parse_command_line( argc, argv );
+        const auto parse_result = parse_command_line( argc, argv );
         auto out_stream = &std::cout;
         fs::path input_path;
 
@@ -67,7 +66,10 @@ int main( int argc, char *argv[] )
             out_stream = &out_file;
         }
 
-        if ( parse_result.count( "register" ) )
+        auto register_print = parse_result.count( "register" );
+        auto memory_print   = parse_result.count( "memory" );
+
+        if ( register_print )
         {
             pmc.print_registers_table( *out_stream );
         }
@@ -79,12 +81,12 @@ int main( int argc, char *argv[] )
 
         while ( pmc.execute() )
         {
-            if ( parse_result.count( "register" ) )
+            if ( register_print )
             {
                 pmc.print_registers( *out_stream );
             }
 
-            if ( parse_result.count( "memory" ) )
+            if ( memory_print )
             {
                 pmc.print_memory( *out_stream );
             }

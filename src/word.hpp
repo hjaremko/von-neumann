@@ -14,7 +14,7 @@ class word
 {
     public:
         word() = default;
-        explicit word( int16_t );
+        explicit word( int16_t t_word ) : m_word( t_word ) {}
         explicit word( const std::string&, const std::string&, int16_t );
 
         void set( int16_t );

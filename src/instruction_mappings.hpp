@@ -34,10 +34,10 @@ enum class mode
     index    = 0b0'0000'11'000000000  //+
 };
 
-extern std::unordered_map<std::string, instruction> instructions_from_str;
-extern std::unordered_map<instruction, std::string> instructions_to_str ;
-extern std::unordered_map<std::string, mode> mode_from_str;
-extern std::unordered_map<mode, std::string> mode_to_str;
+extern const std::unordered_map<std::string, instruction> instructions_from_str;
+extern const std::unordered_map<instruction, std::string> instructions_to_str;
+extern const std::unordered_map<std::string, mode> mode_from_str;
+extern const std::unordered_map<mode, std::string> mode_to_str;
 
 }
 

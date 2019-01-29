@@ -28,12 +28,6 @@ word machine::get_ac() const
     return m_accumulator;
 }
 
-void machine::get_from_memory()
-{
-    m_instruction_reg = m_mem.get( m_program_counter );
-    ++m_program_counter;
-}
-
 bool machine::execute()
 {
     if ( m_instruction_reg.is_instruction() )

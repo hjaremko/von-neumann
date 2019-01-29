@@ -3,7 +3,7 @@
 namespace vnm
 {
 
-std::unordered_map<std::string, instruction> instructions_from_str {
+const std::unordered_map<std::string, instruction> instructions_from_str {
     { "STOP",  instruction::STOP  },
     { "LOAD",  instruction::LOAD  },
     { "STORE", instruction::STORE },
@@ -22,7 +22,7 @@ std::unordered_map<std::string, instruction> instructions_from_str {
     { "SHC",   instruction::SHC   }
 };
 
-std::unordered_map<instruction, std::string> instructions_to_str {
+const std::unordered_map<instruction, std::string> instructions_to_str {
     { instruction::STOP,  "STOP"  },
     { instruction::LOAD,  "LOAD"  },
     { instruction::STORE, "STORE" },
@@ -41,14 +41,14 @@ std::unordered_map<instruction, std::string> instructions_to_str {
     { instruction::SHC,   "SHC"   }
 };
 
-std::unordered_map<std::string, mode> mode_from_str {
+const std::unordered_map<std::string, mode> mode_from_str {
     { "$", mode::instant  },
     { "@", mode::direct   },
     { "&", mode::indirect },
     { "+", mode::index    },
 };
 
-std::unordered_map<mode, std::string> mode_to_str {
+const std::unordered_map<mode, std::string> mode_to_str {
     { mode::instant,  "$" },
     { mode::direct,   "@" },
     { mode::indirect, "&" },

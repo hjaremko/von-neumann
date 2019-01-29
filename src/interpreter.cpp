@@ -81,7 +81,7 @@ void interpreter::interpret( machine& t_machine )
         }
         else if ( token->type_ == token::type::instruction && token->lexeme == "STOP" )
         {
-            word wtmp( static_cast<int16_t>( instructions_from_str[ "STOP" ] ) );
+            word wtmp( static_cast<int16_t>( instructions_from_str.at( "STOP" ) ) );
             wtmp.to_instruction();
             t_machine.put_to_memory( wtmp, word( token->line - 1 ) );
         }

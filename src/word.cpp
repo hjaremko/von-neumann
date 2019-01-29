@@ -2,13 +2,9 @@
 
 namespace vnm
 {
-    word::word( int16_t t_word ) : m_word( t_word )
-    {
-    }
-
     word::word( const std::string& t_code, const std::string& t_mode, int16_t t_arg )
+        : m_word( t_arg & 0b0'0000'00'111111111 )
     {
-        m_word = t_arg & 0b0'0000'00'111111111;
         m_word |= static_cast<int16_t>( instructions_from_str.at( t_code ) );
         m_word |= static_cast<int16_t>( mode_from_str.at( t_mode ) );
     }
@@ -35,9 +31,7 @@ namespace vnm
 
     word word::get_arg() const
     {
-        word tmp;
-        tmp.set( m_word & 0b0'0000'00'111111111 );
-        return tmp;
+        return word( m_word & 0b0'0000'00'111111111 );
     }
 
     bool word::is_arg_negative() const

@@ -32,6 +32,12 @@ class machine
         word   m_operand_reg;
 };
 
+inline void machine::get_from_memory()
+{
+    m_instruction_reg = m_mem.get( m_program_counter );
+    ++m_program_counter;
+}
+
 }
 
 #endif

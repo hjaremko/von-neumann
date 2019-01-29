@@ -13,7 +13,7 @@ class memory
     public:
         memory();
 
-        word get( const word& ) const;
+        const word& get( const word& ) const;
         void set( const word&, const word& );
 
     private:
