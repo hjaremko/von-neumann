@@ -1,12 +1,10 @@
-#include <iostream>
-#include <fstream>
-#include <experimental/filesystem>
-
 #include "cxxopts.hpp"
-#include "machine.hpp"
 #include "interpreter.hpp"
+#include "machine.hpp"
 
-namespace fs = std::experimental::filesystem;
+#include <filesystem>
+#include <fstream>
+#include <iostream>
 
 cxxopts::ParseResult parse_command_line( int argc, char* argv[] )
 {
@@ -33,7 +31,7 @@ cxxopts::ParseResult parse_command_line( int argc, char* argv[] )
     return result;
 }
 
-int main( int argc, char *argv[] )
+int main( int argc, char* argv[] )
 {
     vnm::machine pmc;
     std::fstream out_file;
@@ -42,7 +40,7 @@ int main( int argc, char *argv[] )
     {
         const auto parse_result = parse_command_line( argc, argv );
         auto out_stream = &std::cout;
-        fs::path input_path;
+        std::filesystem::path input_path;
 
         if ( parse_result.count( "file" ) )
         {
@@ -66,8 +64,8 @@ int main( int argc, char *argv[] )
             out_stream = &out_file;
         }
 
-        auto register_print = parse_result.count( "register" );
-        auto memory_print   = parse_result.count( "memory" );
+        const auto register_print = parse_result.count( "register" );
+        const auto memory_print = parse_result.count( "memory" );
 
         if ( register_print )
         {
@@ -96,7 +94,7 @@ int main( int argc, char *argv[] )
 
         pmc.print_memory( *out_stream );
     }
-    catch ( std::ifstream::failure& e )
+    catch ( std::ifstream::failure& /*e*/ )
     {
         std::cout << "Error: Can't open/read file!" << std::endl;
     }

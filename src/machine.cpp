@@ -1,5 +1,8 @@
 #include "machine.hpp"
 
+#include <ostream>
+#include <string>
+
 namespace vnm
 {
 
@@ -34,145 +37,145 @@ bool machine::execute()
     {
         switch ( m_instruction_reg.get_mode() )
         {
-            case mode::instant:
-            {
-                set_or( m_instruction_reg.get_arg() );
-                break;
-            }
-            case mode::direct:
-            {
-                set_or( m_mem.get( m_instruction_reg.get_arg() ) );
-                break;
-            }
-            case mode::indirect:
-            {
-                set_or( m_mem.get( m_mem.get( m_instruction_reg.get_arg() ) ) );
-                break;
-            }
-            case mode::index:
-            {
-                set_or( get_ac() + m_instruction_reg.get_arg() );
-                break;
-            }
+        case mode::instant:
+        {
+            set_or( m_instruction_reg.get_arg() );
+            break;
+        }
+        case mode::direct:
+        {
+            set_or( m_mem.get( m_instruction_reg.get_arg() ) );
+            break;
+        }
+        case mode::indirect:
+        {
+            set_or( m_mem.get( m_mem.get( m_instruction_reg.get_arg() ) ) );
+            break;
+        }
+        case mode::index:
+        {
+            set_or( get_ac() + m_instruction_reg.get_arg() );
+            break;
+        }
         }
 
         switch ( m_instruction_reg.get_code() )
         {
-            case instruction::STOP:
-            {
-                return false;
-
-                break;
-            }
-            case instruction::LOAD:
-            {
-                set_ac( get_or() );
-                break;
-            }
-            case instruction::STORE:
-            {
-                m_mem.set( get_ac(), get_or() );
-                break;
-            }
-            case instruction::JUMP:
+        case instruction::STOP:
+        {
+            return false;
+        }
+        case instruction::LOAD:
+        {
+            set_ac( get_or() );
+            break;
+        }
+        case instruction::STORE:
+        {
+            m_mem.set( get_ac(), get_or() );
+            break;
+        }
+        case instruction::JUMP:
+        {
+            m_program_counter = get_or();
+            break;
+        }
+        case instruction::JNEG:
+        {
+            if ( get_ac().is_arg_negative() )
             {
                 m_program_counter = get_or();
-                break;
             }
-            case instruction::JNEG:
-            {
-                if ( get_ac().is_arg_negative() )
-                {
-                    m_program_counter = get_or();
-                }
 
-                break;
-            }
-            case instruction::JZERO:
+            break;
+        }
+        case instruction::JZERO:
+        {
+            if ( get_ac().get() == 0 )
             {
-                if ( get_ac().get() == 0 )
-                {
-                    m_program_counter = get_or();
-                }
+                m_program_counter = get_or();
+            }
 
-                break;
-            }
-            case instruction::ADD:
+            break;
+        }
+        case instruction::ADD:
+        {
+            set_ac( get_ac() + get_or() );
+            break;
+        }
+        case instruction::SUB:
+        {
+            set_ac( get_ac() - get_or() );
+            break;
+        }
+        case instruction::MULT:
+        {
+            set_ac( get_ac() * get_or() );
+            break;
+        }
+        case instruction::DIV:
+        {
+            set_ac( get_ac() / get_or() );
+            break;
+        }
+        case instruction::AND:
+        {
+            set_ac( get_ac() & get_or() );
+            break;
+        }
+        case instruction::OR:
+        {
+            set_ac( get_ac() | get_or() );
+            break;
+        }
+        case instruction::NOT:
+        {
+            set_ac( !get_or() );
+            break;
+        }
+        case instruction::CMP:
+        {
+            if ( get_ac() == get_or() )
             {
-                set_ac( get_ac() + get_or() );
-                break;
+                set_ac( word( -1 ) );
             }
-            case instruction::SUB:
+            else
             {
-                set_ac( get_ac() - get_or() );
-                break;
+                set_ac( word( 0 ) );
             }
-            case instruction::MULT:
-            {
-                set_ac( get_ac() * get_or() );
-                break;
-            }
-            case instruction::DIV:
-            {
-                set_ac( get_ac() / get_or() );
-                break;
-            }
-            case instruction::AND:
-            {
-                set_ac( get_ac() & get_or() );
-                break;
-            }
-            case instruction::OR:
-            {
-                set_ac( get_ac() | get_or() );
-                break;
-            }
-            case instruction::NOT:
-            {
-                set_ac( !get_or() );
-                break;
-            }
-            case instruction::CMP:
-            {
-                if ( get_ac() == get_or() )
-                {
-                    set_ac( word( -1 ) );
-                }
-                else
-                {
-                    set_ac( word( 0 ) );
-                }
 
-                break;
-            }
-            case instruction::SHZ:
+            break;
+        }
+        case instruction::SHZ:
+        {
+            if ( get_or().get() < 0 )
             {
-                if ( get_or().get() < 0 )
-                {
-                    set_ac( word( get_ac().get() >> std::abs( get_or().get() ) ) );
-                }
-                else if ( get_or().get() > 0 )
-                {
-                    set_ac( word( get_ac().get() << std::abs( get_or().get() ) ) );
-                }
-
-                break;
+                set_ac( word( get_ac().get() >> std::abs( get_or().get() ) ) );
             }
-            case instruction::SHC:
+            else if ( get_or().get() > 0 )
             {
-                if ( get_or().is_arg_negative() )
-                {
-                    set_ac( word( get_ac().get() << std::abs ( get_or().get_complete_arg() ) |
-                    std::abs( get_or().get_complete_arg() ) >> ( 16 - std::abs( get_or().get_complete_arg() ) ) ) );
-                }
-                else
-                {
-                    set_ac( word( get_ac().get() >> get_or().get_complete_arg() |
-                    get_or().get_complete_arg() << ( 16 - get_or().get_complete_arg() ) ) );
-                }
-
-                break;
+                set_ac( word( get_ac().get() << std::abs( get_or().get() ) ) );
             }
+
+            break;
+        }
+        case instruction::SHC:
+        {
+            if ( get_or().is_arg_negative() )
+            {
+                set_ac( word( get_ac().get() << std::abs( get_or().get_complete_arg() ) |
+                              std::abs( get_or().get_complete_arg() ) >>
+                                  ( 16 - std::abs( get_or().get_complete_arg() ) ) ) );
+            }
+            else
+            {
+                set_ac(
+                    word( get_ac().get() >> get_or().get_complete_arg() |
+                          get_or().get_complete_arg() << ( 16 - get_or().get_complete_arg() ) ) );
+            }
+
+            break;
+        }
         }
     }
 
@@ -196,19 +199,19 @@ void machine::print_registers_table( std::ostream& t_ostream ) const
 void machine::print_registers( std::ostream& t_ostream ) const
 {
     t_ostream << std::left;
-    t_ostream << "| "  << std::setw( 6 );
+    t_ostream << "| " << std::setw( 6 );
 
     if ( m_instruction_reg.is_instruction() )
         t_ostream << instructions_to_str.at( m_instruction_reg.get_code() );
     else
         t_ostream << ' ';
 
-    t_ostream << "|  " << std::setw( 4 )  << mode_to_str.at( m_instruction_reg.get_mode() );
-    t_ostream << "| "  << std::setw( 5 )  << m_instruction_reg.get_complete_arg();
-    t_ostream << "| "  << std::setw( 3 )  << m_program_counter.get();
-    t_ostream << "| "  << std::setw( 3 )  << m_operand_reg.get();
-    t_ostream << "| "  << std::setw( 3 )  << m_accumulator.get();
-    t_ostream << "| "  << std::setw( 10 ) << m_mem.get( m_program_counter ) << "|" << std::endl;
+    t_ostream << "|  " << std::setw( 4 ) << mode_to_str.at( m_instruction_reg.get_mode() );
+    t_ostream << "| " << std::setw( 5 ) << m_instruction_reg.get_complete_arg();
+    t_ostream << "| " << std::setw( 3 ) << m_program_counter.get();
+    t_ostream << "| " << std::setw( 3 ) << m_operand_reg.get();
+    t_ostream << "| " << std::setw( 3 ) << m_accumulator.get();
+    t_ostream << "| " << std::setw( 10 ) << m_mem.get( m_program_counter ) << "|" << std::endl;
     t_ostream << "--------------------------------------------------" << std::endl;
 }
 
@@ -218,8 +221,8 @@ void machine::print_memory( std::ostream& t_ostream ) const
 
     for ( int i = 0; i < get_size(); ++i )
     {
-        t_ostream << "[ " << std::left << std::setw( 3 )<<  i << " ]: "
-                  << m_mem.get( word( i ) ) << std::endl;
+        t_ostream << "[ " << std::left << std::setw( 3 ) << i << " ]: " << m_mem.get( word( i ) )
+                  << std::endl;
     }
 
     t_ostream << "--------------------------------------------------" << std::endl;
@@ -238,4 +241,4 @@ int machine::get_size() const
     return 511;
 }
 
-}
+} // namespace vnm

@@ -1,10 +1,11 @@
 #include "interpreter.hpp"
 
+#include <cctype>
+
 namespace vnm
 {
 
-interpreter::scanner::scanner( std::string t_source )
-                             : m_source( std::move( t_source ) )
+interpreter::scanner::scanner( std::string t_source ) : m_source( std::move( t_source ) )
 {
 }
 
@@ -19,51 +20,51 @@ void interpreter::scanner::scan_token()
 
     switch ( c )
     {
-        case '$':
-        case '@':
-        case '&':
-        case '+':
-            add_token( token::type::mode );
-            break;
+    case '$':
+    case '@':
+    case '&':
+    case '+':
+        add_token( token::type::mode );
+        break;
 
-        case ' ':
-        case '\r':
-        case '\t':
-            break;
+    case ' ':
+    case '\r':
+    case '\t':
+        break;
 
-        case '\n':
-            add_token( token::type::newline );
-            m_line++;
-            break;
-        case ';':
-            while ( peek() != '\n' && !at_end() )
-            {
-                advance();
-            }
-
-            break;
-
-        default:
+    case '\n':
+        add_token( token::type::newline );
+        m_line++;
+        break;
+    case ';':
+        while ( peek() != '\n' && !at_end() )
         {
-            if ( std::isdigit( c ) || c == '-' )
-            {
-                number();
-            }
-            else if ( std::isalpha( c ) )
-            {
-                string();
-            }
-            else
-            {
-                interpreter::error( "Unexpected character",
-                                    token( token::type::number,
-                                    m_source.substr( m_start, m_current - m_start ), m_line ),
-                                    m_source );
-
-            }
-
-            break;
+            advance();
         }
+
+        break;
+
+    default:
+    {
+        if ( std::isdigit( c ) || c == '-' )
+        {
+            number();
+        }
+        else if ( std::isalpha( c ) )
+        {
+            string();
+        }
+        else
+        {
+            interpreter::error( "Unexpected character",
+                                token( token::type::number,
+                                       m_source.substr( m_start, m_current - m_start ),
+                                       m_line ),
+                                m_source );
+        }
+
+        break;
+    }
     }
 }
 
@@ -95,7 +96,7 @@ void interpreter::scanner::add_token( token::type t_type, int t_num )
 
 char interpreter::scanner::peek() const
 {
-    return ( at_end() ? '\0' : m_source.at( m_current ) );
+    return at_end() ? '\0' : m_source.at( m_current );
 }
 
 void interpreter::scanner::number()
@@ -105,7 +106,7 @@ void interpreter::scanner::number()
         advance();
     }
 
-    auto snum = ( m_source.substr( m_start, m_current - m_start ) );
+    auto snum = m_source.substr( m_start, m_current - m_start );
     add_token( token::type::number, std::stoi( snum ) );
 }
 
@@ -124,10 +125,9 @@ void interpreter::scanner::string()
     }
     else
     {
-        interpreter::error( "Invalid instruction",
-                            token( token::type::number, str, m_line ),
-                            m_source );
+        interpreter::error(
+            "Invalid instruction", token( token::type::number, str, m_line ), m_source );
     }
 }
 
-}
+} // namespace vnm

@@ -9,7 +9,6 @@ set( LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR} )
 
 set( CMAKE_CXX_STANDARD 17 )
 include_directories( "${PROJECT_SOURCE_DIR}" )
-link_libraries( stdc++fs )
 
 if ( "${CMAKE_CXX_COMPILER_ID}" MATCHES "(GNU|Clang)" )
     set( CMAKE_CXX_FLAGS "-O3 -Wall -Wextra -Wshadow -Wnon-virtual-dtor -Wpedantic -Wold-style-cast -Wcast-align -Wunused -Woverloaded-virtual" )
@@ -26,3 +25,7 @@ set( TARGET_SOURCES
 )
 
 add_executable( ${PROJECT_NAME} ${TARGET_SOURCES} )
+
+if (NOT MSVC)
+    target_link_libraries( ${PROJECT_NAME} stdc++fs )
+endif()
