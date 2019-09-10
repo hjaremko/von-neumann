@@ -2,16 +2,12 @@
 
 ### Building
 ```
-$ cmake .
-$ make
+$ mkdir build && cd build
+$ cmake ..
+$ cmake --build .
 ```
 
-#### Building on Windows with MinGW
-```
-$ cmake -G "MinGW Makefiles"
-$ mingw32-make
-```
-
+Requires compiler fully supporting `std::filesystem`.
 ### Usage
 ```
 $ ./von-neumann [OPTION...]
