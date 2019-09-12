@@ -187,6 +187,11 @@ void machine::put_to_memory( const word& t_word, const word& t_register )
     m_mem.set( t_word, t_register );
 }
 
+memory machine::get_memory() const
+{
+    return m_mem;
+}
+
 void machine::print_registers_table( std::ostream& t_ostream ) const
 {
     t_ostream << "--------------------------------------------------" << std::endl;

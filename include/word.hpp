@@ -98,7 +98,7 @@ public:
 
 private:
     int16_t m_word{ 0 };
-    bool m_instruction{ false }; // not sure if necessery
+    bool m_instruction{ false }; // not sure if necessary
 };
 
 } // namespace vnm
