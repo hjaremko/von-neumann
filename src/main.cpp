@@ -89,7 +89,7 @@ int main( int argc, char* argv[] )
                 pmc.print_memory( *out_stream );
             }
 
-            pmc.get_from_memory();
+            pmc.tick();
         }
 
         pmc.print_memory( *out_stream );

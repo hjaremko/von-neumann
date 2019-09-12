@@ -18,11 +18,12 @@ public:
     void set_pc( const word& );
     void set_or( const word& );
     void set_ac( const word& );
-    void get_from_memory();
+    void tick();
+    [[nodiscard]] memory get_memory() const;
     [[nodiscard]] word get_or() const;
     [[nodiscard]] word get_ac() const;
-    bool execute();
     [[nodiscard]] int get_size() const;
+    bool execute();
 
 private:
     memory m_mem;
@@ -32,7 +33,7 @@ private:
     word m_operand_reg;
 };
 
-inline void machine::get_from_memory()
+inline void machine::tick()
 {
     m_instruction_reg = m_mem.get( m_program_counter );
     ++m_program_counter;
