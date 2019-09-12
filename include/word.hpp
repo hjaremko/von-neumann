@@ -13,92 +13,140 @@ namespace vnm
 class word
 {
 public:
-    word() = default;
-    explicit word( int16_t t_word ) : m_word( t_word )
+    using type = int16_t;
+
+    constexpr word() = default;
+    constexpr explicit word( type value ) : word_( value )
     {
     }
-    explicit word( const std::string&, const std::string&, int16_t );
 
-    void set( int16_t );
-    void to_instruction();
-    [[nodiscard]] bool is_arg_negative() const;
-    [[nodiscard]] bool is_instruction() const;
-    [[nodiscard]] int16_t get() const;
-    [[nodiscard]] int16_t get_complete_arg() const;
-    [[nodiscard]] instruction get_code() const;
-    [[nodiscard]] mode get_mode() const;
-    [[nodiscard]] word get_arg() const;
-
-    word& operator+=( const word& rhs )
+    constexpr word( const std::string& code, const std::string& mode, type arg )
+        : word_( arg & 0b0'0000'00'111111111 ), is_instruction_( true )
     {
-        m_word += rhs.get();
+        word_ |= static_cast<type>( instructions_from_str.at( code ) );
+        word_ |= static_cast<type>( mode_from_str.at( mode ) );
+    }
+
+    constexpr void set( const type raw_value )
+    {
+        word_ = raw_value;
+    }
+
+    constexpr void to_instruction()
+    {
+        is_instruction_ = true;
+    }
+
+    [[nodiscard]] constexpr bool is_arg_negative() const
+    {
+        return static_cast<bool>( word_ & 0b0'0000'00'100000000 );
+    }
+
+    [[nodiscard]] constexpr bool is_instruction() const
+    {
+        return is_instruction_;
+    }
+
+    [[nodiscard]] constexpr type get() const
+    {
+        return word_;
+    }
+
+    [[nodiscard]] constexpr type get_complete_arg() const
+    {
+        if ( is_arg_negative() )
+        {
+            return word_ | 0b1'1111'11'000000000;
+        }
+
+        return word_ & 0b0'0000'00'111111111;
+    }
+
+    [[nodiscard]] constexpr instruction get_code() const
+    {
+        return static_cast<instruction>( word_ & 0b0'1111'00'000000000 );
+    }
+
+    [[nodiscard]] constexpr mode get_mode() const
+    {
+        return static_cast<mode>( word_ & 0b0'0000'11'000000000 );
+    }
+
+    [[nodiscard]] constexpr word get_arg() const
+    {
+        return word( word_ & 0b0'0000'00'111111111 );
+    }
+
+    constexpr word& operator+=( const word& rhs )
+    {
+        word_ += rhs.get();
         return *this;
     }
 
-    word& operator-=( const word& rhs )
+    constexpr word& operator-=( const word& rhs )
     {
-        m_word -= rhs.get();
+        word_ -= rhs.get();
         return *this;
     }
 
-    word& operator*=( const word& rhs )
+    constexpr word& operator*=( const word& rhs )
     {
-        m_word *= rhs.get();
+        word_ *= rhs.get();
         return *this;
     }
 
-    word& operator/=( const word& rhs )
+    constexpr word& operator/=( const word& rhs )
     {
-        m_word = get_complete_arg() / rhs.get_complete_arg();
+        word_ = get_complete_arg() / rhs.get_complete_arg();
         return *this;
     }
 
-    word& operator&=( const word& rhs )
+    constexpr word& operator&=( const word& rhs )
     {
-        m_word &= rhs.get();
+        word_ &= rhs.get();
         return *this;
     }
 
-    word& operator|=( const word& rhs )
+    constexpr word& operator|=( const word& rhs )
     {
-        m_word |= rhs.get();
+        word_ |= rhs.get();
         return *this;
     }
 
-    word operator!()
+    constexpr word operator!() const
     {
         return word( !get() );
     }
 
-    word& operator++()
+    constexpr word& operator++()
     {
-        ++m_word;
+        ++word_;
         return *this;
     }
 
-    word operator++( int )
+    constexpr const word operator++( int )
     {
-        word tmp( *this );
+        auto tmp( *this );
         operator++();
         return tmp;
     }
 
-    word& operator--()
+    constexpr word& operator--()
     {
-        --m_word;
+        --word_;
         return *this;
     }
 
-    word operator--( int )
+    constexpr const word operator--( int )
     {
-        word tmp( *this );
+        auto tmp( *this );
         operator--();
         return tmp;
     }
 
 private:
-    int16_t m_word{ 0 };
-    bool m_instruction{ false }; // not sure if necessary
+    type word_{ 0 };
+    bool is_instruction_{ false }; // not sure if necessary
 };
 
 } // namespace vnm

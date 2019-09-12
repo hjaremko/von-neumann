@@ -2,16 +2,11 @@
 
 namespace vnm
 {
-
-memory::memory() : m_mem( 512 )
-{
-}
-
-word memory::get( const word& t_register ) const
+word memory::get( const word& register_ ) const
 {
     try
     {
-        return m_mem.at( t_register.get() );
+        return memory_.at( register_.get() );
     }
     catch ( const std::exception& /*e*/ )
     {
@@ -19,11 +14,11 @@ word memory::get( const word& t_register ) const
     }
 }
 
-void memory::set( const word& t_word, const word& t_register )
+void memory::set( const word& value, const word& register_ )
 {
     try
     {
-        m_mem.at( t_register.get() ) = t_word;
+        memory_.at( register_.get() ) = value;
     }
     catch ( const std::exception& /*e*/ )
     {

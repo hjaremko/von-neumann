@@ -21,7 +21,7 @@ public:
     explicit interpreter( const std::string& );
     ~interpreter();
 
-    void interpret( machine& );
+    [[nodiscard]] memory interpret();
 
 private:
     class scanner
@@ -41,17 +41,17 @@ private:
         void number();
         void string();
 
-        std::string m_source;
-        std::vector<token> m_tokens;
-        unsigned m_start{ 0 };
-        unsigned m_current{ 0 };
-        unsigned m_line{ 1 };
+        std::string source_;
+        std::vector<token> tokens_;
+        unsigned start_{ 0 };
+        unsigned current_{ 0 };
+        unsigned line_{ 1 };
     };
 
     static void error( const std::string&, const token&, const std::string& );
 
-    static unsigned m_error_count;
-    std::fstream m_file;
+    static unsigned error_count_;
+    std::fstream file_;
 };
 
 } // namespace vnm

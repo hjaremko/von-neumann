@@ -6,60 +6,60 @@
 namespace vnm
 {
 
-void machine::set_pc( const word& t_word )
+void machine::set_pc( const word& value )
 {
-    m_program_counter = t_word;
+    program_counter_ = value;
 }
 
-void machine::set_or( const word& t_word )
+void machine::set_or( const word& value )
 {
-    m_operand_reg = t_word;
+    operand_reg_ = value;
 }
 
-void machine::set_ac( const word& t_word )
+void machine::set_ac( const word& value )
 {
-    m_accumulator = t_word;
+    accumulator_ = value;
 }
 
 word machine::get_or() const
 {
-    return m_operand_reg;
+    return operand_reg_;
 }
 
 word machine::get_ac() const
 {
-    return m_accumulator;
+    return accumulator_;
 }
 
 bool machine::execute()
 {
-    if ( m_instruction_reg.is_instruction() )
+    if ( instruction_reg_.is_instruction() )
     {
-        switch ( m_instruction_reg.get_mode() )
+        switch ( instruction_reg_.get_mode() )
         {
         case mode::instant:
         {
-            set_or( m_instruction_reg.get_arg() );
+            set_or( instruction_reg_.get_arg() );
             break;
         }
         case mode::direct:
         {
-            set_or( m_mem.get( m_instruction_reg.get_arg() ) );
+            set_or( memory_.get( instruction_reg_.get_arg() ) );
             break;
         }
         case mode::indirect:
         {
-            set_or( m_mem.get( m_mem.get( m_instruction_reg.get_arg() ) ) );
+            set_or( memory_.get( memory_.get( instruction_reg_.get_arg() ) ) );
             break;
         }
         case mode::index:
         {
-            set_or( get_ac() + m_instruction_reg.get_arg() );
+            set_or( get_ac() + instruction_reg_.get_arg() );
             break;
         }
         }
 
-        switch ( m_instruction_reg.get_code() )
+        switch ( instruction_reg_.get_code() )
         {
         case instruction::STOP:
         {
@@ -72,19 +72,19 @@ bool machine::execute()
         }
         case instruction::STORE:
         {
-            m_mem.set( get_ac(), get_or() );
+            memory_.set( get_ac(), get_or() );
             break;
         }
         case instruction::JUMP:
         {
-            m_program_counter = get_or();
+            program_counter_ = get_or();
             break;
         }
         case instruction::JNEG:
         {
             if ( get_ac().is_arg_negative() )
             {
-                m_program_counter = get_or();
+                program_counter_ = get_or();
             }
 
             break;
@@ -93,7 +93,7 @@ bool machine::execute()
         {
             if ( get_ac().get() == 0 )
             {
-                m_program_counter = get_or();
+                program_counter_ = get_or();
             }
 
             break;
@@ -137,11 +137,11 @@ bool machine::execute()
         {
             if ( get_ac() == get_or() )
             {
-                set_ac( word( -1 ) );
+                set_ac( word{ -1 } );
             }
             else
             {
-                set_ac( word( 0 ) );
+                set_ac( word{ 0 } );
             }
 
             break;
@@ -163,15 +163,15 @@ bool machine::execute()
         {
             if ( get_or().is_arg_negative() )
             {
-                set_ac( word( get_ac().get() << std::abs( get_or().get_complete_arg() ) |
+                set_ac( word{ static_cast<word::type>( get_ac().get() << std::abs( get_or().get_complete_arg() ) |
                               std::abs( get_or().get_complete_arg() ) >>
-                                  ( 16 - std::abs( get_or().get_complete_arg() ) ) ) );
+                              ( 16 - std::abs( get_or().get_complete_arg() ) ) ) } );
             }
             else
             {
                 set_ac(
-                    word( get_ac().get() >> get_or().get_complete_arg() |
-                          get_or().get_complete_arg() << ( 16 - get_or().get_complete_arg() ) ) );
+                    word{ static_cast<word::type>( get_ac().get() >> get_or().get_complete_arg() |
+                          get_or().get_complete_arg() << ( 16 - get_or().get_complete_arg() ) ) } );
             }
 
             break;
@@ -182,62 +182,67 @@ bool machine::execute()
     return true;
 }
 
-void machine::put_to_memory( const word& t_word, const word& t_register )
+void machine::put_to_memory( const word& value, const word& register_ )
 {
-    m_mem.set( t_word, t_register );
+    memory_.set( value, register_ );
+}
+
+void machine::set_memory( memory mem )
+{
+    memory_ = std::move( mem );
 }
 
 memory machine::get_memory() const
 {
-    return m_mem;
+    return memory_;
 }
 
-void machine::print_registers_table( std::ostream& t_ostream ) const
+void machine::print_registers_table( std::ostream& os ) const
 {
-    t_ostream << "--------------------------------------------------" << std::endl;
-    t_ostream << "|         IR          |    |    |    |           |" << std::endl;
-    t_ostream << "----------------------| PC | OR | AC |   next    |" << std::endl;
-    t_ostream << "| code  | mode | arg  |    |    |    |           |" << std::endl;
-    t_ostream << "--------------------------------------------------" << std::endl;
+    os << "--------------------------------------------------" << std::endl;
+    os << "|         IR          |    |    |    |           |" << std::endl;
+    os << "----------------------| PC | OR | AC |   next    |" << std::endl;
+    os << "| code  | mode | arg  |    |    |    |           |" << std::endl;
+    os << "--------------------------------------------------" << std::endl;
 }
 
-void machine::print_registers( std::ostream& t_ostream ) const
+void machine::print_registers( std::ostream& os ) const
 {
-    t_ostream << std::left;
-    t_ostream << "| " << std::setw( 6 );
+    os << std::left;
+    os << "| " << std::setw( 6 );
 
-    if ( m_instruction_reg.is_instruction() )
-        t_ostream << instructions_to_str.at( m_instruction_reg.get_code() );
+    if ( instruction_reg_.is_instruction() )
+        os << instructions_to_str.at( instruction_reg_.get_code() );
     else
-        t_ostream << ' ';
+        os << ' ';
 
-    t_ostream << "|  " << std::setw( 4 ) << mode_to_str.at( m_instruction_reg.get_mode() );
-    t_ostream << "| " << std::setw( 5 ) << m_instruction_reg.get_complete_arg();
-    t_ostream << "| " << std::setw( 3 ) << m_program_counter.get();
-    t_ostream << "| " << std::setw( 3 ) << m_operand_reg.get();
-    t_ostream << "| " << std::setw( 3 ) << m_accumulator.get();
-    t_ostream << "| " << std::setw( 10 ) << m_mem.get( m_program_counter ) << "|" << std::endl;
-    t_ostream << "--------------------------------------------------" << std::endl;
+    os << "|  " << std::setw( 4 ) << mode_to_str.at( instruction_reg_.get_mode() );
+    os << "| " << std::setw( 5 ) << instruction_reg_.get_complete_arg();
+    os << "| " << std::setw( 3 ) << program_counter_.get();
+    os << "| " << std::setw( 3 ) << operand_reg_.get();
+    os << "| " << std::setw( 3 ) << accumulator_.get();
+    os << "| " << std::setw( 10 ) << memory_.get( program_counter_ ) << "|" << std::endl;
+    os << "--------------------------------------------------" << std::endl;
 }
 
-void machine::print_memory( std::ostream& t_ostream ) const
+void machine::print_memory( std::ostream& os ) const
 {
-    t_ostream << "--------------------------------------------------" << std::endl;
+    os << "--------------------------------------------------" << std::endl;
 
     for ( int i = 0; i < get_size(); ++i )
     {
-        t_ostream << "[ " << std::left << std::setw( 3 ) << i << " ]: " << m_mem.get( word( i ) )
-                  << std::endl;
+        os << "[ " << std::left << std::setw( 3 ) << i << " ]: " << memory_.get( word{ static_cast<word::type>( i ) } )
+                   << std::endl;
     }
 
-    t_ostream << "--------------------------------------------------" << std::endl;
+    os << "--------------------------------------------------" << std::endl;
 }
 
 int machine::get_size() const
 {
-    for ( int i = 511; i >= 0; --i )
+    for ( word::type i = 511; i >= 0; --i )
     {
-        if ( m_mem.get( word( i ) ).get() != 0 )
+        if ( memory_.get( word{ i } ).get() != 0 )
         {
             return i + 2;
         }
