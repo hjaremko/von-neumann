@@ -2,66 +2,68 @@
 
 namespace vnm
 {
-unsigned interpreter::m_error_count{ 0 };
+unsigned interpreter::error_count_{ 0 };
 
-interpreter::interpreter( const std::string& t_filename )
+interpreter::interpreter( const std::string& filename )
 {
-    m_file.exceptions( std::ifstream::failbit | std::ifstream::badbit );
-    m_file.open( t_filename.c_str() );
+    file_.exceptions( std::ifstream::failbit | std::ifstream::badbit );
+    file_.open( filename.c_str() );
 }
 
 interpreter::~interpreter()
 {
-    m_file.close();
+    file_.close();
 }
 
-void interpreter::error( const std::string& t_msg, const token& t_t, const std::string& t_s )
+void interpreter::error( const std::string& msg, const token& t, const std::string& s )
 {
-    m_error_count++;
+    error_count_++;
 
-    std::stringstream source_ss{ t_s };
-    std::string l;
+    auto source_ss { std::stringstream{ s } };
+    auto l { std::string{} };
 
-    for ( int i = 0; i < t_t.line; ++i )
+    for ( int i = 0; i < t.line; ++i )
     {
         std::getline( source_ss, l );
     }
 
-    auto token_pos = l.find( t_t.lexeme );
+    auto token_pos = l.find( t.lexeme );
 
     if ( token_pos == std::string::npos )
     {
         token_pos = l.length() - 1;
     }
 
-    auto spaces = std::string( token_pos, ' ' );
-    auto tildes = std::string( t_t.lexeme.length() - 1, '~' );
+    const auto spaces { std::string{ static_cast<char>( token_pos ), ' ' } };
+    const auto tildes { std::string{ static_cast<char>( t.lexeme.length() - 1 ), '~' } };
 
-    std::cout << t_t.line << ":" << token_pos + 1 << ": " << t_msg << std::endl;
+    std::cout << t.line << ":" << token_pos + 1 << ": " << msg << std::endl;
     std::cout << "\t" << l << std::endl;
     std::cout << "\t" << spaces << "^" << tildes << std::endl;
 }
 
-void interpreter::interpret( machine& t_machine )
+memory interpreter::interpret() //const
 {
-    std::string input( ( std::istreambuf_iterator<char>( m_file ) ),
-                         std::istreambuf_iterator<char>() );
-    scanner s( input );
-    auto tokens = s.scan_tokens();
+    const auto input { std::string { std::istreambuf_iterator<char>{ file_ },
+                                     std::istreambuf_iterator<char>{} } };
+    auto ram { memory{} };
+    auto s { scanner{ input } };
+    const auto tokens { s.scan_tokens() };
 
-    for ( auto token = begin( tokens ); token != end( tokens ); ++token )
+    for ( auto token = std::begin( tokens ); token != std::end( tokens ); ++token )
     {
+        const auto& next_token { *( token + 1 ) };
+
         if ( token->type_ == token::type::instruction && token->lexeme != "STOP" )
         {
-            if ( ( token + 1 )->type_ == token::type::mode )
+            if ( next_token.type_ == token::type::mode )
             {
                 if ( ( token + 2 )->type_ == token::type::number )
                 {
                     if ( ( token + 3 )->type_ == token::type::newline )
                     {
-                        word wtmp( token->lexeme, ( token + 1 )->lexeme, ( token + 2 )->value );
-                        wtmp.to_instruction();
-                        t_machine.put_to_memory( wtmp, word( ( token + 1 )->line - 1 ) );
+                        const auto wtmp { word{ token->lexeme, next_token.lexeme, static_cast<word::type>( ( token + 2 )->value ) } };
+                        ram.set( wtmp, word{ static_cast<word::type>( next_token.line - 1 ) } );
                         token += 2;
                     }
                 }
@@ -70,37 +72,39 @@ void interpreter::interpret( machine& t_machine )
                     error( "Expected argument", *( token + 2 ), input );
                 }
             }
-            else if ( ( token + 1 )->type_ == token::type::newline )
+            else if ( next_token.type_ == token::type::newline )
             {
-                error( "Expected addressing mode", *( token + 1 ), input );
+                error( "Expected addressing mode", next_token, input );
             }
             else
             {
-                error( "Unknown addressing mode", *( token + 1 ), input );
+                error( "Unknown addressing mode", next_token, input );
             }
         }
         else if ( token->type_ == token::type::instruction && token->lexeme == "STOP" )
         {
-            word wtmp( static_cast<int16_t>( instructions_from_str.at( "STOP" ) ) );
+            auto wtmp { word{ static_cast<word::type>( instructions_from_str.at( "STOP" ) ) } };
             wtmp.to_instruction();
-            t_machine.put_to_memory( wtmp, word( token->line - 1 ) );
+            ram.set( wtmp, word{ static_cast<word::type>( token->line - 1 ) } );
         }
         else if ( token->type_ == token::type::number )
         {
-            t_machine.put_to_memory( word( token->value ), word( token->line - 1 ) );
+            ram.set( word{ static_cast<word::type>( token->value ) }, word{ static_cast<word::type>( token->line - 1 ) } );
 
-            if ( ( token + 1 )->type_ != token::type::newline )
+            if ( next_token.type_ != token::type::newline )
             {
-                error( "No newline after argument", *( token + 1 ), input );
+                error( "No newline after argument", next_token, input );
             }
         }
     }
 
-    if ( m_error_count )
+    if ( error_count_ )
     {
-        auto msg = "Execution halted: "s + std::to_string( m_error_count ) + " errors"s;
+        const auto msg { "Execution halted: "s + std::to_string( error_count_ ) + " errors"s };
         throw std::runtime_error( msg );
     }
+
+    return ram;
 }
 
 }

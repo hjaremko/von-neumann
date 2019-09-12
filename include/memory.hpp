@@ -11,13 +11,11 @@ namespace vnm
 class memory
 {
 public:
-    memory();
-
     [[nodiscard]] word get( const word& ) const;
     void set( const word&, const word& );
 
 private:
-    std::vector<word> m_mem;
+    std::vector<word> memory_{ 512 };
 };
 
 } // namespace vnm

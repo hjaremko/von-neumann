@@ -8,8 +8,7 @@
 
 cxxopts::ParseResult parse_command_line( int argc, char* argv[] )
 {
-    static cxxopts::Options options( argv[ 0 ], "Von Neumann Machine emulator" );
-
+    static auto options { cxxopts::Options{ argv[ 0 ], "Von Neumann Machine emulator" } };
     options.positional_help( "[optional args]" ).show_positional_help();
 
     options.add_options()
@@ -20,12 +19,12 @@ cxxopts::ParseResult parse_command_line( int argc, char* argv[] )
         ( "r,register", "Print register values before every cycle" )
         ( "m,memory", "Print memory before every cycle" );
 
-    auto result = options.parse( argc, argv );
+    const auto result = options.parse( argc, argv );
 
     if ( result.count( "help" ) || result.arguments().empty() )
     {
         std::cout << options.help( { "", "Group" } ) << std::endl;
-        exit( 0 );
+        std::exit( 0 );
     }
 
     return result;
@@ -33,14 +32,14 @@ cxxopts::ParseResult parse_command_line( int argc, char* argv[] )
 
 int main( int argc, char* argv[] )
 {
-    vnm::machine pmc;
-    std::fstream out_file;
+    auto pmc { vnm::machine{} };
+    auto out_file { std::fstream{} };
 
     try
     {
-        const auto parse_result = parse_command_line( argc, argv );
-        auto out_stream = &std::cout;
-        std::filesystem::path input_path;
+        const auto parse_result { parse_command_line( argc, argv ) };
+        auto out_stream { &std::cout };
+        auto input_path { std::filesystem::path{} };
 
         if ( parse_result.count( "file" ) )
         {
@@ -51,15 +50,13 @@ int main( int argc, char* argv[] )
             throw std::logic_error( "No input file!" );
         }
 
-        vnm::interpreter i( input_path.string() );
-        i.interpret( pmc );
+        pmc.set_memory( vnm::interpreter{ input_path.string() }.interpret() );
 
         if ( parse_result.count( "save" ) )
         {
-            std::stringstream ss;
+            auto ss { std::stringstream{} };
 
             ss << "output-" << input_path.filename().string() << ".txt";
-
             out_file.open( ss.str().c_str(), std::ios::out | std::ios::trunc );
             out_stream = &out_file;
         }
@@ -104,6 +101,5 @@ int main( int argc, char* argv[] )
     }
 
     out_file.close();
-
     return 0;
 }

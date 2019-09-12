@@ -31,10 +31,10 @@ TEST_CASE( "example codes executed successfully", "[example]" )
 
         for (const auto& instruction : code)
         {
-            machine.put_to_memory(instruction, vnm::word{static_cast<int16_t>(i++)});
+            machine.put_to_memory(instruction, vnm::word{static_cast<vnm::word::type>(i++)});
         }
 
-        machine.put_to_memory(stop, vnm::word{static_cast<int16_t>(i)});
+        machine.put_to_memory(stop, vnm::word{static_cast<vnm::word::type>(i)});
 
         machine.put_to_memory(vnm::word{5}, vnm::word{20});
         machine.put_to_memory(vnm::word{10}, vnm::word{21});
@@ -64,10 +64,10 @@ TEST_CASE( "example codes executed successfully", "[example]" )
 
         for (const auto& instruction : code)
         {
-            machine.put_to_memory(instruction, vnm::word{static_cast<int16_t>(i++)});
+            machine.put_to_memory(instruction, vnm::word{static_cast<vnm::word::type>(i++)});
         }
 
-        machine.put_to_memory(stop, vnm::word{static_cast<int16_t>(i)});
+        machine.put_to_memory(stop, vnm::word{static_cast<vnm::word::type>(i)});
 
         machine.put_to_memory(vnm::word{21}, vnm::word{5});
         machine.put_to_memory(vnm::word{34}, vnm::word{6});

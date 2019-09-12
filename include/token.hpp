@@ -13,13 +13,13 @@ struct token
         newline
     };
 
-    token( type t_type, std::string t_lexeme, int t_line )
-        : type_( t_type ), lexeme( std::move( t_lexeme ) ), line( t_line )
+    token( type _type, std::string _lexeme, int _line )
+        : type_( _type ), lexeme( std::move( _lexeme ) ), line( _line )
     {
     }
 
-    token( type t_type, int t_value, int t_line )
-        : type_( t_type ), value( t_value ), line( t_line )
+    token( type _type, int _value, int _line )
+        : type_( _type ), value( _value ), line( _line )
     {
     }
 

@@ -5,18 +5,18 @@
 namespace vnm
 {
 
-interpreter::scanner::scanner( std::string t_source ) : m_source( std::move( t_source ) )
+interpreter::scanner::scanner( std::string source ) : source_( std::move( source ) )
 {
 }
 
 bool interpreter::scanner::at_end() const
 {
-    return m_current >= m_source.length();
+    return current_ >= source_.length();
 }
 
 void interpreter::scanner::scan_token()
 {
-    auto c = advance();
+    const auto c { advance() };
 
     switch ( c )
     {
@@ -34,7 +34,7 @@ void interpreter::scanner::scan_token()
 
     case '\n':
         add_token( token::type::newline );
-        m_line++;
+        line_++;
         break;
     case ';':
         while ( peek() != '\n' && !at_end() )
@@ -57,10 +57,10 @@ void interpreter::scanner::scan_token()
         else
         {
             interpreter::error( "Unexpected character",
-                                token( token::type::number,
-                                       m_source.substr( m_start, m_current - m_start ),
-                                       m_line ),
-                                m_source );
+                                token{ token::type::number,
+                                       source_.substr( start_, current_ - start_ ),
+                                       static_cast<int>( line_ ) },
+                                source_ );
         }
 
         break;
@@ -72,31 +72,31 @@ std::vector<token> interpreter::scanner::scan_tokens()
 {
     while ( !at_end() )
     {
-        m_start = m_current;
+        start_ = current_;
         scan_token();
     }
 
-    return std::move( m_tokens );
+    return tokens_;
 }
 
 char interpreter::scanner::advance()
 {
-    return m_source.at( m_current++ );
+    return source_.at( current_++ );
 }
 
-void interpreter::scanner::add_token( token::type t_type )
+void interpreter::scanner::add_token( token::type token_type )
 {
-    m_tokens.emplace_back( t_type, m_source.substr( m_start, m_current - m_start ), m_line );
+    tokens_.emplace_back( token_type, source_.substr( start_, current_ - start_ ), line_ );
 }
 
-void interpreter::scanner::add_token( token::type t_type, int t_num )
+void interpreter::scanner::add_token( token::type token_type, int num )
 {
-    m_tokens.emplace_back( t_type, t_num, m_line );
+    tokens_.emplace_back( token_type, num, line_ );
 }
 
 char interpreter::scanner::peek() const
 {
-    return at_end() ? '\0' : m_source.at( m_current );
+    return at_end() ? '\0' : source_.at( current_ );
 }
 
 void interpreter::scanner::number()
@@ -106,7 +106,7 @@ void interpreter::scanner::number()
         advance();
     }
 
-    auto snum = m_source.substr( m_start, m_current - m_start );
+    const auto snum { source_.substr( start_, current_ - start_ ) };
     add_token( token::type::number, std::stoi( snum ) );
 }
 
@@ -117,7 +117,7 @@ void interpreter::scanner::string()
         advance();
     }
 
-    auto str = m_source.substr( m_start, m_current - m_start );
+    const auto str { source_.substr( start_, current_ - start_ ) };
 
     if ( instructions_from_str.count( str ) )
     {
@@ -126,7 +126,7 @@ void interpreter::scanner::string()
     else
     {
         interpreter::error(
-            "Invalid instruction", token( token::type::number, str, m_line ), m_source );
+            "Invalid instruction", token{ token::type::number, str, static_cast<int>( line_ ) }, source_ );
     }
 }
 
