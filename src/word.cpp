@@ -45,3 +45,4 @@ std::istream& operator>>( std::istream& os, vnm::word& rhs )
     rhs = vnm::word{ code, mode, args };
     return os;
 }
+
