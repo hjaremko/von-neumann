@@ -1,5 +1,9 @@
 # Von Neumann machine emulator [![Build Status](https://travis-ci.org/hjaremko/von-neumann.svg?branch=master)](https://travis-ci.org/hjaremko/von-neumann)
 
+### Downloading
+
+Build for Windows and Linux are available [here](https://github.com/hjaremko/von-neumann/releases).
+
 ### Building
 ```
 $ mkdir build && cd build

@@ -20,7 +20,7 @@ public:
     {
     }
 
-    constexpr word( const std::string& code, const std::string& mode, type arg )
+    word( const std::string& code, const std::string& mode, type arg )
         : word_( arg & 0b0'0000'00'111111111 ), is_instruction_( true )
     {
         word_ |= static_cast<type>( instructions_from_str.at( code ) );

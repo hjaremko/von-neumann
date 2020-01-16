@@ -1,3 +1,4 @@
+cmake_minimum_required(VERSION 3.10)
 project(von_neumann_test)
 
 set(CATCH_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../extern/catch)
