@@ -1,23 +1,58 @@
 language: cpp
-dist: bionic
-compiler:
-  - gcc
-  - clang
-os:
-  - linux
 
-addons:
-  apt:
-    packages:
-      - gcc-8
-      - g++-8
+stages:
+  - build
 
-before_install:
-  - if [[ "$TRAVIS_COMPILER" == "gcc" ]]; then export CC=gcc-8; export CXX=g++-8; fi
+jobs:
+  include:
+    - stage: build
+      os: linux
+      dist: bionic
+      compiler: gcc
+      addons:
+        apt:
+          packages:
+            - gcc-8
+            - g++-8
+      before_install:
+        - if [[ "$TRAVIS_COMPILER" == "gcc" ]]; then export CC=gcc-8; export CXX=g++-8; fi
+      script:
+        - mkdir build
+        - cd build
+        - cmake -DCMAKE_BUILD_TYPE=Release ..
+        - cmake --build .
+        - cd ../bin
+        - mv von-neumann von-neumann-linux
+    - stage: build
+      os: windows
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cmake --build . --config Release
+        - cd ../bin/Release
+        - mv von-neumann.exe von-neumann-windows.exe
+#    - stage: build
+#      os: osx
+#      script:
+#        - mkdir build
+#        - cd build
+#        - cmake ..
+#        - cmake --build .
+#        - mv ../bin/von-neumann ../bin/von-neumann-macos
 
-script:
-  - mkdir build
-  - cd build
-  - cmake ..
-  - cmake --build .
-  - ../bin/tests
+before_deploy:
+  - git config --local user.name "hjaremko"
+  - git config --local user.email "hjaremko@outlook.com"
+
+deploy:
+  provider: releases
+  api_key: $github_token
+  file_glob: true
+  file:
+    - von-neumann*
+  skip_cleanup: true
+  overwrite: true
+  on:
+    tags: true
+    branch: master
