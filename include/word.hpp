@@ -124,7 +124,7 @@ public:
         return *this;
     }
 
-    constexpr const word operator++( int )
+    constexpr word operator++( int )
     {
         auto tmp( *this );
         operator++();
@@ -137,7 +137,7 @@ public:
         return *this;
     }
 
-    constexpr const word operator--( int )
+    constexpr word operator--( int )
     {
         auto tmp( *this );
         operator--();
@@ -145,9 +145,11 @@ public:
     }
 
 private:
-    type word_{ 0 };
-    bool is_instruction_{ false }; // not sure if necessary
+    type word_ { 0 };
+    bool is_instruction_ { false }; // not sure if necessary
 };
+
+const static auto stop { word { "STOP", "$", 0 } };
 
 } // namespace vnm
 
