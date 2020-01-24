@@ -8,7 +8,7 @@ Build for Windows and Linux are available [here](https://github.com/hjaremko/von
 ```
 $ mkdir build && cd build
 $ cmake ..
-$ cmake --build .
+$ cmake --build . --config Release
 ```
 
 Requires compiler fully supporting `std::filesystem`.

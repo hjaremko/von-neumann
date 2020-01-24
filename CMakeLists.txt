@@ -41,7 +41,6 @@ else ()
 endif ()
 
 set(TARGET_SOURCES
-        ${CMAKE_SOURCE_DIR}/instruction_mappings.cpp
         ${CMAKE_SOURCE_DIR}/word.cpp
         ${CMAKE_SOURCE_DIR}/interpreter.cpp
         ${CMAKE_SOURCE_DIR}/machine.cpp
