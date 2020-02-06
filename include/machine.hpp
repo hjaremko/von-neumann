@@ -11,9 +11,6 @@ class machine
 public:
     machine() = default;
 
-    void print_registers_table( std::ostream& ) const;
-    void print_registers( std::ostream& ) const;
-    void print_memory( std::ostream& ) const;
     void put_to_memory( const word&, const word& );
     void set_pc( const word& );
     void set_or( const word& );
@@ -23,7 +20,8 @@ public:
     [[nodiscard]] memory get_memory() const;
     [[nodiscard]] word get_or() const;
     [[nodiscard]] word get_ac() const;
-    [[nodiscard]] int get_size() const;
+    [[nodiscard]] word get_ir() const;
+    [[nodiscard]] word get_pc() const;
     bool execute();
 
 private:
@@ -36,7 +34,7 @@ private:
 
 inline void machine::tick()
 {
-    instruction_reg_ = memory_.get( program_counter_ );
+    instruction_reg_ = memory_.at( program_counter_ );
     ++program_counter_;
 }
 

@@ -2,7 +2,7 @@
 
 ### Downloading
 
-Build for Windows and Linux are available [here](https://github.com/hjaremko/von-neumann/releases).
+Builds for Windows and Linux are available [here](https://github.com/hjaremko/von-neumann/releases).
 
 ### Building
 ```
@@ -23,6 +23,8 @@ $ ./von-neumann [OPTION...]
   -s, --save         Save output to file
   -r, --register     Print register values before every cycle
   -m, --memory       Print memory before every cycle
+  -b, --binary       Print instruction arguments in binary
+  -d, --signed       Print instruction arguments as 9-bit signed integers
 ```
 **Example:**
 ```
