@@ -1,5 +1,7 @@
 #include "interpreter.hpp"
 
+#include <algorithm>
+
 namespace vnm
 {
 unsigned interpreter::error_count_ { 0 };
@@ -35,7 +37,8 @@ void interpreter::error( const std::string& msg, const token& t, const std::stri
     }
 
     const auto spaces { std::string { static_cast<char>( token_pos ), ' ' } };
-    const auto tildes { std::string { static_cast<char>( t.lexeme.length() - 1 ), '~' } };
+    const auto tildes { std::string {
+        static_cast<char>( t.lexeme.length() != 0 ? t.lexeme.length() - 1 : 0u ), '~' } };
 
     std::cout << t.line << ":" << token_pos + 1 << ": " << msg << std::endl;
     std::cout << "\t" << l << std::endl;

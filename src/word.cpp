@@ -2,32 +2,6 @@
 
 #include <sstream>
 
-std::ostream& operator<<( std::ostream& os, const vnm::word& rhs )
-{
-    std::stringstream ss;
-
-    if ( rhs.is_instruction() )
-    {
-        if ( rhs.get_code() == vnm::instruction::STOP )
-        {
-            ss << "STOP";
-        }
-        else
-        {
-            ss << std::left << std::setw( 6 )
-               << vnm::instructions_to_str.at( rhs.get_code() )
-               << vnm::mode_to_str.at( rhs.get_mode() ) << ' '
-               << rhs.get_complete_arg();
-        }
-    }
-    else if ( rhs.get() != 0 )
-    {
-        ss << rhs.get_complete_arg();
-    }
-
-    return os << ss.str();
-}
-
 std::istream& operator>>( std::istream& os, vnm::word& rhs )
 {
     auto line { std::string{} };
@@ -45,4 +19,3 @@ std::istream& operator>>( std::istream& os, vnm::word& rhs )
     rhs = vnm::word{ code, mode, args };
     return os;
 }
-

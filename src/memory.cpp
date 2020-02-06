@@ -1,16 +1,25 @@
 #include "memory.hpp"
 
+#include <sstream>
+
 namespace vnm
 {
-word memory::get( const word& register_ ) const
+
+word memory::at( const word& register_ ) const
 {
     try
     {
-        return memory_.at( register_.get() );
+        return memory_.at( *register_ );
     }
     catch ( const std::exception& /*e*/ )
     {
-        throw std::runtime_error( "Address exceeds device memory!" );
+        std::stringstream ss;
+        ss << "Address " << *register_ << " exceeds device memory!";
+
+        if ( *register_ == 512 )
+            ss << " Missing STOP perhaps?";
+
+        throw std::runtime_error( ss.str() );
     }
 }
 
@@ -18,11 +27,13 @@ void memory::set( const word& value, const word& register_ )
 {
     try
     {
-        memory_.at( register_.get() ) = value;
+        memory_.at( *register_ ) = value;
     }
     catch ( const std::exception& /*e*/ )
     {
-        throw std::runtime_error( "Address exceeds device memory!" );
+        std::stringstream ss;
+        ss << "Address " << *register_ << " exceeds device memory!";
+        throw std::runtime_error( ss.str() );
     }
 }
 

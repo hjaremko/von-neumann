@@ -11,7 +11,7 @@ namespace vnm
 class memory
 {
 public:
-    [[nodiscard]] word get( const word& ) const;
+    [[nodiscard]] word at( const word& ) const;
     void set( const word&, const word& );
 
 private:

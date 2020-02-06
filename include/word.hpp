@@ -13,7 +13,7 @@ namespace vnm
 class word
 {
 public:
-    using type = int16_t;
+    using type = uint16_t;
 
     constexpr word() = default;
     constexpr explicit word( type value ) : word_( value )
@@ -21,7 +21,7 @@ public:
     }
 
     word( const std::string& code, const std::string& mode, type arg )
-        : word_( arg & 0b0'0000'00'111111111 ), is_instruction_( true )
+        : word_( arg & 0b0'0000'00'111111111u ), is_instruction_( true )
     {
         word_ |= static_cast<type>( instructions_from_str.at( code ) );
         word_ |= static_cast<type>( mode_from_str.at( mode ) );
@@ -39,7 +39,7 @@ public:
 
     [[nodiscard]] constexpr bool is_arg_negative() const
     {
-        return static_cast<bool>( word_ & 0b0'0000'00'100000000 );
+        return static_cast<bool>( word_ & 0b0'0000'00'100000000u );
     }
 
     [[nodiscard]] constexpr bool is_instruction() const
@@ -52,29 +52,29 @@ public:
         return word_;
     }
 
-    [[nodiscard]] constexpr type get_complete_arg() const
+    type& operator*()
     {
-        if ( is_arg_negative() )
-        {
-            return word_ | 0b1'1111'11'000000000;
-        }
+        return word_;
+    }
 
-        return word_ & 0b0'0000'00'111111111;
+    const type& operator*() const
+    {
+        return word_;
     }
 
     [[nodiscard]] constexpr instruction get_code() const
     {
-        return static_cast<instruction>( word_ & 0b0'1111'00'000000000 );
+        return static_cast<instruction>( word_ & 0b0'1111'00'000000000u );
     }
 
     [[nodiscard]] constexpr mode get_mode() const
     {
-        return static_cast<mode>( word_ & 0b0'0000'11'000000000 );
+        return static_cast<mode>( word_ & 0b0'0000'11'000000000u );
     }
 
     [[nodiscard]] constexpr word get_arg() const
     {
-        return word( word_ & 0b0'0000'00'111111111 );
+        return word( word_ & 0b0'0000'00'111111111u );
     }
 
     constexpr word& operator+=( const word& rhs )
@@ -97,7 +97,7 @@ public:
 
     constexpr word& operator/=( const word& rhs )
     {
-        word_ = get_complete_arg() / rhs.get_complete_arg();
+        word_ /= rhs.get();
         return *this;
     }
 
@@ -124,7 +124,7 @@ public:
         return *this;
     }
 
-    constexpr word operator++( int )
+    constexpr const word operator++( int )
     {
         auto tmp( *this );
         operator++();
@@ -137,7 +137,7 @@ public:
         return *this;
     }
 
-    constexpr word operator--( int )
+    constexpr const word operator--( int )
     {
         auto tmp( *this );
         operator--();
@@ -153,12 +153,11 @@ const static auto stop { word { "STOP", "$", 0 } };
 
 } // namespace vnm
 
-std::ostream& operator<<( std::ostream&, const vnm::word& );
 std::istream& operator>>( std::istream&, vnm::word& );
 
 inline bool operator==( const vnm::word& lhs, const vnm::word& rhs )
 {
-    return lhs.get() == rhs.get();
+    return lhs.get() == rhs.get() && lhs.is_instruction() == rhs.is_instruction();
 }
 
 inline bool operator!=( const vnm::word& lhs, const vnm::word& rhs )
