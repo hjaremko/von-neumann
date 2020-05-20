@@ -6,9 +6,8 @@ add_executable(${PROJECT_NAME}
         ${TARGET_SOURCES}
         )
 
-if (NOT MSVC)
-    target_link_libraries(${PROJECT_NAME} PRIVATE project_warnings stdc++fs)
-else ()
-    target_link_libraries(${PROJECT_NAME} PRIVATE project_warnings)
-endif ()
-
+#if (NOT MSVC)
+#    target_link_libraries(${PROJECT_NAME} PRIVATE project_warnings stdc++fs)
+#else ()
+target_link_libraries(${PROJECT_NAME} PRIVATE project_warnings)
+#endif ()

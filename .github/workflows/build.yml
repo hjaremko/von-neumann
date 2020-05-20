@@ -1,0 +1,43 @@
+name: Build
+
+on: [push]
+
+jobs:
+  build:
+    name: Build project
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+      - name: Chceckout code
+        uses: actions/checkout@v2
+      - name: Create build dir
+        run: mkdir build
+      - name: Cache CMake files
+        uses: actions/cache@v1
+        with:
+          path: build
+          key: ${{ runner.os }}-cmake-${{ hashFiles('*') }}
+          restore-keys: ${{ runner.os }}-cmake-
+      - name: Build on Linux
+        if: runner.os == 'Linux'
+        env:
+          CC: gcc-9
+          CXX: g++-9
+        run: |
+          cd build
+          cmake ..
+          cmake --build . --config Release
+      - name: Build on Windows or macOS
+        if: runner.os == 'Windows' || runner.os == 'macOS'
+        run: |
+          cd build
+          cmake ..
+          cmake --build . --config Release
+      - name: Run tests
+        if: runner.os == 'Linux'
+        run: |
+          cd bin
+          ./tests

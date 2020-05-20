@@ -2,6 +2,7 @@
 #define INSTRUCTION_MAPPINGS_HPP
 
 #include <unordered_map>
+#include <string>
 
 namespace vnm
 {
@@ -34,7 +35,7 @@ enum class mode
     index    = 0b0'0000'11'000000000  //+
 };
 
-static const std::unordered_map<std::string, instruction> instructions_from_str {
+inline const std::unordered_map<std::string, instruction> instructions_from_str {
     { "STOP",  instruction::STOP  },
     { "LOAD",  instruction::LOAD  },
     { "STORE", instruction::STORE },
@@ -53,7 +54,7 @@ static const std::unordered_map<std::string, instruction> instructions_from_str 
     { "SHC",   instruction::SHC   }
 };
 
-static const std::unordered_map<instruction, std::string> instructions_to_str {
+inline const std::unordered_map<instruction, std::string> instructions_to_str {
     { instruction::STOP,  "STOP"  },
     { instruction::LOAD,  "LOAD"  },
     { instruction::STORE, "STORE" },
@@ -72,14 +73,14 @@ static const std::unordered_map<instruction, std::string> instructions_to_str {
     { instruction::SHC,   "SHC"   }
 };
 
-static const std::unordered_map<std::string, mode> mode_from_str {
+inline const std::unordered_map<std::string, mode> mode_from_str {
     { "$", mode::instant  },
     { "@", mode::direct   },
     { "&", mode::indirect },
     { "+", mode::index    },
 };
 
-static const std::unordered_map<mode, std::string> mode_to_str {
+inline const std::unordered_map<mode, std::string> mode_to_str {
     { mode::instant,  "$" },
     { mode::direct,   "@" },
     { mode::indirect, "&" },
