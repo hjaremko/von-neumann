@@ -20,6 +20,7 @@ public:
     {
     }
 
+    // TODO: mode as char
     word( const std::string& code, const std::string& mode, type arg )
         : word_( arg & 0b0'0000'00'111111111u ), is_instruction_( true )
     {

@@ -19,8 +19,7 @@ namespace vnm
 class interpreter
 {
 public:
-    explicit interpreter( const std::string& );
-    ~interpreter();
+    explicit interpreter( std::istream& );
 
     [[nodiscard]] machine::mem_t interpret();
 
@@ -51,8 +50,8 @@ private:
 
     static void error( const std::string&, const token&, const std::string& );
 
-    static unsigned error_count_;
-    std::fstream file_;
+    static inline unsigned error_count_ { 0 };
+    std::istream& input_stream_;
 };
 
 } // namespace vnm

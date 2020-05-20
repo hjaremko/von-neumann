@@ -4,23 +4,18 @@
 
 namespace vnm
 {
-unsigned interpreter::error_count_ { 0 };
 
-interpreter::interpreter( const std::string& filename )
+interpreter::interpreter( std::istream& istream ) : input_stream_( istream )
 {
-    file_.exceptions( std::ifstream::failbit | std::ifstream::badbit );
-    file_.open( filename.c_str() );
-}
-
-interpreter::~interpreter()
-{
-    file_.close();
+    input_stream_.exceptions( std::ifstream::failbit | std::ifstream::badbit );
+    error_count_ = 0;
 }
 
 void interpreter::error( const std::string& msg, const token& t, const std::string& s )
 {
     error_count_++;
 
+    // TODO: extract
     auto source_ss { std::stringstream { s } };
     auto l { std::string {} };
 
@@ -36,9 +31,8 @@ void interpreter::error( const std::string& msg, const token& t, const std::stri
         token_pos = l.length() - 1;
     }
 
-    const auto spaces { std::string { static_cast<char>( token_pos ), ' ' } };
-    const auto tildes { std::string {
-        static_cast<char>( t.lexeme.length() != 0 ? t.lexeme.length() - 1 : 0u ), '~' } };
+    const auto spaces { std::string( token_pos, ' ' ) };
+    const auto tildes { std::string( t.lexeme.length() != 0 ? t.lexeme.length() - 1 : 0u, '~' ) };
 
     std::cout << t.line << ":" << token_pos + 1 << ": " << msg << std::endl;
     std::cout << "\t" << l << std::endl;
@@ -47,7 +41,7 @@ void interpreter::error( const std::string& msg, const token& t, const std::stri
 
 machine::mem_t interpreter::interpret() // const
 {
-    const auto input { std::string { std::istreambuf_iterator<char> { file_ },
+    const auto input { std::string { std::istreambuf_iterator<char> { input_stream_ },
                                      std::istreambuf_iterator<char> {} } };
     auto ram { machine::mem_t {} };
     auto s { scanner { input } };

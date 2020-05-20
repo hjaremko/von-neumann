@@ -52,7 +52,8 @@ int main( int argc, char* argv[] )
             throw std::logic_error( "No input file!" );
         }
 
-        pmc.set_memory( vnm::interpreter { input_path.string() }.interpret() );
+        auto input_file = std::fstream { input_path };
+        pmc.set_memory( vnm::interpreter { input_file }.interpret() );
 
         if ( parse_result.count( "save" ) )
         {

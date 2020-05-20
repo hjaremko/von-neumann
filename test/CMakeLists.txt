@@ -15,6 +15,7 @@ set(TEST_SOURCES
         machine_test.cpp
         word_test.cpp
         memory_test.cpp
+        interpreter_test.cpp
         )
 
 add_executable(tests ${TEST_SOURCES})
