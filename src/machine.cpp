@@ -194,12 +194,12 @@ void machine::put_to_memory( const word& value, const word& register_ )
     memory_.set( value, register_ );
 }
 
-void machine::set_memory( memory mem )
+void machine::set_memory( mem_t mem )
 {
     memory_ = std::move( mem );
 }
 
-memory machine::get_memory() const
+machine::mem_t machine::get_memory() const
 {
     return memory_;
 }

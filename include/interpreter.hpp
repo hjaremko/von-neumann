@@ -9,6 +9,7 @@
 #include <stdexcept>
 #include <streambuf>
 #include <string>
+#include <vector>
 
 using namespace std::string_literals;
 
@@ -21,7 +22,7 @@ public:
     explicit interpreter( const std::string& );
     ~interpreter();
 
-    [[nodiscard]] memory interpret();
+    [[nodiscard]] machine::mem_t interpret();
 
 private:
     class scanner
@@ -43,9 +44,9 @@ private:
 
         std::string source_;
         std::vector<token> tokens_;
-        unsigned start_{ 0 };
-        unsigned current_{ 0 };
-        unsigned line_{ 1 };
+        unsigned start_ { 0 };
+        unsigned current_ { 0 };
+        unsigned line_ { 1 };
     };
 
     static void error( const std::string&, const token&, const std::string& );

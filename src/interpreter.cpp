@@ -45,11 +45,11 @@ void interpreter::error( const std::string& msg, const token& t, const std::stri
     std::cout << "\t" << spaces << "^" << tildes << std::endl;
 }
 
-memory interpreter::interpret() // const
+machine::mem_t interpreter::interpret() // const
 {
     const auto input { std::string { std::istreambuf_iterator<char> { file_ },
                                      std::istreambuf_iterator<char> {} } };
-    auto ram { memory {} };
+    auto ram { machine::mem_t {} };
     auto s { scanner { input } };
     const auto tokens { s.scan_tokens() };
 

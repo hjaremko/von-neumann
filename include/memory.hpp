@@ -3,19 +3,53 @@
 
 #include "word.hpp"
 
-#include <vector>
+#include <array>
+#include <sstream>
 
 namespace vnm
 {
 
+template <int S>
 class memory
 {
 public:
-    [[nodiscard]] word at( const word& ) const;
-    void set( const word&, const word& );
+    [[nodiscard]] word at( const word& register_ ) const
+    {
+        try
+        {
+            return memory_.at( *register_ );
+        }
+        catch ( const std::exception& /*e*/ )
+        {
+            std::stringstream ss;
+            ss << "Address " << *register_ << " exceeds device memory!";
+
+            if ( *register_ == size )
+                ss << " Missing STOP perhaps?";
+
+            throw std::runtime_error( ss.str() );
+        }
+    }
+
+    // TODO: operator[] or merge set with at
+    void set( const word& value, const word& register_ )
+    {
+        try
+        {
+            memory_.at( *register_ ) = value;
+        }
+        catch ( const std::exception& /*e*/ )
+        {
+            std::stringstream ss;
+            ss << "Address " << *register_ << " exceeds device memory!";
+            throw std::runtime_error( ss.str() );
+        }
+    }
+
+    static constexpr auto size { S };
 
 private:
-    std::vector<word> memory_{ 512 };
+    std::array<word, S> memory_;
 };
 
 } // namespace vnm
