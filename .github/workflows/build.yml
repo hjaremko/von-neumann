@@ -8,35 +8,40 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-20.04, windows-latest, macos-latest]
 
     steps:
       - name: Chceckout code
         uses: actions/checkout@v2
+      - name: Setup Ninja
+        uses: seanmiddleditch/gha-setup-ninja@master
       - name: Create build dir
         run: mkdir build
       - name: Cache CMake files
-        uses: actions/cache@v1
+        uses: actions/cache@v2
         with:
           path: build
-          key: ${{ runner.os }}-cmake-${{ hashFiles('*') }}
-          restore-keys: ${{ runner.os }}-cmake-
-      - name: Build on Linux
-        if: runner.os == 'Linux'
-        env:
-          CC: gcc-9
-          CXX: g++-9
+          key: ${{ runner.os }}-cmake--${{ hashFiles('*') }}
+          restore-keys: ${{ runner.os }}-cmake--
+      - name: Build
+        if: runner.os != 'Windows'
+        run: |
+          cd build
+          cmake -G Ninja ..
+          cmake --build .
+      - name: Build
+        if: runner.os == 'Windows'
         run: |
           cd build
           cmake ..
           cmake --build . --config Release
-      - name: Build on Windows or macOS
-        if: runner.os == 'Windows' || runner.os == 'macOS'
-        run: |
-          cd build
-          cmake ..
-          cmake --build . --config Release
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: von-neumann-${{ runner.os }}
+          path: ./bin/*
       - name: Run tests
+        # TODO: cmake target
         if: runner.os == 'Linux'
         run: |
           cd bin

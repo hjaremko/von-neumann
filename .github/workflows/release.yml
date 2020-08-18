@@ -3,87 +3,62 @@ on:
     tags:
       - 'v*'
 
-name: Upload release
+name: Release
 
 jobs:
-  create-release:
-    name: Create release
-    runs-on: ubuntu-latest
-    outputs:
-      upload_url: ${{ steps.create_release.outputs.upload_url }}
-
-    steps:
-      - name: Create release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          draft: true
-          prerelease: false
-
   release:
     name: Upload
-    needs: create-release
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-20.04, windows-latest, macos-latest]
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: Setup Ninja
+        uses: seanmiddleditch/gha-setup-ninja@master
       - name: Create build dir
         run: mkdir build
-      - name: Cache CMake files
-        uses: actions/cache@v1
-        with:
-          path: build
-          key: ${{ runner.os }}-cmake-rel${{ hashFiles('*') }}
-          restore-keys: ${{ runner.os }}-cmake-rel-
-      - name: Build on Linux
-        if: runner.os == 'Linux'
-        env:
-          CC: gcc-9
-          CXX: g++-9
+      - name: Build
+        if: runner.os != 'Windows'
         run: |
           cd build
-          cmake ..
+          cmake -G Ninja ..
           cmake --build . --config Release
       - name: Build on Windows or macOS
-        if: runner.os == 'Windows' || runner.os == 'macOS'
+        if: runner.os == 'Windows'
         run: |
           cd build
           cmake ..
           cmake --build . --config Release
+      - name: Rename macOS artifacts
+        if: runner.os == 'macOS'
+        working-directory: ./bin
+        run: |
+          mv von-neumann von-neumann-macos
       - name: Upload Linux asset
         if: runner.os == 'Linux'
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: ncipollo/release-action@v1
         with:
-          upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: bin/von-neumann
-          asset_name: von-neumann
-          asset_content_type: application/x-binary
+          artifacts: "./bin/von-neumann"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          draft: true
+          allowUpdates: true
       - name: Upload Windows asset
         if: runner.os == 'Windows'
-        uses: actions/upload-release-asset@v1
+        uses: ncipollo/release-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: bin/Release/von-neumann.exe
-          asset_name: von-neumann.exe
-          asset_content_type: application/x-binary
+          artifacts: "./bin/Release/von-neumann.exe"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          draft: true
+          allowUpdates: true
       - name: Upload macOS asset
         if: runner.os == 'macOS'
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: ncipollo/release-action@v1
         with:
-          upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: bin/von-neumann
-          asset_name: von-neumann-macos
-          asset_content_type: application/x-binary
+          artifacts: "./bin/von-neumann-macos"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          draft: true
+          allowUpdates: true
