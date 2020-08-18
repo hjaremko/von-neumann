@@ -151,14 +151,10 @@ private:
 
 const static auto stop { word { "STOP", "$", 0 } };
 
-} // namespace vnm
-
 std::istream& operator>>( std::istream&, vnm::word& );
+bool operator==( const vnm::word& lhs, const vnm::word& rhs );
 
-inline bool operator==( const vnm::word& lhs, const vnm::word& rhs )
-{
-    return lhs.get() == rhs.get() && lhs.is_instruction() == rhs.is_instruction();
-}
+} // namespace vnm
 
 inline bool operator!=( const vnm::word& lhs, const vnm::word& rhs )
 {

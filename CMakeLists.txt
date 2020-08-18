@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(von-neumann LANGUAGES CXX VERSION 0.1.1)
+project(von-neumann LANGUAGES CXX VERSION 0.1.2)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
@@ -15,7 +15,8 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
 include_directories("include")
-include_directories("extern/cxxopts")
+include_directories(SYSTEM "extern/catch")
+include_directories(SYSTEM "extern/cxxopts")
 
 add_library(project_warnings INTERFACE)
 

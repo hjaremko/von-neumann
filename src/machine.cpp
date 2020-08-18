@@ -181,6 +181,8 @@ bool machine::execute()
 
             break;
         }
+        default:
+            return false;
         }
     }
 

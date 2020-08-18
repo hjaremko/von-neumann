@@ -2,6 +2,7 @@
 #define PRINTER_INTERFACE_HPP
 
 #include <bitset>
+#include <cxxopts.hpp>
 
 // TODO: print all in binary
 
@@ -124,7 +125,7 @@ private:
     {
         for ( word::type i = 511; i >= 0; --i )
         {
-            if ( *machine_.get_memory().at( word { i } ) != 0 )
+            if ( machine_.get_memory().at( word { i } ) == vnm::stop )
             {
                 return i + 2;
             }

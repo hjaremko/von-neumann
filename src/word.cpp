@@ -19,3 +19,8 @@ std::istream& operator>>( std::istream& os, vnm::word& rhs )
     rhs = vnm::word{ code, mode, args };
     return os;
 }
+
+bool vnm::operator==( const vnm::word& lhs, const vnm::word& rhs )
+{
+    return lhs.get() == rhs.get() && lhs.is_instruction() == rhs.is_instruction();
+}
