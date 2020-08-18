@@ -13,7 +13,7 @@ set(TEST_SOURCES
         ${TARGET_SOURCES}
         ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/machine_test.cpp
-        )
+        word_test.cpp)
 
 add_executable(tests ${TEST_SOURCES})
 target_link_libraries(tests Catch2::Catch)
