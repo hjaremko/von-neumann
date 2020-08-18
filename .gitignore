@@ -39,3 +39,7 @@ CMakeFiles
 # IDE
 .idea
 .vs
+
+# Von Neumann source files
+*.txt
+*.vnm
