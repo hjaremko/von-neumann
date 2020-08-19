@@ -14,12 +14,16 @@ public:
     virtual void print_registers_table() const = 0;
     virtual void print_registers() const = 0;
     virtual void print_memory() const = 0;
+
+    virtual ~printer_interface() = default;
 };
 
 class word_printer_interface
 {
 public:
     virtual void print_word( std::ostream&, const vnm::word& w ) const = 0;
+
+    virtual ~word_printer_interface() = default;
 };
 
 class word_default_printer : public word_printer_interface
@@ -117,15 +121,15 @@ private:
     void print_memory_cell( word::type i ) const
     {
         os_ << "[ " << std::left << std::setw( 3 ) << i << " ]: ";
-        print_word( os_, machine_.get_memory().at( word { static_cast<word::type>( i ) } ) );
+        print_word( os_, machine_.get_memory().at( word { i } ) );
         os_ << std::endl;
     }
 
     [[nodiscard]] word::type get_size() const
     {
-        for ( word::type i = 511; i >= 0; --i )
+        for ( auto i = 511; i >= 0; --i )
         {
-            if ( machine_.get_memory().at( word { i } ) == vnm::stop )
+            if ( machine_.get_memory().at( word { static_cast<word::type>( i ) } ) == vnm::stop )
             {
                 return i + 2;
             }

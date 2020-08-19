@@ -162,7 +162,8 @@ bool machine::execute()
 
             if ( get_or().is_arg_negative() )
             {
-                word::type shift = -arg { static_cast<int16_t>( *get_or() ) }.val;
+                auto shift =
+                    static_cast<word::type>( -arg { static_cast<int16_t>( *get_or() ) }.val );
                 set_ac( word( *get_ac() >> shift ) );
             }
             else if ( !get_or().is_arg_negative() )

@@ -1,13 +1,13 @@
 #ifndef INSTRUCTION_MAPPINGS_HPP
 #define INSTRUCTION_MAPPINGS_HPP
 
-#include <unordered_map>
 #include <string>
+#include <unordered_map>
 
 namespace vnm
 {
 
-enum class instruction
+enum class instruction : uint16_t
 {
     STOP  = 0b0'0000'00'000000000,
     LOAD  = 0b0'0001'00'000000000,
@@ -27,7 +27,7 @@ enum class instruction
     SHC   = 0b0'1111'00'000000000,
 };
 
-enum class mode
+enum class mode : uint16_t
 {
     instant  = 0b0'0000'00'000000000, //$
     direct   = 0b0'0000'01'000000000, //@

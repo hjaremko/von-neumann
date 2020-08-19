@@ -35,7 +35,7 @@ else ()
             -Wunused
             -Woverloaded-virtual
             -Wpedantic
-            -Wconversion
+#            -Wconversion
             -Wsign-conversion
             -Wmisleading-indentation
             -Wduplicated-cond

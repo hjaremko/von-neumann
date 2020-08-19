@@ -9,7 +9,7 @@
 namespace vnm
 {
 
-template <int S>
+template <unsigned int S>
 class memory
 {
 public:
