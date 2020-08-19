@@ -1,7 +1,5 @@
 #include "machine.hpp"
 
-#include <ostream>
-
 namespace vnm
 {
 
@@ -157,11 +155,17 @@ bool machine::execute()
         }
         case instruction::SHZ:
         {
-            if ( *get_or() < 0 )
+            struct arg
             {
-                set_ac( word( *get_ac() >> *get_or() ) );
+                int16_t val : 9;
+            };
+
+            if ( get_or().is_arg_negative() )
+            {
+                word::type shift = -arg { static_cast<int16_t>( *get_or() ) }.val;
+                set_ac( word( *get_ac() >> shift ) );
             }
-            else if ( *get_or() > 0 )
+            else if ( !get_or().is_arg_negative() )
             {
                 set_ac( word( *get_ac() << *get_or() ) );
             }
@@ -170,19 +174,26 @@ bool machine::execute()
         }
         case instruction::SHC:
         {
-            if ( get_or().is_arg_negative() )
+            struct arg
             {
-                set_ac( word( *get_ac() << *get_or() | *get_or() >> ( 16u - *get_or() ) ) );
-            }
-            else
-            {
-                set_ac( word( ( *get_ac() >> *get_or() | *get_or() << ( 16u - *get_or() ) ) ) );
-            }
+                int16_t val : 9;
+            };
+
+            auto rot_left = []( uint16_t value, uint16_t count ) {
+                return ( value << count ) | ( value >> ( 16u - count ) );
+            };
+
+            auto rot_right = []( uint16_t value, uint16_t count ) {
+                return ( value >> count ) | ( value << ( 16u - count ) );
+            };
+
+            set_ac(
+                word( get_or().is_arg_negative()
+                          ? rot_right( *get_ac(), -arg { static_cast<int16_t>( *get_or() ) }.val )
+                          : rot_left( *get_ac(), *get_or() ) ) );
 
             break;
         }
-        default:
-            return false;
         }
     }
 
@@ -194,9 +205,9 @@ void machine::put_to_memory( const word& value, const word& register_ )
     memory_.set( value, register_ );
 }
 
-void machine::set_memory( mem_t mem )
+void machine::set_memory( const mem_t& mem )
 {
-    memory_ = std::move( mem );
+    memory_ = mem;
 }
 
 machine::mem_t machine::get_memory() const

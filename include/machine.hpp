@@ -17,7 +17,7 @@ public:
     void set_pc( const word& );
     void set_or( const word& );
     void set_ac( const word& );
-    void set_memory( mem_t );
+    void set_memory( const mem_t& );
     void tick();
     [[nodiscard]] mem_t get_memory() const;
     [[nodiscard]] word get_or() const;

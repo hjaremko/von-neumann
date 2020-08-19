@@ -104,11 +104,37 @@ TEST_CASE( "word methods", "[word]" )
 
     SECTION( "is arg negative" )
     {
-        auto val { int16_t { -31315 } };
+        auto val { int16_t { 1453 } };
         w.set( val );
+        w.to_instruction();
         REQUIRE( w.is_arg_negative() );
         REQUIRE( w.get() > 0 );
     }
+
+    SECTION( "is arg non negative" )
+    {
+        auto val { int16_t { -31571 } };
+        w.set( val );
+        w.to_instruction();
+        REQUIRE_FALSE( w.is_arg_negative() );
+        REQUIRE( static_cast<int16_t>( w.get() ) < 0 );
+    }
+
+    //    SECTION( "is non instruction arg negative" )
+    //    {
+    //        auto val { int16_t { -31571 } };
+    //        w.set( val );
+    //        REQUIRE( w.is_arg_negative() );
+    //        REQUIRE( static_cast<int16_t>( w.get() ) < 0 );
+    //    }
+    //
+    //    SECTION( "is non instruction arg non negative" )
+    //    {
+    //        auto val { int16_t { 1453 } };
+    //        w.set( val );
+    //        REQUIRE_FALSE( w.is_arg_negative() );
+    //        REQUIRE( w.get() > 0 );
+    //    }
 }
 
 TEST_CASE( "word operators test", "[word]" )

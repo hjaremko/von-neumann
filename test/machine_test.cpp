@@ -10,14 +10,11 @@ TEST_CASE( "example codes executed successfully", "[machine]" )
     SECTION( "array sum example" )
     {
         const std::vector<word> code = {
-            word { "LOAD", "$", 0 },   word { "STORE", "$", 19 },
-            word { "LOAD", "$", 21 },  word { "STORE", "$", 18 },
-            word { "LOAD", "$", 21 },  word { "ADD", "@", 20 },
-            word { "SUB", "@", 18 },   word { "JZERO", "$", 15 },
-            word { "LOAD", "@", 19 },  word { "ADD", "&", 18 },
-            word { "STORE", "$", 19 }, word { "LOAD", "@", 18 },
-            word { "ADD", "$", 1 },    word { "STORE", "$", 18 },
-            word { "JUMP", "$", 4 },
+            word { "LOAD", "$", 0 },   word { "STORE", "$", 19 }, word { "LOAD", "$", 21 },
+            word { "STORE", "$", 18 }, word { "LOAD", "$", 21 },  word { "ADD", "@", 20 },
+            word { "SUB", "@", 18 },   word { "JZERO", "$", 15 }, word { "LOAD", "@", 19 },
+            word { "ADD", "&", 18 },   word { "STORE", "$", 19 }, word { "LOAD", "@", 18 },
+            word { "ADD", "$", 1 },    word { "STORE", "$", 18 }, word { "JUMP", "$", 4 },
         };
 
         auto i { word::type { 0 } };
@@ -74,7 +71,7 @@ TEST_CASE( "example codes executed successfully", "[machine]" )
     }
 }
 
-TEST_CASE( "stop tests", "[machine]" )
+TEST_CASE( "STOP tests", "[machine]" )
 {
     using namespace vnm;
 
@@ -117,5 +114,157 @@ TEST_CASE( "stop tests", "[machine]" )
         }
 
         REQUIRE_FALSE( machine.execute() );
+    }
+}
+
+TEST_CASE( "JNEG tests", "[machine]" )
+{
+    using namespace vnm;
+
+    auto machine { vnm::machine {} };
+
+    SECTION( "jump on negative AC" )
+    {
+        auto w { static_cast<word::type>( -5 ) };
+        machine.put_to_memory( word { "LOAD", "$", w }, word { 1 } );
+        machine.put_to_memory( word { "JNEG", "$", 5 }, word { 2 } );
+        machine.put_to_memory( word { "STORE", "$", 4 }, word { 3 } );
+        machine.put_to_memory( stop, word { 5 } );
+
+        while ( machine.execute() )
+        {
+            machine.tick();
+        }
+
+        REQUIRE( *machine.get_memory().at( word { 4 } ) != 507 );
+    }
+
+    SECTION( "do not jump on positive AC" )
+    {
+        auto w { static_cast<word::type>( 5 ) };
+        machine.put_to_memory( word { "LOAD", "$", w }, word { 1 } );
+        machine.put_to_memory( word { "JNEG", "$", 5 }, word { 2 } );
+        machine.put_to_memory( word { "STORE", "$", 4 }, word { 3 } );
+        machine.put_to_memory( stop, word { 5 } );
+
+        while ( machine.execute() )
+        {
+            machine.tick();
+        }
+
+        REQUIRE( *machine.get_memory().at( word { 4 } ) == 5 );
+    }
+}
+
+TEST_CASE( "SHZ tests", "[machine]" )
+{
+    using namespace vnm;
+
+    auto machine { vnm::machine {} };
+
+    SECTION( "shift left" )
+    {
+        auto w { word::type { 1 } };
+        machine.put_to_memory( word { "LOAD", "$", w }, word { 0 } );
+        machine.put_to_memory( word { "SHZ", "$", 1 }, word { 1 } );
+        machine.put_to_memory( stop, word { 5 } );
+
+        while ( machine.execute() )
+        {
+            machine.tick();
+        }
+
+        REQUIRE( *machine.get_ac() == 1u << 1u );
+    }
+
+    SECTION( "shift right" )
+    {
+        auto w { word::type { 5 } };
+        machine.put_to_memory( word { "LOAD", "$", w }, word { 0 } );
+        machine.put_to_memory( word { "SHZ", "$", static_cast<word::type>( -1 ) }, word { 1 } );
+        machine.put_to_memory( stop, word { 5 } );
+
+        while ( machine.execute() )
+        {
+            machine.tick();
+        }
+
+        REQUIRE( *machine.get_ac() == 5u >> 1u );
+    }
+}
+
+TEST_CASE( "SHC tests", "[machine]" )
+{
+    using namespace vnm;
+
+    auto machine { vnm::machine {} };
+
+    SECTION( "shift left" )
+    {
+        auto w { word::type { 0b1100'0000'0000'0000 } };
+        machine.put_to_memory( word { w }, word { 0 } );
+        machine.put_to_memory( word { "LOAD", "@", 0 }, word { 1 } );
+        machine.put_to_memory( word { "SHC", "$", 1 }, word { 2 } );
+        machine.put_to_memory( stop, word { 5 } );
+
+        while ( machine.execute() )
+        {
+            machine.tick();
+        }
+
+        REQUIRE( *machine.get_ac() == 0b1000'0000'0000'0001 );
+    }
+
+    SECTION( "shift right" )
+    {
+        auto w { word::type { 0b1100'0000'0000'0010 } };
+        machine.put_to_memory( word { w }, word { 0 } );
+        machine.put_to_memory( word { "LOAD", "@", 0 }, word { 1 } );
+        machine.put_to_memory( word { "SHC", "$", static_cast<word::type>( -2 ) }, word { 2 } );
+        machine.put_to_memory( stop, word { 5 } );
+
+        while ( machine.execute() )
+        {
+            machine.tick();
+        }
+
+        REQUIRE( *machine.get_ac() == 0b1011'0000'0000'0000 );
+    }
+}
+
+TEST_CASE( "machine method tests", "[machine]" )
+{
+    using namespace vnm;
+
+    auto machine { vnm::machine {} };
+
+    SECTION( "set memory" )
+    {
+        machine::mem_t mem;
+        mem.set( word { "STORE", "@", 0 }, word { 1 } );
+        mem.set( stop, word { 0 } );
+        machine.set_memory( mem );
+
+        REQUIRE( machine.get_memory().at( word { 0 } ) == mem.at( word { 0 } ) );
+        REQUIRE( machine.get_memory().at( word { 1 } ) == mem.at( word { 1 } ) );
+    }
+
+    SECTION( "program counter" )
+    {
+        REQUIRE( machine.get_pc() == word { 0 } );
+        machine.set_pc( word { 20 } );
+        REQUIRE( machine.get_pc() == word { 20 } );
+    }
+
+    SECTION( "tick" )
+    {
+        auto w { word { "STORE", "@", 0 } };
+        machine.put_to_memory( w, word { 0 } );
+
+        REQUIRE( machine.get_pc() == word { 0 } );
+        REQUIRE( machine.get_ir() == word { 0 } );
+        machine.tick();
+        REQUIRE( machine.get_pc() == word { 1 } );
+        REQUIRE( machine.get_ir() == w );
     }
 }

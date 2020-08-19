@@ -26,6 +26,20 @@ TEST_CASE( "interpreter", "[interpreter]" )
         REQUIRE( actual.at( word { 5 } ) == word { "STOP", "$", 0 } );
         REQUIRE( actual.at( word { 6 } ) == word { 0 } );
     }
+
+    SECTION( "negative arguments are parsed correctly" )
+    {
+        auto input { std::string { "STORE $ -5\n"
+                                   "-123\n"
+                                   "STOP" } };
+
+        auto ss { std::stringstream { input } };
+        auto actual = interpreter { ss }.interpret();
+
+        REQUIRE( actual.at( word { 0 } ) == word { "STORE", "$", static_cast<word::type>( -5 ) } );
+        REQUIRE( actual.at( word { 1 } ) == word { static_cast<word::type>( -123 ) } );
+        REQUIRE( actual.at( word { 2 } ) == stop );
+    }
 }
 
 TEST_CASE( "input errors detection", "[interpreter]" )
