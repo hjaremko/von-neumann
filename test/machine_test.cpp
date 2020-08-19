@@ -251,9 +251,9 @@ TEST_CASE( "machine method tests", "[machine]" )
 
     SECTION( "program counter" )
     {
-        REQUIRE( machine.get_pc() == word { 0 } );
-        machine.set_pc( word { 20 } );
-        REQUIRE( machine.get_pc() == word { 20 } );
+        REQUIRE( machine.pc() == word { 0 } );
+        machine.pc() = word { 20 };
+        REQUIRE( machine.pc() == word { 20 } );
     }
 
     SECTION( "tick" )
@@ -261,10 +261,10 @@ TEST_CASE( "machine method tests", "[machine]" )
         auto w { word { "STORE", "@", 0 } };
         machine.put_to_memory( w, word { 0 } );
 
-        REQUIRE( machine.get_pc() == word { 0 } );
+        REQUIRE( machine.pc() == word { 0 } );
         REQUIRE( machine.get_ir() == word { 0 } );
         machine.tick();
-        REQUIRE( machine.get_pc() == word { 1 } );
+        REQUIRE( machine.pc() == word { 1 } );
         REQUIRE( machine.get_ir() == w );
     }
 }

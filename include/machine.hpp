@@ -14,7 +14,10 @@ public:
     machine() = default;
 
     void put_to_memory( const word&, const word& );
-    void set_pc( const word& );
+
+    auto pc() -> word&;
+    [[nodiscard]] auto pc() const -> word;
+
     void set_or( const word& );
     void set_ac( const word& );
     void set_memory( const mem_t& );
@@ -23,7 +26,6 @@ public:
     [[nodiscard]] auto get_or() const -> word;
     [[nodiscard]] auto get_ac() const -> word;
     [[nodiscard]] auto get_ir() const -> word;
-    [[nodiscard]] auto get_pc() const -> word;
     auto execute() -> bool;
 
 private:

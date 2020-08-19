@@ -3,7 +3,7 @@ project(von-neumann LANGUAGES CXX VERSION 0.1.2)
 
 if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
-endif()
+endif ()
 
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
@@ -25,7 +25,7 @@ if (MSVC)
 else ()
     target_compile_options(project_warnings
             INTERFACE
-#            -Werror
+            #            -Werror
             -Wall
             -Wextra
             -Wshadow
@@ -35,7 +35,7 @@ else ()
             -Wunused
             -Woverloaded-virtual
             -Wpedantic
-#            -Wconversion
+            #            -Wconversion
             -Wsign-conversion
             -Wmisleading-indentation
             -Wduplicated-cond
@@ -48,11 +48,16 @@ else ()
             )
 endif ()
 
+# TODO: split this
 set(TARGET_SOURCES
         ${CMAKE_SOURCE_DIR}/word.cpp
         ${CMAKE_SOURCE_DIR}/interpreter.cpp
         ${CMAKE_SOURCE_DIR}/machine.cpp
         ${CMAKE_SOURCE_DIR}/scanner.cpp
+        ${CMAKE_SOURCE_DIR}/cli_parser.cpp
+        ${CMAKE_SOURCE_DIR}/print/normal.cpp
+        ${CMAKE_SOURCE_DIR}/print/with_sign.cpp
+        ${CMAKE_SOURCE_DIR}/print/binary.cpp
         )
 
 add_subdirectory(src)

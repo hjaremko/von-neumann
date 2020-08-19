@@ -3,9 +3,14 @@
 namespace vnm
 {
 
-void machine::set_pc( const word& value )
+auto machine::pc() -> word&
 {
-    program_counter_ = value;
+    return program_counter_;
+}
+
+auto machine::pc() const -> word
+{
+    return program_counter_;
 }
 
 void machine::set_or( const word& value )
@@ -31,11 +36,6 @@ auto machine::get_ac() const -> word
 auto machine::get_ir() const -> word
 {
     return instruction_reg_;
-}
-
-auto machine::get_pc() const -> word
-{
-    return program_counter_;
 }
 
 auto machine::execute() -> bool
