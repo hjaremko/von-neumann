@@ -22,7 +22,7 @@ public:
 
     // TODO: mode as char
     word( const std::string& code, const std::string& mode, type arg )
-        : word_( arg & 0b0'0000'00'111111111u ), is_instruction_( true )
+        : word_( arg & 0b0'0000'00'111111111U ), is_instruction_( true )
     {
         word_ |= static_cast<type>( instructions_from_str.at( code ) );
         word_ |= static_cast<type>( mode_from_str.at( mode ) );
@@ -38,107 +38,107 @@ public:
         is_instruction_ = true;
     }
 
-    [[nodiscard]] constexpr bool is_arg_negative() const
+    [[nodiscard]] constexpr auto is_arg_negative() const -> bool
     {
-        return static_cast<bool>( word_ & 0b0'0000'00'100000000u );
+        return static_cast<bool>( word_ & 0b0'0000'00'100000000U );
     }
 
-    [[nodiscard]] constexpr bool is_instruction() const
+    [[nodiscard]] constexpr auto is_instruction() const -> bool
     {
         return is_instruction_;
     }
 
-    [[nodiscard]] constexpr type get() const
+    [[nodiscard]] constexpr auto get() const -> type
     {
         return word_;
     }
 
-    type& operator*()
+    auto operator*() -> type&
     {
         return word_;
     }
 
-    const type& operator*() const
+    auto operator*() const -> const type&
     {
         return word_;
     }
 
-    [[nodiscard]] constexpr instruction get_code() const
+    [[nodiscard]] constexpr auto get_code() const -> instruction
     {
         return static_cast<instruction>( word_ & 0b0'1111'00'000000000u );
     }
 
-    [[nodiscard]] constexpr mode get_mode() const
+    [[nodiscard]] constexpr auto get_mode() const -> mode
     {
         return static_cast<mode>( word_ & 0b0'0000'11'000000000u );
     }
 
-    [[nodiscard]] constexpr word get_arg() const
+    [[nodiscard]] constexpr auto get_arg() const -> word
     {
         return word( word_ & 0b0'0000'00'111111111u );
     }
 
-    constexpr word& operator+=( const word& rhs )
+    constexpr auto operator+=( const word& rhs ) -> word&
     {
         word_ += rhs.get();
         return *this;
     }
 
-    constexpr word& operator-=( const word& rhs )
+    constexpr auto operator-=( const word& rhs ) -> word&
     {
         word_ -= rhs.get();
         return *this;
     }
 
-    constexpr word& operator*=( const word& rhs )
+    constexpr auto operator*=( const word& rhs ) -> word&
     {
         word_ *= rhs.get();
         return *this;
     }
 
-    constexpr word& operator/=( const word& rhs )
+    constexpr auto operator/=( const word& rhs ) -> word&
     {
         word_ /= rhs.get();
         return *this;
     }
 
-    constexpr word& operator&=( const word& rhs )
+    constexpr auto operator&=( const word& rhs ) -> word&
     {
         word_ &= rhs.get();
         return *this;
     }
 
-    constexpr word& operator|=( const word& rhs )
+    constexpr auto operator|=( const word& rhs ) -> word&
     {
         word_ |= rhs.get();
         return *this;
     }
 
-    constexpr word operator!() const
+    constexpr auto operator!() const -> word
     {
         return word( !get() );
     }
 
-    constexpr word& operator++()
+    constexpr auto operator++() -> word&
     {
         ++word_;
         return *this;
     }
 
-    constexpr const word operator++( int )
+    constexpr auto operator++( int ) -> const word
     {
         auto tmp( *this );
         operator++();
         return tmp;
     }
 
-    constexpr word& operator--()
+    constexpr auto operator--() -> word&
     {
         --word_;
         return *this;
     }
 
-    constexpr const word operator--( int )
+    constexpr auto operator--( int ) -> const word
     {
         auto tmp( *this );
         operator--();
@@ -152,47 +152,47 @@ private:
 
 const static auto stop { word { "STOP", "$", 0 } };
 
-std::istream& operator>>( std::istream&, vnm::word& );
-bool operator==( const vnm::word& lhs, const vnm::word& rhs );
+auto operator>>( std::istream&, vnm::word& ) -> std::istream&;
+auto operator==( const vnm::word& lhs, const vnm::word& rhs ) -> bool;
 
 } // namespace vnm
 
-inline bool operator!=( const vnm::word& lhs, const vnm::word& rhs )
+inline auto operator!=( const vnm::word& lhs, const vnm::word& rhs ) -> bool
 {
     return !operator==( lhs, rhs );
 }
 
-inline vnm::word operator+( vnm::word lhs, const vnm::word& rhs )
+inline auto operator+( vnm::word lhs, const vnm::word& rhs ) -> vnm::word
 {
     lhs += rhs;
     return lhs;
 }
 
-inline vnm::word operator-( vnm::word lhs, const vnm::word& rhs )
+inline auto operator-( vnm::word lhs, const vnm::word& rhs ) -> vnm::word
 {
     lhs -= rhs;
     return lhs;
 }
 
-inline vnm::word operator*( vnm::word lhs, const vnm::word& rhs )
+inline auto operator*( vnm::word lhs, const vnm::word& rhs ) -> vnm::word
 {
     lhs *= rhs;
     return lhs;
 }
 
-inline vnm::word operator/( vnm::word lhs, const vnm::word& rhs )
+inline auto operator/( vnm::word lhs, const vnm::word& rhs ) -> vnm::word
 {
     lhs /= rhs;
     return lhs;
 }
 
-inline vnm::word operator&( vnm::word lhs, const vnm::word& rhs )
+inline auto operator&( vnm::word lhs, const vnm::word& rhs ) -> vnm::word
 {
     lhs &= rhs;
     return lhs;
 }
 
-inline vnm::word operator|( vnm::word lhs, const vnm::word& rhs )
+inline auto operator|( vnm::word lhs, const vnm::word& rhs ) -> vnm::word
 {
     lhs |= rhs;
     return lhs;

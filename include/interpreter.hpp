@@ -21,7 +21,7 @@ class interpreter
 public:
     explicit interpreter( std::istream& );
 
-    [[nodiscard]] machine::mem_t interpret();
+    [[nodiscard]] auto interpret() -> machine::mem_t;
 
 private:
     class scanner
@@ -29,13 +29,13 @@ private:
     public:
         explicit scanner( std::string );
 
-        [[nodiscard]] bool at_end() const;
+        [[nodiscard]] auto at_end() const -> bool;
         void scan_token();
-        std::vector<token> scan_tokens();
+        auto scan_tokens() -> std::vector<token>;
 
     private:
-        char advance();
-        [[nodiscard]] char peek() const;
+        auto advance() -> char;
+        [[nodiscard]] auto peek() const -> char;
         void add_token( token::type );
         void add_token( token::type, int );
         void number();

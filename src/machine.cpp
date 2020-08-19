@@ -18,27 +18,27 @@ void machine::set_ac( const word& value )
     accumulator_ = value;
 }
 
-word machine::get_or() const
+auto machine::get_or() const -> word
 {
     return operand_reg_;
 }
 
-word machine::get_ac() const
+auto machine::get_ac() const -> word
 {
     return accumulator_;
 }
 
-word machine::get_ir() const
+auto machine::get_ir() const -> word
 {
     return instruction_reg_;
 }
 
-word machine::get_pc() const
+auto machine::get_pc() const -> word
 {
     return program_counter_;
 }
 
-bool machine::execute()
+auto machine::execute() -> bool
 {
     if ( instruction_reg_.is_instruction() )
     {
@@ -181,17 +181,18 @@ bool machine::execute()
             };
 
             auto rot_left = []( uint16_t value, uint16_t count ) {
-                return ( value << count ) | ( value >> ( 16u - count ) );
+                return value << count | value >> ( 16U - count );
             };
 
             auto rot_right = []( uint16_t value, uint16_t count ) {
-                return ( value >> count ) | ( value << ( 16u - count ) );
+                return value >> count | value << ( 16U - count );
             };
 
-            set_ac(
-                word( get_or().is_arg_negative()
-                          ? rot_right( *get_ac(), -arg { static_cast<int16_t>( *get_or() ) }.val )
-                          : rot_left( *get_ac(), *get_or() ) ) );
+            set_ac( word( get_or().is_arg_negative()
+                              ? rot_right( *get_ac(),
+                                           static_cast<uint16_t>(
+                                               -arg { static_cast<int16_t>( *get_or() ) }.val ) )
+                              : rot_left( *get_ac(), *get_or() ) ) );
 
             break;
         }
@@ -211,7 +212,7 @@ void machine::set_memory( const mem_t& mem )
     memory_ = mem;
 }
 
-machine::mem_t machine::get_memory() const
+auto machine::get_memory() const -> machine::mem_t
 {
     return memory_;
 }

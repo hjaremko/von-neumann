@@ -19,12 +19,12 @@ public:
     void set_ac( const word& );
     void set_memory( const mem_t& );
     void tick();
-    [[nodiscard]] mem_t get_memory() const;
-    [[nodiscard]] word get_or() const;
-    [[nodiscard]] word get_ac() const;
-    [[nodiscard]] word get_ir() const;
-    [[nodiscard]] word get_pc() const;
-    bool execute();
+    [[nodiscard]] auto get_memory() const -> mem_t;
+    [[nodiscard]] auto get_or() const -> word;
+    [[nodiscard]] auto get_ac() const -> word;
+    [[nodiscard]] auto get_ir() const -> word;
+    [[nodiscard]] auto get_pc() const -> word;
+    auto execute() -> bool;
 
 private:
     mem_t memory_;

@@ -9,7 +9,7 @@ interpreter::scanner::scanner( std::string source ) : source_( std::move( source
 {
 }
 
-bool interpreter::scanner::at_end() const
+auto interpreter::scanner::at_end() const -> bool
 {
     return current_ >= source_.length();
 }
@@ -57,9 +57,9 @@ void interpreter::scanner::scan_token()
         else
         {
             interpreter::error( "Unexpected character",
-                                token{ token::type::number,
-                                       source_.substr( start_, current_ - start_ ),
-                                       static_cast<int>( line_ ) },
+                                token { token::type::number,
+                                        source_.substr( start_, current_ - start_ ),
+                                        static_cast<int>( line_ ) },
                                 source_ );
         }
 
@@ -68,7 +68,7 @@ void interpreter::scanner::scan_token()
     }
 }
 
-std::vector<token> interpreter::scanner::scan_tokens()
+auto interpreter::scanner::scan_tokens() -> std::vector<token>
 {
     while ( !at_end() )
     {
@@ -79,7 +79,7 @@ std::vector<token> interpreter::scanner::scan_tokens()
     return tokens_;
 }
 
-char interpreter::scanner::advance()
+auto interpreter::scanner::advance() -> char
 {
     return source_.at( current_++ );
 }
@@ -94,7 +94,7 @@ void interpreter::scanner::add_token( token::type token_type, int num )
     tokens_.emplace_back( token_type, num, line_ );
 }
 
-char interpreter::scanner::peek() const
+auto interpreter::scanner::peek() const -> char
 {
     return at_end() ? '\0' : source_.at( current_ );
 }
@@ -125,8 +125,9 @@ void interpreter::scanner::string()
     }
     else
     {
-        interpreter::error(
-            "Invalid instruction", token{ token::type::number, str, static_cast<int>( line_ ) }, source_ );
+        interpreter::error( "Invalid instruction",
+                            token { token::type::number, str, static_cast<int>( line_ ) },
+                            source_ );
     }
 }
 

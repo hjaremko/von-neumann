@@ -2,7 +2,7 @@
 
 #include <sstream>
 
-std::istream& vnm::operator>>( std::istream& os, vnm::word& rhs )
+auto vnm::operator>>( std::istream& os, vnm::word& rhs ) -> std::istream&
 {
     auto line { std::string {} };
     auto code { std::string {} };
@@ -18,7 +18,7 @@ std::istream& vnm::operator>>( std::istream& os, vnm::word& rhs )
     return os;
 }
 
-bool vnm::operator==( const vnm::word& lhs, const vnm::word& rhs )
+auto vnm::operator==( const vnm::word& lhs, const vnm::word& rhs ) -> bool
 {
     return lhs.get() == rhs.get() && lhs.is_instruction() == rhs.is_instruction();
 }

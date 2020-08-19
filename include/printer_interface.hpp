@@ -15,6 +15,11 @@ public:
     virtual void print_registers() const = 0;
     virtual void print_memory() const = 0;
 
+    printer_interface() = default;
+    printer_interface( const printer_interface& ) = default;
+    printer_interface( printer_interface&& ) = default;
+    auto operator=( const printer_interface& ) -> printer_interface& = default;
+    auto operator=( printer_interface&& ) -> printer_interface& = default;
     virtual ~printer_interface() = default;
 };
 
@@ -23,6 +28,11 @@ class word_printer_interface
 public:
     virtual void print_word( std::ostream&, const vnm::word& w ) const = 0;
 
+    word_printer_interface() = default;
+    word_printer_interface( const word_printer_interface& ) = default;
+    word_printer_interface( word_printer_interface&& ) = default;
+    auto operator=( const word_printer_interface& ) -> word_printer_interface& = default;
+    auto operator=( word_printer_interface&& ) -> word_printer_interface& = default;
     virtual ~word_printer_interface() = default;
 };
 
@@ -84,10 +94,7 @@ public:
         const auto& ac { machine_.get_ac() };
         const auto& next { machine_.get_memory().at( pc ) };
 
-        if ( ir.is_instruction() )
-            os_ << instructions_to_str.at( ir_code );
-        else
-            os_ << ' ';
+        os_ << ( ir.is_instruction() ? instructions_to_str.at( ir_code ) : " " );
 
         os_ << "|  " << std::setw( 4 ) << mode_to_str.at( ir_mode );
         os_ << "| " << std::setw( 5 );
@@ -125,7 +132,7 @@ private:
         os_ << std::endl;
     }
 
-    [[nodiscard]] word::type get_size() const
+    [[nodiscard]] auto get_size() const -> word::type
     {
         for ( auto i = 511; i >= 0; --i )
         {
@@ -214,14 +221,19 @@ public:
     }
 };
 
-std::unique_ptr<printer_interface>
-make_printer( const cxxopts::ParseResult& parse_result, std::ostream& os, const machine& m )
+inline auto make_printer( const cxxopts::ParseResult& parse_result,
+                          std::ostream& os,
+                          const machine& m ) -> std::unique_ptr<printer_interface>
 {
     if ( parse_result.count( "binary" ) )
+    {
         return std::make_unique<binary_printer>( os, m );
+    }
 
     if ( parse_result.count( "signed" ) )
+    {
         return std::make_unique<signed_printer>( os, m );
+    }
 
     return std::make_unique<default_printer>( os, m );
 }

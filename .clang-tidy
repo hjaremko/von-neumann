@@ -1,0 +1,7 @@
+---
+Checks:          '*,-fuchsia-*,-google-*,-zircon-*,-abseil-*,-llvm-*,-llvmlibc-*,-readability-implicit-bool-conversion,-readability-magic-numbers'
+WarningsAsErrors: '1'
+HeaderFilterRegex: ''
+FormatStyle:     none
+
+

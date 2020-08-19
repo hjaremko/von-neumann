@@ -4,7 +4,7 @@ AlignAfterOpenBracket: Align
 AlignTrailingComments: true
 AllowAllParametersOfDeclarationOnNextLine: true
 #AllowAllArgumentsOnNextLine: true
-AllowShortBlocksOnASingleLine: false
+AllowShortBlocksOnASingleLine: Never
 AllowShortCaseLabelsOnASingleLine: false
 AllowShortFunctionsOnASingleLine: None
 AllowShortIfStatementsOnASingleLine: Never

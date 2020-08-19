@@ -6,8 +6,9 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+//#include <span>
 
-cxxopts::ParseResult parse_command_line( int argc, char* argv[] )
+auto parse_command_line( int argc, char** argv ) -> cxxopts::ParseResult
 {
     static auto options { cxxopts::Options { argv[ 0 ], "Von Neumann Machine emulator" } };
     options.positional_help( "[optional args]" ).show_positional_help();
@@ -21,7 +22,7 @@ cxxopts::ParseResult parse_command_line( int argc, char* argv[] )
                                                          "Print instruction arguments in binary" )(
         "d,signed", "Print instruction arguments as 9-bit signed integers" );
 
-    const auto result = options.parse( argc, argv );
+    auto result = options.parse( argc, argv );
 
     if ( result.count( "help" ) || result.arguments().empty() )
     {
@@ -32,7 +33,7 @@ cxxopts::ParseResult parse_command_line( int argc, char* argv[] )
     return result;
 }
 
-int main( int argc, char* argv[] )
+auto main( int argc, char** argv ) -> int
 {
     auto pmc { vnm::machine {} };
     auto out_file { std::fstream {} };
@@ -40,7 +41,7 @@ int main( int argc, char* argv[] )
     try
     {
         const auto parse_result { parse_command_line( argc, argv ) };
-        auto out_stream { &std::cout };
+        auto* out_stream { &std::cout };
         auto input_path { std::filesystem::path {} };
 
         if ( parse_result.count( "file" ) )

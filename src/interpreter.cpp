@@ -39,7 +39,7 @@ void interpreter::error( const std::string& msg, const token& t, const std::stri
     std::cout << "\t" << spaces << "^" << tildes << std::endl;
 }
 
-machine::mem_t interpreter::interpret() // const
+auto interpreter::interpret() -> machine::mem_t // const
 {
     const auto input { std::string { std::istreambuf_iterator<char> { input_stream_ },
                                      std::istreambuf_iterator<char> {} } };

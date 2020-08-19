@@ -13,7 +13,7 @@ template <unsigned int S>
 class memory
 {
 public:
-    [[nodiscard]] word at( const word& register_ ) const
+    [[nodiscard]] auto at( const word& register_ ) const -> word
     {
         try
         {
@@ -25,7 +25,9 @@ public:
             ss << "Address " << *register_ << " exceeds device memory!";
 
             if ( *register_ == size )
+            {
                 ss << " Missing STOP perhaps?";
+            }
 
             throw std::runtime_error( ss.str() );
         }
