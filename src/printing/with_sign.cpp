@@ -1,14 +1,12 @@
-#include "print/binary.hpp"
+#include "printing/with_sign.hpp"
 
 namespace vnm::print_policy
 {
 
-void binary::print_word( std::ostream& os_, const word& rhs )
+void with_sign::print_word( std::ostream& os_, const word& rhs )
 {
-    constexpr auto WORD_WIDTH { 6 };
-    constexpr auto ARGUMENT_SIZE { 9 };
-    constexpr auto WORD_SIZE { 16 };
     std::stringstream ss;
+    constexpr auto WORD_WIDTH { 6 };
 
     if ( rhs.is_instruction() )
     {
@@ -20,12 +18,13 @@ void binary::print_word( std::ostream& os_, const word& rhs )
         {
             ss << std::left << std::setw( WORD_WIDTH ) << instructions_to_str.at( rhs.get_code() )
                << mode_to_str.at( rhs.get_mode() ) << ' ';
-            ss << std::bitset<ARGUMENT_SIZE>( *rhs.get_arg() );
+            const auto t { s { *rhs.get_arg() } };
+            ss << t.val;
         }
     }
     else if ( *rhs != 0 )
     {
-        ss << std::bitset<WORD_SIZE>( *rhs );
+        ss << static_cast<int16_t>( *rhs );
     }
 
     os_ << ss.str();

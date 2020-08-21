@@ -1,22 +1,23 @@
-#include "error_reporter.hpp"
-#include "interpreter.hpp"
+#include "parsing/scanner.hpp"
+
+#include "instruction_mappings.hpp"
 
 #include <cctype>
 
 namespace vnm
 {
 
-interpreter::scanner::scanner( std::string source, error_reporter& errors )
+scanner::scanner( std::string source, error_reporter& errors )
     : source_( std::move( source ) ), errors_( errors )
 {
 }
 
-auto interpreter::scanner::at_end() const -> bool
+auto scanner::at_end() const -> bool
 {
     return current_ >= source_.length();
 }
 
-void interpreter::scanner::scan_token()
+void scanner::scan_token()
 {
     const auto c { advance() };
 
@@ -69,7 +70,7 @@ void interpreter::scanner::scan_token()
     }
 }
 
-auto interpreter::scanner::scan_tokens() -> std::vector<token>
+auto scanner::scan_tokens() -> std::vector<token>
 {
     while ( !at_end() )
     {
@@ -80,27 +81,27 @@ auto interpreter::scanner::scan_tokens() -> std::vector<token>
     return tokens_;
 }
 
-auto interpreter::scanner::advance() -> char
+auto scanner::advance() -> char
 {
     return source_.at( current_++ );
 }
 
-void interpreter::scanner::add_token( token::type token_type )
+void scanner::add_token( token::type token_type )
 {
     tokens_.emplace_back( token_type, source_.substr( start_, current_ - start_ ), line_ );
 }
 
-void interpreter::scanner::add_token( token::type token_type, int num )
+void scanner::add_token( token::type token_type, int num )
 {
     tokens_.emplace_back( token_type, num, line_ );
 }
 
-auto interpreter::scanner::peek() const -> char
+auto scanner::peek() const -> char
 {
     return at_end() ? '\0' : source_.at( current_ );
 }
 
-void interpreter::scanner::number()
+void scanner::number()
 {
     while ( std::isdigit( peek() ) )
     {
@@ -111,7 +112,7 @@ void interpreter::scanner::number()
     add_token( token::type::number, std::stoi( snum ) );
 }
 
-void interpreter::scanner::string()
+void scanner::string()
 {
     while ( std::isalpha( peek() ) && !std::isspace( peek() ) && !at_end() )
     {

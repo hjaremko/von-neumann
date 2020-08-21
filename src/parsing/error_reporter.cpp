@@ -1,7 +1,8 @@
-#include "error_reporter.hpp"
+#include "parsing/error_reporter.hpp"
 
 #include <iostream>
 #include <sstream>
+#include <utility>
 
 namespace
 {
@@ -20,7 +21,7 @@ auto get_token_column( const token& invalid_token, const std::string& line ) -> 
 
 } // namespace
 
-vnm::error_reporter::error_reporter( const std::string& source ) : source_( source )
+vnm::error_reporter::error_reporter( std::string source ) : source_( std::move( source ) )
 {
 }
 
@@ -39,19 +40,19 @@ void vnm::error_reporter::print_errors() const
     }
 }
 
-auto vnm::error_reporter::has_errors() -> bool
+auto vnm::error_reporter::has_errors() const -> bool
 {
     return !errors_.empty();
 }
 
-auto vnm::error_reporter::count() -> unsigned int
+auto vnm::error_reporter::count() const -> unsigned int
 {
     return errors_.size();
 }
 
 auto vnm::error_reporter::get_line_containing_token( const token& invalid_token ) -> std::string
 {
-    auto source_ss { std::stringstream { source_ } };
+    auto source_ss { std::stringstream { std::string { source_ } } };
     auto line { std::string {} };
 
     for ( int i = 0; i < invalid_token.line; ++i )
@@ -62,24 +63,7 @@ auto vnm::error_reporter::get_line_containing_token( const token& invalid_token 
     return line;
 }
 
-auto vnm::error_reporter::error::make_error_message() const -> std::string
+void vnm::error_reporter::clear()
 {
-    auto ss { std::stringstream {} };
-
-    ss << invalid_token.line << ":" << column << ": " << message << std::endl;
-    ss << "\t" << line << std::endl;
-    ss << "\t" << make_spaces( column - 1 ) << "^" << make_tildes();
-
-    return ss.str();
-}
-
-auto vnm::error_reporter::error::make_tildes() const -> std::string
-{
-    return std::string( invalid_token.lexeme.length() != 0 ? invalid_token.lexeme.length() - 1 : 0U,
-                        '~' );
-}
-
-auto vnm::error_reporter::error::make_spaces( unsigned int amount ) -> std::string
-{
-    return std::string( amount, ' ' );
+    errors_.clear();
 }

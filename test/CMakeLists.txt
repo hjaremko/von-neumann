@@ -12,9 +12,10 @@ set_property(TARGET Catch2::Catch PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${CATC
 set(TEST_TARGET_SOURCES
         ${SOURCE_DIR}/word.cpp
         ${SOURCE_DIR}/machine.cpp
-        ${SOURCE_DIR}/error_reporter.cpp
-        ${SOURCE_DIR}/interpreter.cpp
-        ${SOURCE_DIR}/scanner.cpp
+        ${SOURCE_DIR}/parsing/error_reporter.cpp
+        ${SOURCE_DIR}/parsing/error.cpp
+        ${SOURCE_DIR}/parsing/interpreter.cpp
+        ${SOURCE_DIR}/parsing/scanner.cpp
         )
 
 set(TEST_SOURCES

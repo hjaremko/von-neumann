@@ -1,6 +1,7 @@
-#include "interpreter.hpp"
+#include "parsing/interpreter.hpp"
 
-#include "error_reporter.hpp"
+#include "parsing/error_reporter.hpp"
+#include "parsing/scanner.hpp"
 
 #include <algorithm>
 #include <fstream>
@@ -15,25 +16,30 @@ auto make_halt_message( unsigned int error_count ) -> std::string
     return ss.str();
 }
 
+auto read_input( std::istream& istream ) -> std::string
+{
+    istream.exceptions( std::ifstream::failbit | std::ifstream::badbit );
+    return { std::istreambuf_iterator<char> { istream }, std::istreambuf_iterator<char> {} };
+}
+
 } // namespace
 
 namespace vnm
 {
 
-interpreter::interpreter( std::istream& istream ) : input_stream_( istream )
+interpreter::interpreter( std::istream& istream )
 {
-    input_stream_.exceptions( std::ifstream::failbit | std::ifstream::badbit );
+    auto input { read_input( istream ) };
+    errors_ = error_reporter( input );
+    tokens_ = scanner( input, errors_ ).scan_tokens();
+    check_for_errors();
 }
 
-auto interpreter::interpret() -> machine::mem_t // const
+auto interpreter::interpret() -> machine::mem_t
 {
-    const auto input { read_input() };
-    auto errors { error_reporter { input } };
     auto ram { machine::mem_t {} };
-    auto scan { scanner { input, errors } };
-    const auto tokens { scan.scan_tokens() };
 
-    for ( auto token = std::begin( tokens ); token != std::end( tokens ); ++token )
+    for ( auto token = std::begin( tokens_ ); token != std::end( tokens_ ); ++token )
     {
         if ( token->type_ == token::type::instruction && token->lexeme != "STOP" )
         {
@@ -51,16 +57,16 @@ auto interpreter::interpret() -> machine::mem_t // const
                 }
                 else
                 {
-                    errors.report( "Expected argument", *( token + 2 ) );
+                    errors_.report( "Expected argument", *( token + 2 ) );
                 }
             }
             else if ( next_token.type_ == token::type::newline )
             {
-                errors.report( "Expected addressing mode", next_token );
+                errors_.report( "Expected addressing mode", next_token );
             }
             else
             {
-                errors.report( "Unknown addressing mode", next_token );
+                errors_.report( "Unknown addressing mode", next_token );
             }
         }
         else if ( token->type_ == token::type::instruction && token->lexeme == "STOP" )
@@ -74,23 +80,23 @@ auto interpreter::interpret() -> machine::mem_t // const
 
             if ( next_token.type_ != token::type::newline )
             {
-                errors.report( "No newline after argument", next_token );
+                errors_.report( "No newline after argument", next_token );
             }
         }
     }
 
-    if ( errors.has_errors() )
-    {
-        errors.print_errors();
-        throw std::runtime_error( make_halt_message( errors.count() ) );
-    }
-
+    check_for_errors();
     return ram;
 }
 
-auto interpreter::read_input() const -> std::string
+void interpreter::check_for_errors()
 {
-    return { std::istreambuf_iterator<char> { input_stream_ }, std::istreambuf_iterator<char> {} };
+    if ( errors_.has_errors() )
+    {
+        errors_.print_errors();
+        errors_.clear();
+        throw std::runtime_error( make_halt_message( errors_.count() ) );
+    }
 }
 
 } // namespace vnm

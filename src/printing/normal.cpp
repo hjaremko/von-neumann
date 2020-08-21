@@ -1,4 +1,4 @@
-#include "print/normal.hpp"
+#include "printing/normal.hpp"
 
 #include "machine.hpp"
 #include "word.hpp"

@@ -1,5 +1,5 @@
-#include "cli_parser.hpp"
 #include "machine.hpp"
+#include "parsing/cli_parser.hpp"
 
 #include <cxxopts.hpp>
 #include <fstream>

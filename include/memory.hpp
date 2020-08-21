@@ -1,5 +1,5 @@
-#ifndef MEMORY_HPP
-#define MEMORY_HPP
+#ifndef VON_NEUMANN_MEMORY_HPP
+#define VON_NEUMANN_MEMORY_HPP
 
 #include "word.hpp"
 

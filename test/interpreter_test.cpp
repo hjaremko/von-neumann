@@ -1,5 +1,5 @@
 #include "catch.hpp"
-#include "interpreter.hpp"
+#include "parsing/interpreter.hpp"
 
 #include <sstream>
 

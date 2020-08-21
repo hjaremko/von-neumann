@@ -3,7 +3,7 @@
 
 #include "interpreter.hpp"
 #include "machine.hpp"
-#include "print/printer_interface.hpp"
+#include "printing/printer_interface.hpp"
 
 #include <cxxopts.hpp>
 #include <filesystem>

@@ -1,6 +1,6 @@
-#include "cli_parser.hpp"
+#include "parsing/cli_parser.hpp"
 
-#include "print/printer.hpp"
+#include "printing/printer.hpp"
 
 #include <fstream>
 

@@ -1,5 +1,5 @@
-#ifndef TOKEN_HPP
-#define TOKEN_HPP
+#ifndef VON_NEUMANN_TOKEN_HPP
+#define VON_NEUMANN_TOKEN_HPP
 
 #include <string>
 
