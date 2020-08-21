@@ -10,7 +10,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 set(CMAKE_CXX_STANDARD 17)
 
-set(CMAKE_SOURCE_DIR ${PROJECT_SOURCE_DIR}/src)
+set(SOURCE_DIR ${PROJECT_SOURCE_DIR}/src)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
@@ -47,18 +47,6 @@ else ()
             -Wformat=2
             )
 endif ()
-
-# TODO: split this
-set(TARGET_SOURCES
-        ${CMAKE_SOURCE_DIR}/word.cpp
-        ${CMAKE_SOURCE_DIR}/interpreter.cpp
-        ${CMAKE_SOURCE_DIR}/machine.cpp
-        ${CMAKE_SOURCE_DIR}/scanner.cpp
-        ${CMAKE_SOURCE_DIR}/cli_parser.cpp
-        ${CMAKE_SOURCE_DIR}/print/normal.cpp
-        ${CMAKE_SOURCE_DIR}/print/with_sign.cpp
-        ${CMAKE_SOURCE_DIR}/print/binary.cpp
-        )
 
 add_subdirectory(src)
 add_subdirectory(test)
