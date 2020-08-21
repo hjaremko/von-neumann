@@ -36,7 +36,7 @@ TEST_CASE( "example codes executed successfully", "[machine]" )
             machine.tick();
         }
 
-        const auto memory_state { machine.get_memory() };
+        const auto memory_state { machine.ram };
         REQUIRE( *memory_state.at( word { 18 } ) == 26 );
         REQUIRE( *memory_state.at( word { 19 } ) == 150 );
     }
@@ -66,7 +66,7 @@ TEST_CASE( "example codes executed successfully", "[machine]" )
             machine.tick();
         }
 
-        const auto memory_state { machine.get_memory() };
+        const auto memory_state { machine.ram };
         REQUIRE( *memory_state.at( word { 7 } ) == 110 );
     }
 }
@@ -81,10 +81,10 @@ TEST_CASE( "STOP tests", "[machine]" )
     {
         machine.put_to_memory( stop, word { 0 } );
         machine.tick();
-        REQUIRE( machine.get_ir() == machine.get_memory().at( word { 0 } ) );
-        REQUIRE( machine.get_memory().at( word { 0 } ).is_instruction() );
-        REQUIRE( machine.get_memory().at( word { 0 } ).get_mode() == mode::instant );
-        REQUIRE( machine.get_memory().at( word { 0 } ).get_code() == instruction::STOP );
+        REQUIRE( machine.instruction_reg == machine.ram.at( word { 0 } ) );
+        REQUIRE( machine.ram.at( word { 0 } ).is_instruction() );
+        REQUIRE( machine.ram.at( word { 0 } ).get_mode() == mode::instant );
+        REQUIRE( machine.ram.at( word { 0 } ).get_code() == instruction::STOP );
         REQUIRE_FALSE( machine.execute() );
     }
 
@@ -136,7 +136,7 @@ TEST_CASE( "JNEG tests", "[machine]" )
             machine.tick();
         }
 
-        REQUIRE( *machine.get_memory().at( word { 4 } ) != 507 );
+        REQUIRE( *machine.ram.at( word { 4 } ) != 507 );
     }
 
     SECTION( "do not jump on positive AC" )
@@ -152,7 +152,7 @@ TEST_CASE( "JNEG tests", "[machine]" )
             machine.tick();
         }
 
-        REQUIRE( *machine.get_memory().at( word { 4 } ) == 5 );
+        REQUIRE( *machine.ram.at( word { 4 } ) == 5 );
     }
 }
 
@@ -174,7 +174,7 @@ TEST_CASE( "SHZ tests", "[machine]" )
             machine.tick();
         }
 
-        REQUIRE( *machine.get_ac() == 1u << 1u );
+        REQUIRE( *machine.accumulator == 1u << 1u );
     }
 
     SECTION( "shift right" )
@@ -189,7 +189,7 @@ TEST_CASE( "SHZ tests", "[machine]" )
             machine.tick();
         }
 
-        REQUIRE( *machine.get_ac() == 5u >> 1u );
+        REQUIRE( *machine.accumulator == 5u >> 1u );
     }
 }
 
@@ -212,7 +212,7 @@ TEST_CASE( "SHC tests", "[machine]" )
             machine.tick();
         }
 
-        REQUIRE( *machine.get_ac() == 0b1000'0000'0000'0001 );
+        REQUIRE( *machine.accumulator == 0b1000'0000'0000'0001 );
     }
 
     SECTION( "shift right" )
@@ -228,7 +228,7 @@ TEST_CASE( "SHC tests", "[machine]" )
             machine.tick();
         }
 
-        REQUIRE( *machine.get_ac() == 0b1011'0000'0000'0000 );
+        REQUIRE( *machine.accumulator == 0b1011'0000'0000'0000 );
     }
 }
 
@@ -243,17 +243,17 @@ TEST_CASE( "machine method tests", "[machine]" )
         machine::mem_t mem;
         mem.set( word { "STORE", "@", 0 }, word { 1 } );
         mem.set( stop, word { 0 } );
-        machine.set_memory( mem );
+        machine.ram = mem;
 
-        REQUIRE( machine.get_memory().at( word { 0 } ) == mem.at( word { 0 } ) );
-        REQUIRE( machine.get_memory().at( word { 1 } ) == mem.at( word { 1 } ) );
+        REQUIRE( machine.ram.at( word { 0 } ) == mem.at( word { 0 } ) );
+        REQUIRE( machine.ram.at( word { 1 } ) == mem.at( word { 1 } ) );
     }
 
     SECTION( "program counter" )
     {
-        REQUIRE( machine.pc() == word { 0 } );
-        machine.pc() = word { 20 };
-        REQUIRE( machine.pc() == word { 20 } );
+        REQUIRE( machine.program_counter == word { 0 } );
+        machine.program_counter = word { 20 };
+        REQUIRE( machine.program_counter == word { 20 } );
     }
 
     SECTION( "tick" )
@@ -261,10 +261,10 @@ TEST_CASE( "machine method tests", "[machine]" )
         auto w { word { "STORE", "@", 0 } };
         machine.put_to_memory( w, word { 0 } );
 
-        REQUIRE( machine.pc() == word { 0 } );
-        REQUIRE( machine.get_ir() == word { 0 } );
+        REQUIRE( machine.program_counter == word { 0 } );
+        REQUIRE( machine.instruction_reg == word { 0 } );
         machine.tick();
-        REQUIRE( machine.pc() == word { 1 } );
-        REQUIRE( machine.get_ir() == w );
+        REQUIRE( machine.program_counter == word { 1 } );
+        REQUIRE( machine.instruction_reg == w );
     }
 }

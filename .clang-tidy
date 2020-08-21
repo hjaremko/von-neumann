@@ -1,5 +1,5 @@
 ---
-Checks:          '*,-fuchsia-*,-google-*,-zircon-*,-abseil-*,-llvm-*,-llvmlibc-*,-readability-implicit-bool-conversion,-readability-magic-numbers'
+Checks:          '*,-fuchsia-*,-google-*,-zircon-*,-abseil-*,-llvm-*,-llvmlibc-*,-readability-implicit-bool-conversion,-readability-magic-numbers,-misc-non-private-member-variables-in-classes'
 WarningsAsErrors: '1'
 HeaderFilterRegex: ''
 FormatStyle:     none

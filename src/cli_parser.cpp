@@ -55,8 +55,8 @@ auto vnm::cli_parser::make_machine() const -> vnm::machine
     auto input_file { std::fstream { input_path } };
     auto pmc { vnm::machine {} };
 
-    pmc.set_memory( vnm::interpreter { input_file }.interpret() );
-    pmc.pc() = get_starting_pc();
+    pmc.ram = vnm::interpreter { input_file }.interpret();
+    pmc.program_counter = get_starting_pc();
 
     return pmc;
 }
@@ -101,7 +101,7 @@ auto vnm::cli_parser::make_printer( const vnm::machine& m ) const
 auto vnm::cli_parser::get_output_stream( std::fstream& out_file ) const -> std::ostream*
 {
     return parse_result.count( "save" )
-               ? open_output_file( out_file, get_input_filename().string() )
+               ? open_output_file( out_file, get_input_filename().stem().string() )
                : &std::cout;
 }
 

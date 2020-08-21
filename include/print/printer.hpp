@@ -35,14 +35,14 @@ public:
         os_ << std::left;
         os_ << "| " << std::setw( 6 );
 
-        const auto& ir { machine_.get_ir() };
+        const auto& ir { machine_.instruction_reg };
         const auto& ir_code { ir.get_code() };
         const auto& ir_mode { ir.get_mode() };
         const auto& ir_arg { ir.get_arg() };
-        const auto& pc { machine_.pc() };
-        const auto& oreg { machine_.get_or() };
-        const auto& ac { machine_.get_ac() };
-        const auto& next { machine_.get_memory().at( pc ) };
+        const auto& pc { machine_.program_counter };
+        const auto& oreg { machine_.operand_reg };
+        const auto& ac { machine_.accumulator };
+        const auto& next { machine_.ram.at( pc ) };
 
         os_ << ( ir.is_instruction() ? instructions_to_str.at( ir_code ) : " " );
 
@@ -63,7 +63,7 @@ public:
         os_ << "--------------------------------------------------" << std::endl;
 
         word::type i = 0;
-        //        for ( ; machine_.get_memory().get( word { i } ) != vnm::stop; ++i )
+        //        for ( ; machine_.memory.get( word { i } ) != vnm::stop; ++i )
         for ( ; i < get_size(); ++i )
         {
             print_memory_cell( i );
@@ -78,7 +78,7 @@ private:
     void print_memory_cell( word::type i ) const
     {
         os_ << "[ " << std::left << std::setw( 3 ) << i << " ]: ";
-        word_printer::print_word( os_, machine_.get_memory().at( word { i } ) );
+        word_printer::print_word( os_, machine_.ram.at( word { i } ) );
         os_ << std::endl;
     }
 
@@ -86,7 +86,7 @@ private:
     {
         for ( auto i = 511; i >= 0; --i )
         {
-            if ( machine_.get_memory().at( word { static_cast<word::type>( i ) } ) == vnm::stop )
+            if ( machine_.ram.at( word { static_cast<word::type>( i ) } ) == vnm::stop )
             {
                 return i + 2;
             }

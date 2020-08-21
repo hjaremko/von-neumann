@@ -3,70 +3,35 @@
 namespace vnm
 {
 
-auto machine::pc() -> word&
-{
-    return program_counter_;
-}
-
-auto machine::pc() const -> word
-{
-    return program_counter_;
-}
-
-void machine::set_or( const word& value )
-{
-    operand_reg_ = value;
-}
-
-void machine::set_ac( const word& value )
-{
-    accumulator_ = value;
-}
-
-auto machine::get_or() const -> word
-{
-    return operand_reg_;
-}
-
-auto machine::get_ac() const -> word
-{
-    return accumulator_;
-}
-
-auto machine::get_ir() const -> word
-{
-    return instruction_reg_;
-}
-
 auto machine::execute() -> bool
 {
-    if ( instruction_reg_.is_instruction() )
+    if ( instruction_reg.is_instruction() )
     {
-        switch ( instruction_reg_.get_mode() )
+        switch ( instruction_reg.get_mode() )
         {
         case mode::instant:
         {
-            set_or( instruction_reg_.get_arg() );
+            operand_reg = instruction_reg.get_arg();
             break;
         }
         case mode::direct:
         {
-            set_or( memory_.at( instruction_reg_.get_arg() ) );
+            operand_reg = ram.at( instruction_reg.get_arg() );
             break;
         }
         case mode::indirect:
         {
-            set_or( memory_.at( memory_.at( instruction_reg_.get_arg() ) ) );
+            operand_reg = ram.at( ram.at( instruction_reg.get_arg() ) );
             break;
         }
         case mode::index:
         {
-            set_or( get_ac() + instruction_reg_.get_arg() );
+            operand_reg = accumulator + instruction_reg.get_arg();
             break;
         }
         }
 
-        switch ( instruction_reg_.get_code() )
+        switch ( instruction_reg.get_code() )
         {
         case instruction::STOP:
         {
@@ -74,81 +39,81 @@ auto machine::execute() -> bool
         }
         case instruction::LOAD:
         {
-            set_ac( get_or() );
+            accumulator = operand_reg;
             break;
         }
         case instruction::STORE:
         {
-            memory_.set( get_ac(), get_or() );
+            ram.set( accumulator, operand_reg );
             break;
         }
         case instruction::JUMP:
         {
-            program_counter_ = get_or();
+            program_counter = operand_reg;
             break;
         }
         case instruction::JNEG:
         {
-            if ( get_ac().is_arg_negative() )
+            if ( accumulator.is_arg_negative() )
             {
-                program_counter_ = get_or();
+                program_counter = operand_reg;
             }
 
             break;
         }
         case instruction::JZERO:
         {
-            if ( *get_ac() == 0 )
+            if ( *accumulator == 0 )
             {
-                program_counter_ = get_or();
+                program_counter = operand_reg;
             }
 
             break;
         }
         case instruction::ADD:
         {
-            set_ac( get_ac() + get_or() );
+            accumulator = accumulator + operand_reg;
             break;
         }
         case instruction::SUB:
         {
-            set_ac( get_ac() - get_or() );
+            accumulator = accumulator - operand_reg;
             break;
         }
         case instruction::MULT:
         {
-            set_ac( get_ac() * get_or() );
+            accumulator = accumulator * operand_reg;
             break;
         }
         case instruction::DIV:
         {
-            set_ac( get_ac() / get_or() );
+            accumulator = accumulator / operand_reg;
             break;
         }
         case instruction::AND:
         {
-            set_ac( get_ac() & get_or() );
+            accumulator = accumulator & operand_reg;
             break;
         }
         case instruction::OR:
         {
-            set_ac( get_ac() | get_or() );
+            accumulator = accumulator | operand_reg;
             break;
         }
         case instruction::NOT:
         {
-            set_ac( !get_or() );
+            accumulator = !operand_reg;
             break;
         }
         case instruction::CMP:
         {
-            if ( *get_ac() == *get_or() )
+            if ( *accumulator == *operand_reg )
             {
-                set_ac( word { static_cast<word::type>( -1 ) } );
+                accumulator = word { static_cast<word::type>( -1 ) };
             }
             else
             {
-                set_ac( word { 0 } );
+                accumulator = word { 0 };
             }
 
             break;
@@ -160,15 +125,15 @@ auto machine::execute() -> bool
                 int16_t val : 9;
             };
 
-            if ( get_or().is_arg_negative() )
+            if ( operand_reg.is_arg_negative() )
             {
                 auto shift =
-                    static_cast<word::type>( -arg { static_cast<int16_t>( *get_or() ) }.val );
-                set_ac( word( *get_ac() >> shift ) );
+                    static_cast<word::type>( -arg { static_cast<int16_t>( *operand_reg ) }.val );
+                accumulator = word( *accumulator >> shift );
             }
-            else if ( !get_or().is_arg_negative() )
+            else if ( !operand_reg.is_arg_negative() )
             {
-                set_ac( word( *get_ac() << *get_or() ) );
+                accumulator = word( *accumulator << *operand_reg );
             }
 
             break;
@@ -188,11 +153,12 @@ auto machine::execute() -> bool
                 return value >> count | value << ( 16U - count );
             };
 
-            set_ac( word( get_or().is_arg_negative()
-                              ? rot_right( *get_ac(),
-                                           static_cast<uint16_t>(
-                                               -arg { static_cast<int16_t>( *get_or() ) }.val ) )
-                              : rot_left( *get_ac(), *get_or() ) ) );
+            accumulator =
+                word( operand_reg.is_arg_negative()
+                          ? rot_right( *accumulator,
+                                       static_cast<uint16_t>(
+                                           -arg { static_cast<int16_t>( *operand_reg ) }.val ) )
+                          : rot_left( *accumulator, *operand_reg ) );
 
             break;
         }
@@ -204,17 +170,13 @@ auto machine::execute() -> bool
 
 void machine::put_to_memory( const word& value, const word& register_ )
 {
-    memory_.set( value, register_ );
+    ram.set( value, register_ );
 }
 
-void machine::set_memory( const mem_t& mem )
+void machine::tick()
 {
-    memory_ = mem;
-}
-
-auto machine::get_memory() const -> machine::mem_t
-{
-    return memory_;
+    instruction_reg = ram.at( program_counter );
+    ++program_counter;
 }
 
 } // namespace vnm
