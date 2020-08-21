@@ -1,6 +1,21 @@
 #include "interpreter.hpp"
 
+#include "error_reporter.hpp"
+
 #include <algorithm>
+#include <fstream>
+
+namespace
+{
+
+auto make_halt_message( unsigned int error_count ) -> std::string
+{
+    auto ss { std::stringstream {} };
+    ss << "Execution halted: " << error_count << " errors";
+    return ss.str();
+}
+
+} // namespace
 
 namespace vnm
 {
@@ -8,44 +23,15 @@ namespace vnm
 interpreter::interpreter( std::istream& istream ) : input_stream_( istream )
 {
     input_stream_.exceptions( std::ifstream::failbit | std::ifstream::badbit );
-    error_count_ = 0;
-}
-
-void interpreter::error( const std::string& msg, const token& t, const std::string& s )
-{
-    error_count_++;
-
-    // TODO: extract
-    auto source_ss { std::stringstream { s } };
-    auto l { std::string {} };
-
-    for ( int i = 0; i < t.line; ++i )
-    {
-        std::getline( source_ss, l );
-    }
-
-    auto token_pos = l.find( t.lexeme );
-
-    if ( token_pos == std::string::npos )
-    {
-        token_pos = l.length() - 1;
-    }
-
-    const auto spaces { std::string( token_pos, ' ' ) };
-    const auto tildes { std::string( t.lexeme.length() != 0 ? t.lexeme.length() - 1 : 0U, '~' ) };
-
-    std::cout << t.line << ":" << token_pos + 1 << ": " << msg << std::endl;
-    std::cout << "\t" << l << std::endl;
-    std::cout << "\t" << spaces << "^" << tildes << std::endl;
 }
 
 auto interpreter::interpret() -> machine::mem_t // const
 {
-    const auto input { std::string { std::istreambuf_iterator<char> { input_stream_ },
-                                     std::istreambuf_iterator<char> {} } };
+    const auto input { read_input() };
+    auto errors { error_reporter { input } };
     auto ram { machine::mem_t {} };
-    auto s { scanner { input } };
-    const auto tokens { s.scan_tokens() };
+    auto scan { scanner { input, errors } };
+    const auto tokens { scan.scan_tokens() };
 
     for ( auto token = std::begin( tokens ); token != std::end( tokens ); ++token )
     {
@@ -65,16 +51,16 @@ auto interpreter::interpret() -> machine::mem_t // const
                 }
                 else
                 {
-                    error( "Expected argument", *( token + 2 ), input );
+                    errors.report( "Expected argument", *( token + 2 ) );
                 }
             }
             else if ( next_token.type_ == token::type::newline )
             {
-                error( "Expected addressing mode", next_token, input );
+                errors.report( "Expected addressing mode", next_token );
             }
             else
             {
-                error( "Unknown addressing mode", next_token, input );
+                errors.report( "Unknown addressing mode", next_token );
             }
         }
         else if ( token->type_ == token::type::instruction && token->lexeme == "STOP" )
@@ -84,22 +70,27 @@ auto interpreter::interpret() -> machine::mem_t // const
         else if ( token->type_ == token::type::number )
         {
             ram[ token->line - 1 ] = token->value;
-
             const auto& next_token { *( token + 1 ) };
+
             if ( next_token.type_ != token::type::newline )
             {
-                error( "No newline after argument", next_token, input );
+                errors.report( "No newline after argument", next_token );
             }
         }
     }
 
-    if ( error_count_ )
+    if ( errors.has_errors() )
     {
-        const auto msg { "Execution halted: "s + std::to_string( error_count_ ) + " errors"s };
-        throw std::runtime_error( msg );
+        errors.print_errors();
+        throw std::runtime_error( make_halt_message( errors.count() ) );
     }
 
     return ram;
+}
+
+auto interpreter::read_input() const -> std::string
+{
+    return { std::istreambuf_iterator<char> { input_stream_ }, std::istreambuf_iterator<char> {} };
 }
 
 } // namespace vnm

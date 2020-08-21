@@ -1,17 +1,9 @@
 #ifndef INTERPRETER_HPP
 #define INTERPRETER_HPP
 
+#include "error_reporter.hpp"
 #include "machine.hpp"
 #include "token.hpp"
-
-#include <fstream>
-#include <sstream>
-#include <stdexcept>
-#include <streambuf>
-#include <string>
-#include <vector>
-
-using namespace std::string_literals;
 
 namespace vnm
 {
@@ -27,7 +19,7 @@ private:
     class scanner
     {
     public:
-        explicit scanner( std::string );
+        explicit scanner( std::string, error_reporter& );
 
         [[nodiscard]] auto at_end() const -> bool;
         void scan_token();
@@ -42,15 +34,15 @@ private:
         void string();
 
         std::string source_;
+        error_reporter& errors_;
         std::vector<token> tokens_;
         unsigned start_ { 0 };
         unsigned current_ { 0 };
         unsigned line_ { 1 };
     };
 
-    static void error( const std::string&, const token&, const std::string& );
+    [[nodiscard]] auto read_input() const -> std::string;
 
-    static inline unsigned error_count_ { 0 };
     std::istream& input_stream_;
 };
 

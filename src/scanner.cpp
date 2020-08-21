@@ -1,3 +1,4 @@
+#include "error_reporter.hpp"
 #include "interpreter.hpp"
 
 #include <cctype>
@@ -5,7 +6,8 @@
 namespace vnm
 {
 
-interpreter::scanner::scanner( std::string source ) : source_( std::move( source ) )
+interpreter::scanner::scanner( std::string source, error_reporter& errors )
+    : source_( std::move( source ) ), errors_( errors )
 {
 }
 
@@ -56,11 +58,10 @@ void interpreter::scanner::scan_token()
         }
         else
         {
-            interpreter::error( "Unexpected character",
-                                token { token::type::number,
-                                        source_.substr( start_, current_ - start_ ),
-                                        static_cast<int>( line_ ) },
-                                source_ );
+            errors_.report( "Unexpected character",
+                            token { token::type::number,
+                                    source_.substr( start_, current_ - start_ ),
+                                    static_cast<int>( line_ ) } );
         }
 
         break;
@@ -125,9 +126,8 @@ void interpreter::scanner::string()
     }
     else
     {
-        interpreter::error( "Invalid instruction",
-                            token { token::type::number, str, static_cast<int>( line_ ) },
-                            source_ );
+        errors_.report( "Invalid instruction",
+                        token { token::type::number, str, static_cast<int>( line_ ) } );
     }
 }
 

@@ -2,6 +2,7 @@
 #include "machine.hpp"
 
 #include <cxxopts.hpp>
+#include <fstream>
 
 void run_machine( vnm::machine& pmc,
                   const vnm::printer_interface& printer,
