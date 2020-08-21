@@ -32,7 +32,7 @@ void interpreter::error( const std::string& msg, const token& t, const std::stri
     }
 
     const auto spaces { std::string( token_pos, ' ' ) };
-    const auto tildes { std::string( t.lexeme.length() != 0 ? t.lexeme.length() - 1 : 0u, '~' ) };
+    const auto tildes { std::string( t.lexeme.length() != 0 ? t.lexeme.length() - 1 : 0U, '~' ) };
 
     std::cout << t.line << ":" << token_pos + 1 << ": " << msg << std::endl;
     std::cout << "\t" << l << std::endl;
@@ -58,11 +58,8 @@ auto interpreter::interpret() -> machine::mem_t // const
                 {
                     if ( ( token + 3 )->type_ == token::type::newline )
                     {
-                        const auto wtmp { word {
-                            token->lexeme,
-                            next_token.lexeme,
-                            static_cast<word::type>( ( token + 2 )->value ) } };
-                        ram[ word { static_cast<word::type>( next_token.line - 1 ) } ] = wtmp;
+                        ram[ next_token.line - 1 ] =
+                            word( token->lexeme, next_token.lexeme, ( token + 2 )->value );
                         token += 2;
                     }
                 }
@@ -82,14 +79,11 @@ auto interpreter::interpret() -> machine::mem_t // const
         }
         else if ( token->type_ == token::type::instruction && token->lexeme == "STOP" )
         {
-            auto wtmp { word { static_cast<word::type>( instructions_from_str.at( "STOP" ) ) } };
-            wtmp.to_instruction();
-            ram[ word { static_cast<word::type>( token->line - 1 ) } ] = wtmp;
+            ram[ token->line - 1 ] = stop;
         }
         else if ( token->type_ == token::type::number )
         {
-            ram[ word { static_cast<word::type>( token->line - 1 ) } ] =
-                word { static_cast<word::type>( token->value ) };
+            ram[ token->line - 1 ] = token->value;
 
             const auto& next_token { *( token + 1 ) };
             if ( next_token.type_ != token::type::newline )

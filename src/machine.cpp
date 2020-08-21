@@ -109,11 +109,11 @@ auto machine::execute() -> bool
         {
             if ( *accumulator == *operand_reg )
             {
-                accumulator = word { static_cast<word::type>( -1 ) };
+                accumulator = static_cast<word::type>( -1 );
             }
             else
             {
-                accumulator = word { 0 };
+                accumulator = 0;
             }
 
             break;

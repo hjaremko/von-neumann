@@ -10,26 +10,25 @@ TEST_CASE( "example codes executed successfully", "[machine]" )
     SECTION( "array sum example" )
     {
         const std::vector<word> code = {
-            word { "LOAD", "$", 0 },   word { "STORE", "$", 19 }, word { "LOAD", "$", 21 },
-            word { "STORE", "$", 18 }, word { "LOAD", "$", 21 },  word { "ADD", "@", 20 },
-            word { "SUB", "@", 18 },   word { "JZERO", "$", 15 }, word { "LOAD", "@", 19 },
-            word { "ADD", "&", 18 },   word { "STORE", "$", 19 }, word { "LOAD", "@", 18 },
-            word { "ADD", "$", 1 },    word { "STORE", "$", 18 }, word { "JUMP", "$", 4 },
+            { "LOAD", "$", 0 },  { "STORE", "$", 19 }, { "LOAD", "$", 21 },  { "STORE", "$", 18 },
+            { "LOAD", "$", 21 }, { "ADD", "@", 20 },   { "SUB", "@", 18 },   { "JZERO", "$", 15 },
+            { "LOAD", "@", 19 }, { "ADD", "&", 18 },   { "STORE", "$", 19 }, { "LOAD", "@", 18 },
+            { "ADD", "$", 1 },   { "STORE", "$", 18 }, { "JUMP", "$", 4 },
         };
 
         auto i { word::type { 0 } };
         for ( const auto& instruction : code )
         {
-            machine.put_to_memory( instruction, word { i++ } );
+            machine.put_to_memory( instruction, i++ );
         }
 
-        machine.put_to_memory( stop, word { i } );
-        machine.put_to_memory( word { 5 }, word { 20 } );
-        machine.put_to_memory( word { 10 }, word { 21 } );
-        machine.put_to_memory( word { 20 }, word { 22 } );
-        machine.put_to_memory( word { 30 }, word { 23 } );
-        machine.put_to_memory( word { 40 }, word { 24 } );
-        machine.put_to_memory( word { 50 }, word { 25 } );
+        machine.put_to_memory( stop, i );
+        machine.put_to_memory( 5, 20 );
+        machine.put_to_memory( 10, 21 );
+        machine.put_to_memory( 20, 22 );
+        machine.put_to_memory( 30, 23 );
+        machine.put_to_memory( 40, 24 );
+        machine.put_to_memory( 50, 25 );
 
         while ( machine.execute() )
         {
@@ -37,29 +36,29 @@ TEST_CASE( "example codes executed successfully", "[machine]" )
         }
 
         const auto memory_state { machine.ram };
-        REQUIRE( *memory_state[ word { 18 } ] == 26 );
-        REQUIRE( *memory_state[ word { 19 } ] == 150 );
+        REQUIRE( *memory_state[ 18 ] == 26 );
+        REQUIRE( *memory_state[ 19 ] == 150 );
     }
 
     SECTION( "double sum example" )
     {
         const std::vector<word> code = {
-            word { "LOAD", "@", 5 },
-            word { "ADD", "@", 6 },
-            word { "MULT", "$", 2 },
-            word { "STORE", "$", 7 },
+            { "LOAD", "@", 5 },
+            { "ADD", "@", 6 },
+            { "MULT", "$", 2 },
+            { "STORE", "$", 7 },
         };
 
         auto i { word::type { 0 } };
         for ( const auto& instruction : code )
         {
-            machine.put_to_memory( instruction, word { i++ } );
+            machine.put_to_memory( instruction, i++ );
         }
 
-        machine.put_to_memory( stop, word { i } );
-        machine.put_to_memory( word { 21 }, word { 5 } );
-        machine.put_to_memory( word { 34 }, word { 6 } );
-        machine.put_to_memory( word { 0 }, word { 7 } );
+        machine.put_to_memory( stop, i );
+        machine.put_to_memory( 21, 5 );
+        machine.put_to_memory( 34, 6 );
+        machine.put_to_memory( 0, 7 );
 
         while ( machine.execute() )
         {
@@ -67,7 +66,7 @@ TEST_CASE( "example codes executed successfully", "[machine]" )
         }
 
         const auto memory_state { machine.ram };
-        REQUIRE( *memory_state[ word { 7 } ] == 110 );
+        REQUIRE( *memory_state[ 7 ] == 110 );
     }
 }
 
@@ -79,18 +78,18 @@ TEST_CASE( "STOP tests", "[machine]" )
 
     SECTION( "single stop" )
     {
-        machine.put_to_memory( stop, word { 0 } );
+        machine.put_to_memory( stop, 0 );
         machine.tick();
-        REQUIRE( machine.instruction_reg == machine.ram[ word { 0 } ] );
-        REQUIRE( machine.ram[ word { 0 } ].is_instruction() );
-        REQUIRE( machine.ram[ word { 0 } ].get_mode() == mode::instant );
-        REQUIRE( machine.ram[ word { 0 } ].get_code() == instruction::STOP );
+        REQUIRE( machine.instruction_reg == machine.ram[ 0 ] );
+        REQUIRE( machine.ram[ 0 ].is_instruction() );
+        REQUIRE( machine.ram[ 0 ].get_mode() == mode::instant );
+        REQUIRE( machine.ram[ 0 ].get_code() == instruction::STOP );
         REQUIRE_FALSE( machine.execute() );
     }
 
     SECTION( "single stop on position other than 0 " )
     {
-        machine.put_to_memory( stop, word { 12 } );
+        machine.put_to_memory( stop, 12 );
 
         while ( machine.execute() )
         {
@@ -102,11 +101,11 @@ TEST_CASE( "STOP tests", "[machine]" )
 
     SECTION( "stop with some values" )
     {
-        machine.put_to_memory( word { 1 }, word { 5 } );
-        machine.put_to_memory( word { 1 }, word { 7 } );
-        machine.put_to_memory( word { 1 }, word { 8 } );
-        machine.put_to_memory( word { 1 }, word { 10 } );
-        machine.put_to_memory( stop, word { 12 } );
+        machine.put_to_memory( 1, 5 );
+        machine.put_to_memory( 1, 7 );
+        machine.put_to_memory( 1, 8 );
+        machine.put_to_memory( 1, 10 );
+        machine.put_to_memory( stop, 12 );
 
         while ( machine.execute() )
         {
@@ -126,33 +125,33 @@ TEST_CASE( "JNEG tests", "[machine]" )
     SECTION( "jump on negative AC" )
     {
         auto w { static_cast<word::type>( -5 ) };
-        machine.put_to_memory( word { "LOAD", "$", w }, word { 1 } );
-        machine.put_to_memory( word { "JNEG", "$", 5 }, word { 2 } );
-        machine.put_to_memory( word { "STORE", "$", 4 }, word { 3 } );
-        machine.put_to_memory( stop, word { 5 } );
+        machine.put_to_memory( { "LOAD", "$", w }, 1 );
+        machine.put_to_memory( { "JNEG", "$", 5 }, 2 );
+        machine.put_to_memory( { "STORE", "$", 4 }, 3 );
+        machine.put_to_memory( stop, 5 );
 
         while ( machine.execute() )
         {
             machine.tick();
         }
 
-        REQUIRE( *machine.ram[ word { 4 } ] != 507 );
+        REQUIRE( *machine.ram[ 4 ] != 507 );
     }
 
     SECTION( "do not jump on positive AC" )
     {
         auto w { static_cast<word::type>( 5 ) };
-        machine.put_to_memory( word { "LOAD", "$", w }, word { 1 } );
-        machine.put_to_memory( word { "JNEG", "$", 5 }, word { 2 } );
-        machine.put_to_memory( word { "STORE", "$", 4 }, word { 3 } );
-        machine.put_to_memory( stop, word { 5 } );
+        machine.put_to_memory( { "LOAD", "$", w }, 1 );
+        machine.put_to_memory( { "JNEG", "$", 5 }, 2 );
+        machine.put_to_memory( { "STORE", "$", 4 }, 3 );
+        machine.put_to_memory( stop, 5 );
 
         while ( machine.execute() )
         {
             machine.tick();
         }
 
-        REQUIRE( *machine.ram[ word { 4 } ] == 5 );
+        REQUIRE( *machine.ram[ 4 ] == 5 );
     }
 }
 
@@ -165,9 +164,9 @@ TEST_CASE( "SHZ tests", "[machine]" )
     SECTION( "shift left" )
     {
         auto w { word::type { 1 } };
-        machine.put_to_memory( word { "LOAD", "$", w }, word { 0 } );
-        machine.put_to_memory( word { "SHZ", "$", 1 }, word { 1 } );
-        machine.put_to_memory( stop, word { 5 } );
+        machine.put_to_memory( { "LOAD", "$", w }, 0 );
+        machine.put_to_memory( { "SHZ", "$", 1 }, 1 );
+        machine.put_to_memory( stop, 5 );
 
         while ( machine.execute() )
         {
@@ -180,9 +179,9 @@ TEST_CASE( "SHZ tests", "[machine]" )
     SECTION( "shift right" )
     {
         auto w { word::type { 5 } };
-        machine.put_to_memory( word { "LOAD", "$", w }, word { 0 } );
-        machine.put_to_memory( word { "SHZ", "$", static_cast<word::type>( -1 ) }, word { 1 } );
-        machine.put_to_memory( stop, word { 5 } );
+        machine.put_to_memory( { "LOAD", "$", w }, 0 );
+        machine.put_to_memory( { "SHZ", "$", static_cast<word::type>( -1 ) }, 1 );
+        machine.put_to_memory( stop, 5 );
 
         while ( machine.execute() )
         {
@@ -202,10 +201,10 @@ TEST_CASE( "SHC tests", "[machine]" )
     SECTION( "shift left" )
     {
         auto w { word::type { 0b1100'0000'0000'0000 } };
-        machine.put_to_memory( word { w }, word { 0 } );
-        machine.put_to_memory( word { "LOAD", "@", 0 }, word { 1 } );
-        machine.put_to_memory( word { "SHC", "$", 1 }, word { 2 } );
-        machine.put_to_memory( stop, word { 5 } );
+        machine.put_to_memory( w, 0 );
+        machine.put_to_memory( { "LOAD", "@", 0 }, 1 );
+        machine.put_to_memory( { "SHC", "$", 1 }, 2 );
+        machine.put_to_memory( stop, 5 );
 
         while ( machine.execute() )
         {
@@ -218,10 +217,10 @@ TEST_CASE( "SHC tests", "[machine]" )
     SECTION( "shift right" )
     {
         auto w { word::type { 0b1100'0000'0000'0010 } };
-        machine.put_to_memory( word { w }, word { 0 } );
-        machine.put_to_memory( word { "LOAD", "@", 0 }, word { 1 } );
-        machine.put_to_memory( word { "SHC", "$", static_cast<word::type>( -2 ) }, word { 2 } );
-        machine.put_to_memory( stop, word { 5 } );
+        machine.put_to_memory( word { w }, 0 );
+        machine.put_to_memory( word { "LOAD", "@", 0 }, 1 );
+        machine.put_to_memory( word { "SHC", "$", static_cast<word::type>( -2 ) }, 2 );
+        machine.put_to_memory( stop, 5 );
 
         while ( machine.execute() )
         {
@@ -241,30 +240,30 @@ TEST_CASE( "machine method tests", "[machine]" )
     SECTION( "set memory" )
     {
         machine::mem_t mem;
-        mem[ word { 1 } ] = word { "STORE", "@", 0 };
-        mem[ word { 0 } ] = stop;
+        mem[ 1 ] = word { "STORE", "@", 0 };
+        mem[ 0 ] = stop;
         machine.ram = mem;
 
-        REQUIRE( machine.ram[ word { 0 } ] == mem[ word { 0 } ] );
-        REQUIRE( machine.ram[ word { 1 } ] == mem[ word { 1 } ] );
+        REQUIRE( machine.ram[ 0 ] == mem[ 0 ] );
+        REQUIRE( machine.ram[ 1 ] == mem[ 1 ] );
     }
 
     SECTION( "program counter" )
     {
-        REQUIRE( machine.program_counter == word { 0 } );
-        machine.program_counter = word { 20 };
-        REQUIRE( machine.program_counter == word { 20 } );
+        REQUIRE( machine.program_counter == 0 );
+        machine.program_counter = 20;
+        REQUIRE( machine.program_counter == 20 );
     }
 
     SECTION( "tick" )
     {
         auto w { word { "STORE", "@", 0 } };
-        machine.put_to_memory( w, word { 0 } );
+        machine.put_to_memory( w, 0 );
 
-        REQUIRE( machine.program_counter == word { 0 } );
-        REQUIRE( machine.instruction_reg == word { 0 } );
+        REQUIRE( machine.program_counter == 0 );
+        REQUIRE( machine.instruction_reg == 0 );
         machine.tick();
-        REQUIRE( machine.program_counter == word { 1 } );
+        REQUIRE( machine.program_counter == 1 );
         REQUIRE( machine.instruction_reg == w );
     }
 }

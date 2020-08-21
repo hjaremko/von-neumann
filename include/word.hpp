@@ -16,7 +16,7 @@ public:
     using type = uint16_t;
 
     constexpr word() = default;
-    constexpr explicit word( type value ) : word_( value )
+    constexpr word( type value ) : word_( value ) // NOLINT
     {
     }
 

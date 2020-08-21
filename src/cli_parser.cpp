@@ -73,9 +73,7 @@ auto vnm::cli_parser::get_input_filename() const -> std::filesystem::path
 
 auto vnm::cli_parser::get_starting_pc() const -> vnm::word
 {
-    return parse_result.count( "counter" )
-               ? vnm::word { parse_result[ "counter" ].as<vnm::word::type>() }
-               : vnm::word { 0 };
+    return parse_result.count( "counter" ) ? parse_result[ "counter" ].as<vnm::word::type>() : 0;
 }
 
 auto vnm::cli_parser::make_printer( const vnm::machine& m ) const

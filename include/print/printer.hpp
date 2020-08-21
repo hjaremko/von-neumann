@@ -63,7 +63,7 @@ public:
         os_ << "--------------------------------------------------" << std::endl;
 
         word::type i = 0;
-        //        for ( ; machine_.memory.get( word { i } ) != vnm::stop; ++i )
+        // for ( ; machine_.memory.get( i ) != vnm::stop; ++i )
         for ( ; i < get_size(); ++i )
         {
             print_memory_cell( i );
@@ -78,7 +78,7 @@ private:
     void print_memory_cell( word::type i ) const
     {
         os_ << "[ " << std::left << std::setw( 3 ) << i << " ]: ";
-        word_printer::print_word( os_, machine_.ram[ word { i } ] );
+        word_printer::print_word( os_, machine_.ram[ i ] );
         os_ << std::endl;
     }
 
@@ -86,7 +86,7 @@ private:
     {
         for ( auto i = 511; i >= 0; --i )
         {
-            if ( machine_.ram[ word { static_cast<word::type>( i ) } ] == vnm::stop )
+            if ( machine_.ram[ i ] == vnm::stop )
             {
                 return i + 2;
             }

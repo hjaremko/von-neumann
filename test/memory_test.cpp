@@ -9,24 +9,32 @@ TEST_CASE( "memory tests", "[memory]" )
 
     SECTION( "set and at" )
     {
-        mem[ word { 1 } ] = word { 11111 };
-        REQUIRE( mem[ word { 0 } ] == word { 0 } );
-        REQUIRE( mem[ word { 1 } ] == word { 11111 } );
-        REQUIRE( mem[ word { 2 } ] == word { 0 } );
+        mem[ 1 ] = 11111;
+        REQUIRE( mem[ 0 ] == 0 );
+        REQUIRE( mem[ 1 ] == 11111 );
+        REQUIRE( mem[ 2 ] == 0 );
     }
 
     SECTION( "at throws on invalid address" )
     {
-        REQUIRE_THROWS( mem[ word { 16 } ] );
-        REQUIRE_THROWS( mem[ word { static_cast<word::type>( -1 ) } ] );
-        REQUIRE_NOTHROW( mem[ word { 15 } ] );
+        REQUIRE_THROWS( mem[ 16 ] );
+        REQUIRE_THROWS( mem[ static_cast<word::type>( -1 ) ] );
+        REQUIRE_NOTHROW( mem[ 15 ] );
     }
 
     SECTION( "set throws on invalid address" )
     {
-        REQUIRE_THROWS( mem[ word { 16 } ] = word {} );
-        REQUIRE_THROWS( mem[ word { static_cast<word::type>( -1 ) } ] = word {} );
-        REQUIRE_NOTHROW( mem[ word { 15 } ] = word {} );
+        REQUIRE_THROWS( mem[ 16 ] = word {} );
+        REQUIRE_THROWS( mem[ static_cast<word::type>( -1 ) ] = word {} );
+        REQUIRE_NOTHROW( mem[ 15 ] = word {} );
+    }
+
+    SECTION( "const at throws on invalid address" )
+    {
+        const auto cmem { memory<16> {} };
+        REQUIRE_THROWS( cmem[ 16 ] );
+        REQUIRE_THROWS( cmem[ static_cast<word::type>( -1 ) ] );
+        REQUIRE_NOTHROW( cmem[ 15 ] );
     }
 
     SECTION( "size" )
