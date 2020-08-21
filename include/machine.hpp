@@ -11,8 +11,6 @@ class machine
 public:
     using mem_t = memory<512>;
 
-    machine() = default;
-
     void put_to_memory( const word&, const word& );
     void tick();
     auto execute() -> bool;

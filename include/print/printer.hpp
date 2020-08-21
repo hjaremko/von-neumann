@@ -42,7 +42,7 @@ public:
         const auto& pc { machine_.program_counter };
         const auto& oreg { machine_.operand_reg };
         const auto& ac { machine_.accumulator };
-        const auto& next { machine_.ram.at( pc ) };
+        const auto& next { machine_.ram[ pc ] };
 
         os_ << ( ir.is_instruction() ? instructions_to_str.at( ir_code ) : " " );
 
@@ -78,7 +78,7 @@ private:
     void print_memory_cell( word::type i ) const
     {
         os_ << "[ " << std::left << std::setw( 3 ) << i << " ]: ";
-        word_printer::print_word( os_, machine_.ram.at( word { i } ) );
+        word_printer::print_word( os_, machine_.ram[ word { i } ] );
         os_ << std::endl;
     }
 
@@ -86,7 +86,7 @@ private:
     {
         for ( auto i = 511; i >= 0; --i )
         {
-            if ( machine_.ram.at( word { static_cast<word::type>( i ) } ) == vnm::stop )
+            if ( machine_.ram[ word { static_cast<word::type>( i ) } ] == vnm::stop )
             {
                 return i + 2;
             }

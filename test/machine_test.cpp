@@ -37,8 +37,8 @@ TEST_CASE( "example codes executed successfully", "[machine]" )
         }
 
         const auto memory_state { machine.ram };
-        REQUIRE( *memory_state.at( word { 18 } ) == 26 );
-        REQUIRE( *memory_state.at( word { 19 } ) == 150 );
+        REQUIRE( *memory_state[ word { 18 } ] == 26 );
+        REQUIRE( *memory_state[ word { 19 } ] == 150 );
     }
 
     SECTION( "double sum example" )
@@ -67,7 +67,7 @@ TEST_CASE( "example codes executed successfully", "[machine]" )
         }
 
         const auto memory_state { machine.ram };
-        REQUIRE( *memory_state.at( word { 7 } ) == 110 );
+        REQUIRE( *memory_state[ word { 7 } ] == 110 );
     }
 }
 
@@ -81,10 +81,10 @@ TEST_CASE( "STOP tests", "[machine]" )
     {
         machine.put_to_memory( stop, word { 0 } );
         machine.tick();
-        REQUIRE( machine.instruction_reg == machine.ram.at( word { 0 } ) );
-        REQUIRE( machine.ram.at( word { 0 } ).is_instruction() );
-        REQUIRE( machine.ram.at( word { 0 } ).get_mode() == mode::instant );
-        REQUIRE( machine.ram.at( word { 0 } ).get_code() == instruction::STOP );
+        REQUIRE( machine.instruction_reg == machine.ram[ word { 0 } ] );
+        REQUIRE( machine.ram[ word { 0 } ].is_instruction() );
+        REQUIRE( machine.ram[ word { 0 } ].get_mode() == mode::instant );
+        REQUIRE( machine.ram[ word { 0 } ].get_code() == instruction::STOP );
         REQUIRE_FALSE( machine.execute() );
     }
 
@@ -136,7 +136,7 @@ TEST_CASE( "JNEG tests", "[machine]" )
             machine.tick();
         }
 
-        REQUIRE( *machine.ram.at( word { 4 } ) != 507 );
+        REQUIRE( *machine.ram[ word { 4 } ] != 507 );
     }
 
     SECTION( "do not jump on positive AC" )
@@ -152,7 +152,7 @@ TEST_CASE( "JNEG tests", "[machine]" )
             machine.tick();
         }
 
-        REQUIRE( *machine.ram.at( word { 4 } ) == 5 );
+        REQUIRE( *machine.ram[ word { 4 } ] == 5 );
     }
 }
 
@@ -241,12 +241,12 @@ TEST_CASE( "machine method tests", "[machine]" )
     SECTION( "set memory" )
     {
         machine::mem_t mem;
-        mem.set( word { "STORE", "@", 0 }, word { 1 } );
-        mem.set( stop, word { 0 } );
+        mem[ word { 1 } ] = word { "STORE", "@", 0 };
+        mem[ word { 0 } ] = stop;
         machine.ram = mem;
 
-        REQUIRE( machine.ram.at( word { 0 } ) == mem.at( word { 0 } ) );
-        REQUIRE( machine.ram.at( word { 1 } ) == mem.at( word { 1 } ) );
+        REQUIRE( machine.ram[ word { 0 } ] == mem[ word { 0 } ] );
+        REQUIRE( machine.ram[ word { 1 } ] == mem[ word { 1 } ] );
     }
 
     SECTION( "program counter" )

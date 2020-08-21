@@ -16,12 +16,12 @@ auto machine::execute() -> bool
         }
         case mode::direct:
         {
-            operand_reg = ram.at( instruction_reg.get_arg() );
+            operand_reg = ram[ instruction_reg.get_arg() ];
             break;
         }
         case mode::indirect:
         {
-            operand_reg = ram.at( ram.at( instruction_reg.get_arg() ) );
+            operand_reg = ram[ ram[ instruction_reg.get_arg() ] ];
             break;
         }
         case mode::index:
@@ -44,7 +44,7 @@ auto machine::execute() -> bool
         }
         case instruction::STORE:
         {
-            ram.set( accumulator, operand_reg );
+            ram[ operand_reg ] = accumulator;
             break;
         }
         case instruction::JUMP:
@@ -168,14 +168,14 @@ auto machine::execute() -> bool
     return true;
 }
 
-void machine::put_to_memory( const word& value, const word& register_ )
+void machine::put_to_memory( const word& value, const word& addr )
 {
-    ram.set( value, register_ );
+    ram[ addr ] = value;
 }
 
 void machine::tick()
 {
-    instruction_reg = ram.at( program_counter );
+    instruction_reg = ram[ program_counter ];
     ++program_counter;
 }
 

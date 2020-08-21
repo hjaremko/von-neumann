@@ -13,44 +13,43 @@ template <unsigned int S>
 class memory
 {
 public:
-    [[nodiscard]] auto at( const word& register_ ) const -> word
+    [[nodiscard]] auto operator[]( const word& addr ) const -> word
     {
         try
         {
-            return memory_.at( *register_ );
+            return memory_.at( *addr );
         }
         catch ( const std::exception& /*e*/ )
         {
-            std::stringstream ss;
-            ss << "Address " << *register_ << " exceeds device memory!";
-
-            if ( *register_ == size )
-            {
-                ss << " Missing STOP perhaps?";
-            }
-
-            throw std::runtime_error( ss.str() );
+            throw std::out_of_range( make_exception_message( addr ) );
         }
     }
 
-    // TODO: operator[] or merge set with at
-    void set( const word& value, const word& register_ )
+    [[nodiscard]] auto operator[]( const word& addr ) -> word&
     {
         try
         {
-            memory_.at( *register_ ) = value;
+            return memory_.at( *addr );
         }
         catch ( const std::exception& /*e*/ )
         {
-            std::stringstream ss;
-            ss << "Address " << *register_ << " exceeds device memory!";
-            throw std::runtime_error( ss.str() );
+            throw std::out_of_range( make_exception_message( addr ) );
         }
     }
 
     static constexpr auto size { S };
 
 private:
+    [[nodiscard]] auto make_exception_message( const word& addr ) const -> std::string
+    {
+        std::stringstream ss;
+
+        ss << "Address " << *addr << " exceeds device memory!"
+           << ( *addr == size ? " Missing STOP perhaps?" : "" );
+
+        return ss.str();
+    }
+
     std::array<word, S> memory_;
 };
 

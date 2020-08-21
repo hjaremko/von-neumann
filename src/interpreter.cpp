@@ -62,7 +62,7 @@ auto interpreter::interpret() -> machine::mem_t // const
                             token->lexeme,
                             next_token.lexeme,
                             static_cast<word::type>( ( token + 2 )->value ) } };
-                        ram.set( wtmp, word { static_cast<word::type>( next_token.line - 1 ) } );
+                        ram[ word { static_cast<word::type>( next_token.line - 1 ) } ] = wtmp;
                         token += 2;
                     }
                 }
@@ -84,12 +84,12 @@ auto interpreter::interpret() -> machine::mem_t // const
         {
             auto wtmp { word { static_cast<word::type>( instructions_from_str.at( "STOP" ) ) } };
             wtmp.to_instruction();
-            ram.set( wtmp, word { static_cast<word::type>( token->line - 1 ) } );
+            ram[ word { static_cast<word::type>( token->line - 1 ) } ] = wtmp;
         }
         else if ( token->type_ == token::type::number )
         {
-            ram.set( word { static_cast<word::type>( token->value ) },
-                     word { static_cast<word::type>( token->line - 1 ) } );
+            ram[ word { static_cast<word::type>( token->line - 1 ) } ] =
+                word { static_cast<word::type>( token->value ) };
 
             const auto& next_token { *( token + 1 ) };
             if ( next_token.type_ != token::type::newline )

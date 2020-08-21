@@ -18,13 +18,13 @@ TEST_CASE( "interpreter", "[interpreter]" )
         auto ss { std::stringstream { input } };
         auto actual = interpreter { ss }.interpret();
 
-        REQUIRE( actual.at( word { 0 } ) == word { "LOAD", "@", 1 } );
-        REQUIRE( actual.at( word { 1 } ) == word { "DIV", "@", 0 } );
-        REQUIRE( actual.at( word { 2 } ) == word { "STORE", "$", 3 } );
-        REQUIRE( actual.at( word { 3 } ) == word { "LOAD", "@", 1 } );
-        REQUIRE( actual.at( word { 4 } ) == word { "JNEG", "$", 24 } );
-        REQUIRE( actual.at( word { 5 } ) == word { "STOP", "$", 0 } );
-        REQUIRE( actual.at( word { 6 } ) == word { 0 } );
+        REQUIRE( actual[ word { 0 } ] == word { "LOAD", "@", 1 } );
+        REQUIRE( actual[ word { 1 } ] == word { "DIV", "@", 0 } );
+        REQUIRE( actual[ word { 2 } ] == word { "STORE", "$", 3 } );
+        REQUIRE( actual[ word { 3 } ] == word { "LOAD", "@", 1 } );
+        REQUIRE( actual[ word { 4 } ] == word { "JNEG", "$", 24 } );
+        REQUIRE( actual[ word { 5 } ] == word { "STOP", "$", 0 } );
+        REQUIRE( actual[ word { 6 } ] == word { 0 } );
     }
 
     SECTION( "negative arguments are parsed correctly" )
@@ -36,9 +36,9 @@ TEST_CASE( "interpreter", "[interpreter]" )
         auto ss { std::stringstream { input } };
         auto actual = interpreter { ss }.interpret();
 
-        REQUIRE( actual.at( word { 0 } ) == word { "STORE", "$", static_cast<word::type>( -5 ) } );
-        REQUIRE( actual.at( word { 1 } ) == word { static_cast<word::type>( -123 ) } );
-        REQUIRE( actual.at( word { 2 } ) == stop );
+        REQUIRE( actual[ word { 0 } ] == word { "STORE", "$", static_cast<word::type>( -5 ) } );
+        REQUIRE( actual[ word { 1 } ] == word { static_cast<word::type>( -123 ) } );
+        REQUIRE( actual[ word { 2 } ] == stop );
     }
 }
 
