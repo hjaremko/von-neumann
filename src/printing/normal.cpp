@@ -4,6 +4,7 @@
 #include "word.hpp"
 
 #include <bitset>
+#include <iomanip>
 
 namespace vnm::print_policy
 {

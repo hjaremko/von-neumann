@@ -4,8 +4,6 @@
 #include "instruction_mappings.hpp"
 
 #include <cstdint>
-#include <iomanip>
-#include <iostream>
 
 namespace vnm
 {
@@ -15,14 +13,21 @@ class word
 public:
     using type = uint16_t;
 
+    enum class mask : type
+    {
+        code = 0b0'1111'00'000000000U,
+        mode = 0b0'0000'11'000000000U,
+        arg = 0b0'0000'00'111111111U,
+        arg_sign = 0b0'0000'00'100000000U,
+    };
+
     constexpr word() = default;
     constexpr word( type value ) : word_( value ) // NOLINT
     {
     }
 
-    // TODO: mode as char
     word( const std::string& code, const std::string& mode, type arg )
-        : word_( arg & 0b0'0000'00'111111111U ), is_instruction_( true )
+        : word_( arg & static_cast<type>( mask::arg ) ), is_instruction_( true )
     {
         word_ |= static_cast<type>( instructions_from_str.at( code ) );
         word_ |= static_cast<type>( mode_from_str.at( mode ) );
@@ -40,7 +45,7 @@ public:
 
     [[nodiscard]] constexpr auto is_arg_negative() const -> bool
     {
-        return static_cast<bool>( word_ & 0b0'0000'00'100000000U );
+        return static_cast<bool>( word_ & static_cast<type>( mask::arg_sign ) );
     }
 
     [[nodiscard]] constexpr auto is_instruction() const -> bool
@@ -53,29 +58,34 @@ public:
         return word_;
     }
 
-    auto operator*() -> type&
+    [[nodiscard]] constexpr auto get() -> type&
     {
         return word_;
     }
 
-    auto operator*() const -> const type&
+    constexpr auto operator*() -> type&
     {
-        return word_;
+        return get();
+    }
+
+    constexpr auto operator*() const -> type
+    {
+        return get();
     }
 
     [[nodiscard]] constexpr auto get_code() const -> instruction
     {
-        return static_cast<instruction>( word_ & 0b0'1111'00'000000000u );
+        return static_cast<instruction>( word_ & static_cast<type>( mask::code ) );
     }
 
     [[nodiscard]] constexpr auto get_mode() const -> mode
     {
-        return static_cast<mode>( word_ & 0b0'0000'11'000000000u );
+        return static_cast<mode>( word_ & static_cast<type>( mask::mode ) );
     }
 
     [[nodiscard]] constexpr auto get_arg() const -> word
     {
-        return word( word_ & 0b0'0000'00'111111111u );
+        return word( word_ & static_cast<type>( mask::arg ) );
     }
 
     constexpr auto operator+=( const word& rhs ) -> word&
@@ -150,7 +160,7 @@ private:
     bool is_instruction_ { false }; // not sure if necessary
 };
 
-const static auto stop { word { "STOP", "$", 0 } };
+inline const auto stop { word { "STOP", "$", 0 } };
 
 auto operator>>( std::istream&, vnm::word& ) -> std::istream&;
 auto operator==( const vnm::word& lhs, const vnm::word& rhs ) -> bool;

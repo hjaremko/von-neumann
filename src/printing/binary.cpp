@@ -1,5 +1,7 @@
 #include "printing/binary.hpp"
 
+#include <iomanip>
+
 namespace vnm::print_policy
 {
 
