@@ -57,6 +57,20 @@ TEST_CASE( "interpreter", "[interpreter]" )
         auto actual = interpreter { ss }.interpret();
         REQUIRE( actual[ 5 ] == stop );
     }
+
+    SECTION( "no newline at the end of the file" )
+    {
+        auto input { std::string { "\n"
+                                   "\n"
+                                   "\n"
+                                   "LOAD @ 1; comment\n"
+                                   "\n"
+                                   "STOP\n"
+                                   "\n"
+                                   "123" } };
+        auto ss { std::stringstream { input } };
+        REQUIRE_NOTHROW( interpreter { ss }.interpret() );
+    }
 }
 
 TEST_CASE( "input errors detection", "[interpreter]" )

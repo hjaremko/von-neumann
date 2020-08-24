@@ -10,6 +10,7 @@
 
 namespace vnm
 {
+
 template <typename word_printer>
 class printer : public printer_interface
 {
@@ -21,16 +22,11 @@ public:
 
     void print_registers_table() const override
     {
-        os_ << "--------------------------------------------------"
-            << std::endl;
-        os_ << "|         IR          |    |    |    |           |"
-            << std::endl;
-        os_ << "----------------------| PC | OR | AC |   next    |"
-            << std::endl;
-        os_ << "| code  | mode | arg  |    |    |    |           |"
-            << std::endl;
-        os_ << "--------------------------------------------------"
-            << std::endl;
+        os_ << "--------------------------------------------------\n";
+        os_ << "|         IR          |    |    |    |           |\n";
+        os_ << "----------------------| PC | OR | AC |   next    |\n";
+        os_ << "| code  | mode | arg  |    |    |    |           |\n";
+        os_ << "--------------------------------------------------\n";
     }
 
     void print_registers() const override
@@ -39,46 +35,32 @@ public:
         os_ << "| " << std::setw( 6 );
 
         const auto& ir { machine_.instruction_reg };
-        const auto& ir_code { ir.get_code() };
-        const auto& ir_mode { ir.get_mode() };
-        const auto& ir_arg { ir.get_arg() };
-        const auto& pc { machine_.program_counter };
-        const auto& oreg { machine_.operand_reg };
-        const auto& ac { machine_.accumulator };
-        const auto& next { machine_.ram[ pc ] };
+        const auto& next { machine_.ram[ machine_.program_counter ] };
 
-        os_ << ( ir.is_instruction() ? instructions_to_str.at( ir_code )
+        os_ << ( ir.is_instruction() ? instructions_to_str.at( ir.get_code() )
                                      : " " );
-
-        os_ << "|  " << std::setw( 4 ) << mode_to_str.at( ir_mode );
+        os_ << "|  " << std::setw( 4 ) << mode_to_str.at( ir.get_mode() );
         os_ << "| " << std::setw( 5 );
-        word_printer::print_word( os_, ir_arg );
-        os_ << "| " << std::setw( 3 ) << *pc;
-        os_ << "| " << std::setw( 3 ) << *oreg;
-        os_ << "| " << std::setw( 3 ) << *ac;
+        word_printer::print_word( os_, ir.get_arg() );
+        os_ << "| " << std::setw( 3 ) << *machine_.program_counter;
+        os_ << "| " << std::setw( 3 ) << *machine_.operand_reg;
+        os_ << "| " << std::setw( 3 ) << *machine_.accumulator;
         os_ << "| " << std::setw( 10 );
         word_printer::print_word( os_, next );
-        os_ << "|" << std::endl;
-        os_ << "--------------------------------------------------"
-            << std::endl;
+        os_ << "|\n";
+        os_ << "--------------------------------------------------\n";
     }
 
     void print_memory() const override
     {
-        os_ << "--------------------------------------------------"
-            << std::endl;
+        os_ << "--------------------------------------------------\n";
 
-        word::type i = 0;
-        // for ( ; machine_.memory.get( i ) != vnm::stop; ++i )
-        for ( ; i < get_size(); ++i )
+        for ( word::type i = 0; i <= get_size(); ++i )
         {
             print_memory_cell( i );
         }
 
-        print_memory_cell( i );
-
-        os_ << "--------------------------------------------------"
-            << std::endl;
+        os_ << "--------------------------------------------------\n";
     }
 
 private:
@@ -91,15 +73,15 @@ private:
 
     [[nodiscard]] auto get_size() const -> word::type
     {
-        for ( auto i = 511; i >= 0; --i )
+        for ( auto i = machine::memory_size - 1; i >= 0; --i )
         {
-            if ( machine_.ram[ i ] == vnm::stop )
+            if ( machine_.ram[ i ] != 0 )
             {
                 return i + 2;
             }
         }
 
-        return 511;
+        return machine::memory_size - 1;
     }
 
     std::ostream& os_;

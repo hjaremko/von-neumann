@@ -88,7 +88,11 @@ auto line_interpreter::parse_argument() -> std::optional<word>
 
 auto line_interpreter::parse_number() -> std::optional<word>
 {
-    check_for_newline( line_.at( 1 ) );
+    if ( line_.size() != 1 )
+    {
+        check_for_newline( line_.at( 1 ) );
+    }
+
     return line_.at( 0 ).value;
 }
 
