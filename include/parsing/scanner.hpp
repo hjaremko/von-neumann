@@ -12,7 +12,7 @@ class scanner
 public:
     explicit scanner( std::string, error_reporter& );
 
-    auto scan_tokens() -> std::vector<token>;
+    auto scan_tokens() -> std::vector<std::vector<token>>;
 
 private:
     void scan_token();
@@ -20,13 +20,14 @@ private:
     [[nodiscard]] auto peek() const -> char;
     [[nodiscard]] auto at_end() const -> bool;
     void add_token( token::type );
+    void add_newline_token( token::type );
     void add_token( token::type, int );
     void number();
     void string();
 
     std::string source_;
     error_reporter& errors_;
-    std::vector<token> tokens_;
+    std::vector<std::vector<token>> tokens_;
     unsigned start_ { 0 };
     unsigned current_ { 0 };
     unsigned line_ { 1 };

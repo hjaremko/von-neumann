@@ -8,6 +8,7 @@ set(TARGET_SOURCES
         parsing/error_reporter.cpp
         parsing/error.cpp
         parsing/interpreter.cpp
+        parsing/line_interpreter.cpp
         parsing/scanner.cpp
         printing/normal.cpp
         printing/with_sign.cpp

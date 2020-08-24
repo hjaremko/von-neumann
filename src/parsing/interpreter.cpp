@@ -1,6 +1,6 @@
 #include "parsing/interpreter.hpp"
 
-#include "parsing/error_reporter.hpp"
+#include "parsing/line_interpreter.hpp"
 #include "parsing/scanner.hpp"
 
 #include <algorithm>
@@ -38,51 +38,11 @@ interpreter::interpreter( std::istream& istream )
 auto interpreter::interpret() -> machine::mem_t
 {
     auto ram { machine::mem_t {} };
+    auto i { 0 };
 
-    for ( auto token = std::begin( tokens_ ); token != std::end( tokens_ ); ++token )
+    for ( const auto& line : tokens_ )
     {
-        if ( token->type_ == token::type::instruction && token->lexeme != "STOP" )
-        {
-            const auto& next_token { *( token + 1 ) };
-            if ( next_token.type_ == token::type::mode )
-            {
-                if ( ( token + 2 )->type_ == token::type::number )
-                {
-                    if ( ( token + 3 )->type_ == token::type::newline )
-                    {
-                        ram[ next_token.line - 1 ] =
-                            word( token->lexeme, next_token.lexeme, ( token + 2 )->value );
-                        token += 2;
-                    }
-                }
-                else
-                {
-                    errors_.report( "Expected argument", *( token + 2 ) );
-                }
-            }
-            else if ( next_token.type_ == token::type::newline )
-            {
-                errors_.report( "Expected addressing mode", next_token );
-            }
-            else
-            {
-                errors_.report( "Unknown addressing mode", next_token );
-            }
-        }
-        else if ( token->type_ == token::type::instruction && token->lexeme == "STOP" )
-        {
-            ram[ token->line - 1 ] = stop;
-        }
-        else if ( token->type_ == token::type::number )
-        {
-            ram[ token->line - 1 ] = token->value;
-            const auto& next_token { *( token + 1 ) };
-
-            if ( next_token.type_ != token::type::newline )
-            {
-                errors_.report( "No newline after argument", next_token );
-            }
-        }
+        ram[ i++ ] = line_interpreter { line, errors_ }.parse_line().value_or( 0 );
     }
 
     check_for_errors();
@@ -93,9 +53,10 @@ void interpreter::check_for_errors()
 {
     if ( errors_.has_errors() )
     {
+        auto count = errors_.count();
         errors_.print_errors();
         errors_.clear();
-        throw std::runtime_error( make_halt_message( errors_.count() ) );
+        throw std::runtime_error( make_halt_message( count ) );
     }
 }
 

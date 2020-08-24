@@ -17,7 +17,7 @@ public:
 private:
     void check_for_errors();
 
-    std::vector<token> tokens_;
+    std::vector<std::vector<token>> tokens_;
     error_reporter errors_;
 };
 

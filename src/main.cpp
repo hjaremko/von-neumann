@@ -1,7 +1,6 @@
 #include "machine.hpp"
 #include "parsing/cli_parser.hpp"
 
-#include <cxxopts.hpp>
 #include <fstream>
 
 void run_machine( vnm::machine& pmc,

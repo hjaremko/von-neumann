@@ -14,17 +14,18 @@ TEST_CASE( "interpreter", "[interpreter]" )
                                    "STORE $ 3\n"
                                    "LOAD @ 1; comment\n"
                                    "JNEG $ 24\n"
+                                   "123\n"
                                    "STOP;" } };
         auto ss { std::stringstream { input } };
         auto actual = interpreter { ss }.interpret();
 
-        REQUIRE( actual[ word { 0 } ] == word { "LOAD", "@", 1 } );
-        REQUIRE( actual[ word { 1 } ] == word { "DIV", "@", 0 } );
-        REQUIRE( actual[ word { 2 } ] == word { "STORE", "$", 3 } );
-        REQUIRE( actual[ word { 3 } ] == word { "LOAD", "@", 1 } );
-        REQUIRE( actual[ word { 4 } ] == word { "JNEG", "$", 24 } );
-        REQUIRE( actual[ word { 5 } ] == word { "STOP", "$", 0 } );
-        REQUIRE( actual[ word { 6 } ] == word { 0 } );
+        REQUIRE( actual[ 0 ] == word { "LOAD", "@", 1 } );
+        REQUIRE( actual[ 1 ] == word { "DIV", "@", 0 } );
+        REQUIRE( actual[ 2 ] == word { "STORE", "$", 3 } );
+        REQUIRE( actual[ 3 ] == word { "LOAD", "@", 1 } );
+        REQUIRE( actual[ 4 ] == word { "JNEG", "$", 24 } );
+        REQUIRE( actual[ 5 ] == 123 );
+        REQUIRE( actual[ 6 ] == stop );
     }
 
     SECTION( "negative arguments are parsed correctly" )
@@ -36,9 +37,24 @@ TEST_CASE( "interpreter", "[interpreter]" )
         auto ss { std::stringstream { input } };
         auto actual = interpreter { ss }.interpret();
 
-        REQUIRE( actual[ word { 0 } ] == word { "STORE", "$", static_cast<word::type>( -5 ) } );
-        REQUIRE( actual[ word { 1 } ] == word { static_cast<word::type>( -123 ) } );
-        REQUIRE( actual[ word { 2 } ] == stop );
+        REQUIRE( actual[ 0 ] == word { "STORE", "$", static_cast<word::type>( -5 ) } );
+        REQUIRE( actual[ 1 ] == word { static_cast<word::type>( -123 ) } );
+        REQUIRE( actual[ 2 ] == stop );
+    }
+
+    SECTION( "newlines are ignored" )
+    {
+        auto input { std::string { "\n"
+                                   "\n"
+                                   "\n"
+                                   "LOAD @ 1; comment\n"
+                                   "\n"
+                                   "STOP\n"
+                                   "\n"
+                                   "\n" } };
+        auto ss { std::stringstream { input } };
+        auto actual = interpreter { ss }.interpret();
+        REQUIRE( actual[ 5 ] == stop );
     }
 }
 
@@ -102,6 +118,15 @@ TEST_CASE( "input errors detection", "[interpreter]" )
                                    "STORE $ 3 LOAD $ 3\n"
                                    "LOAD @ 1\n"
                                    "JNEG $ 24\n"
+                                   "STOP" } };
+        auto ss { std::stringstream { input } };
+
+        REQUIRE_THROWS( interpreter { ss }.interpret() );
+    }
+
+    SECTION( "only one number per line" )
+    {
+        auto input { std::string { "123 123 123\n"
                                    "STOP" } };
         auto ss { std::stringstream { input } };
 

@@ -10,6 +10,7 @@ namespace vnm
 scanner::scanner( std::string source, error_reporter& errors )
     : source_( std::move( source ) ), errors_( errors )
 {
+    tokens_.emplace_back();
 }
 
 auto scanner::at_end() const -> bool
@@ -36,7 +37,7 @@ void scanner::scan_token()
         break;
 
     case '\n':
-        add_token( token::type::newline );
+        add_newline_token( token::type::newline );
         line_++;
         break;
     case ';':
@@ -70,7 +71,7 @@ void scanner::scan_token()
     }
 }
 
-auto scanner::scan_tokens() -> std::vector<token>
+auto scanner::scan_tokens() -> std::vector<std::vector<token>>
 {
     while ( !at_end() )
     {
@@ -88,12 +89,18 @@ auto scanner::advance() -> char
 
 void scanner::add_token( token::type token_type )
 {
-    tokens_.emplace_back( token_type, source_.substr( start_, current_ - start_ ), line_ );
+    tokens_.back().emplace_back( token_type, source_.substr( start_, current_ - start_ ), line_ );
+}
+
+void scanner::add_newline_token( token::type token_type )
+{
+    add_token( token_type );
+    tokens_.emplace_back();
 }
 
 void scanner::add_token( token::type token_type, int num )
 {
-    tokens_.emplace_back( token_type, num, line_ );
+    tokens_.back().emplace_back( token_type, num, line_ );
 }
 
 auto scanner::peek() const -> char

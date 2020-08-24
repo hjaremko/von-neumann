@@ -15,6 +15,7 @@ set(TEST_TARGET_SOURCES
         ${SOURCE_DIR}/parsing/error_reporter.cpp
         ${SOURCE_DIR}/parsing/error.cpp
         ${SOURCE_DIR}/parsing/interpreter.cpp
+        ${SOURCE_DIR}/parsing/line_interpreter.cpp
         ${SOURCE_DIR}/parsing/scanner.cpp
         )
 
