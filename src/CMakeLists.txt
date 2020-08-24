@@ -20,4 +20,4 @@ add_executable(${PROJECT_NAME}
         ${TARGET_SOURCES}
         )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE project_warnings)
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)

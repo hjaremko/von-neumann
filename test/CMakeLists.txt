@@ -28,5 +28,6 @@ set(TEST_SOURCES
         interpreter_test.cpp
         )
 
-add_executable(tests ${TEST_SOURCES})
-target_link_libraries(tests Catch2::Catch)
+add_executable(${PROJECT_NAME} ${TEST_SOURCES})
+target_link_libraries(${PROJECT_NAME} Catch2::Catch)
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
