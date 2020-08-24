@@ -13,7 +13,8 @@ namespace vnm
 class line_interpreter
 {
 public:
-    explicit line_interpreter( const std::vector<token>& line, error_reporter& errors );
+    explicit line_interpreter( const std::vector<token>& line,
+                               error_reporter& errors );
     auto parse_line() -> std::optional<word>;
 
 private:

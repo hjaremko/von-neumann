@@ -75,7 +75,8 @@ public:
 
     [[nodiscard]] constexpr auto get_code() const -> instruction
     {
-        return static_cast<instruction>( word_ & static_cast<type>( mask::code ) );
+        return static_cast<instruction>( word_ &
+                                         static_cast<type>( mask::code ) );
     }
 
     [[nodiscard]] constexpr auto get_mode() const -> mode

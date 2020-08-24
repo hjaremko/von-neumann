@@ -40,7 +40,8 @@ public:
     static constexpr auto size { S };
 
 private:
-    [[nodiscard]] auto make_exception_message( const word& addr ) const -> std::string
+    [[nodiscard]] auto make_exception_message( const word& addr ) const
+        -> std::string
     {
         std::stringstream ss;
 

@@ -4,7 +4,6 @@
 #include "parsing/error.hpp"
 #include "token.hpp"
 
-#include <string_view>
 #include <vector>
 
 namespace vnm

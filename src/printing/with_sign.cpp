@@ -1,6 +1,7 @@
 #include "printing/with_sign.hpp"
 
 #include <iomanip>
+#include <sstream>
 
 namespace vnm::print_policy
 {
@@ -18,7 +19,8 @@ void with_sign::print_word( std::ostream& os_, const word& rhs )
         }
         else
         {
-            ss << std::left << std::setw( WORD_WIDTH ) << instructions_to_str.at( rhs.get_code() )
+            ss << std::left << std::setw( WORD_WIDTH )
+               << instructions_to_str.at( rhs.get_code() )
                << mode_to_str.at( rhs.get_mode() ) << ' ';
             const auto t { s { *rhs.get_arg() } };
             ss << t.val;

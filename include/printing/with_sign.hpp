@@ -1,7 +1,6 @@
 #ifndef VON_NEUMANN_SIGNED_HPP
 #define VON_NEUMANN_SIGNED_HPP
 
-#include "machine.hpp"
 #include "word.hpp"
 
 namespace vnm::print_policy

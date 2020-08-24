@@ -3,7 +3,7 @@ AccessModifierOffset: -4
 AlignAfterOpenBracket: Align
 AlignTrailingComments: true
 AllowAllParametersOfDeclarationOnNextLine: true
-#AllowAllArgumentsOnNextLine: true
+AllowAllArgumentsOnNextLine: true
 AllowShortBlocksOnASingleLine: Never
 AllowShortCaseLabelsOnASingleLine: false
 AllowShortFunctionsOnASingleLine: None
@@ -14,7 +14,7 @@ AlwaysBreakTemplateDeclarations: Yes
 BinPackArguments: false
 BinPackParameters: false
 BreakBeforeBraces: Allman
-ColumnLimit: 100
+ColumnLimit: 80
 Cpp11BracedListStyle: false
 IncludeBlocks: Regroup
 IndentWidth: 4

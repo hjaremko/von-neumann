@@ -1,10 +1,9 @@
 #include "printing/normal.hpp"
 
-#include "machine.hpp"
 #include "word.hpp"
 
-#include <bitset>
 #include <iomanip>
+#include <sstream>
 
 namespace vnm::print_policy
 {
@@ -18,7 +17,8 @@ void normal::print_word( std::ostream& os_, const word& rhs )
     {
         rhs.get_code() == instruction::STOP
             ? ss << "STOP"
-            : ss << std::left << std::setw( WORD_WIDTH ) << instructions_to_str.at( rhs.get_code() )
+            : ss << std::left << std::setw( WORD_WIDTH )
+                 << instructions_to_str.at( rhs.get_code() )
                  << mode_to_str.at( rhs.get_mode() ) << ' ' << *rhs.get_arg();
     }
     else if ( *rhs != 0 )

@@ -2,12 +2,12 @@
 
 #include <iostream>
 #include <sstream>
-#include <utility>
 
 namespace
 {
 
-auto get_token_column( const token& invalid_token, const std::string& line ) -> unsigned int
+auto get_token_column( const token& invalid_token, const std::string& line )
+    -> unsigned int
 {
     auto token_pos = line.find( invalid_token.lexeme );
 
@@ -21,11 +21,13 @@ auto get_token_column( const token& invalid_token, const std::string& line ) -> 
 
 } // namespace
 
-vnm::error_reporter::error_reporter( std::string source ) : source_( std::move( source ) )
+vnm::error_reporter::error_reporter( std::string source )
+    : source_( std::move( source ) )
 {
 }
 
-void vnm::error_reporter::report( const std::string& error_message, const token& invalid_token )
+void vnm::error_reporter::report( const std::string& error_message,
+                                  const token& invalid_token )
 {
     auto line = get_line_containing_token( invalid_token );
     auto column = get_token_column( invalid_token, line );
@@ -50,7 +52,8 @@ auto vnm::error_reporter::count() const -> unsigned int
     return errors_.size();
 }
 
-auto vnm::error_reporter::get_line_containing_token( const token& invalid_token ) -> std::string
+auto vnm::error_reporter::get_line_containing_token(
+    const token& invalid_token ) -> std::string
 {
     auto source_ss { std::stringstream { std::string { source_ } } };
     auto line { std::string {} };

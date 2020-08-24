@@ -8,26 +8,29 @@
 #include "with_sign.hpp"
 #include "word.hpp"
 
-#include <bitset>
-#include <cxxopts.hpp>
-
 namespace vnm
 {
 template <typename word_printer>
 class printer : public printer_interface
 {
 public:
-    printer( std::ostream& os, const machine& machine ) : os_( os ), machine_( machine )
+    printer( std::ostream& os, const machine& machine )
+        : os_( os ), machine_( machine )
     {
     }
 
     void print_registers_table() const override
     {
-        os_ << "--------------------------------------------------" << std::endl;
-        os_ << "|         IR          |    |    |    |           |" << std::endl;
-        os_ << "----------------------| PC | OR | AC |   next    |" << std::endl;
-        os_ << "| code  | mode | arg  |    |    |    |           |" << std::endl;
-        os_ << "--------------------------------------------------" << std::endl;
+        os_ << "--------------------------------------------------"
+            << std::endl;
+        os_ << "|         IR          |    |    |    |           |"
+            << std::endl;
+        os_ << "----------------------| PC | OR | AC |   next    |"
+            << std::endl;
+        os_ << "| code  | mode | arg  |    |    |    |           |"
+            << std::endl;
+        os_ << "--------------------------------------------------"
+            << std::endl;
     }
 
     void print_registers() const override
@@ -44,7 +47,8 @@ public:
         const auto& ac { machine_.accumulator };
         const auto& next { machine_.ram[ pc ] };
 
-        os_ << ( ir.is_instruction() ? instructions_to_str.at( ir_code ) : " " );
+        os_ << ( ir.is_instruction() ? instructions_to_str.at( ir_code )
+                                     : " " );
 
         os_ << "|  " << std::setw( 4 ) << mode_to_str.at( ir_mode );
         os_ << "| " << std::setw( 5 );
@@ -55,12 +59,14 @@ public:
         os_ << "| " << std::setw( 10 );
         word_printer::print_word( os_, next );
         os_ << "|" << std::endl;
-        os_ << "--------------------------------------------------" << std::endl;
+        os_ << "--------------------------------------------------"
+            << std::endl;
     }
 
     void print_memory() const override
     {
-        os_ << "--------------------------------------------------" << std::endl;
+        os_ << "--------------------------------------------------"
+            << std::endl;
 
         word::type i = 0;
         // for ( ; machine_.memory.get( i ) != vnm::stop; ++i )
@@ -71,7 +77,8 @@ public:
 
         print_memory_cell( i );
 
-        os_ << "--------------------------------------------------" << std::endl;
+        os_ << "--------------------------------------------------"
+            << std::endl;
     }
 
 private:

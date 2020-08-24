@@ -28,13 +28,13 @@ jobs:
         run: |
           cd build
           cmake -G Ninja ..
-          cmake --build .
+          cmake --build . --config Debug
       - name: Build
         if: runner.os == 'Windows'
         run: |
           cd build
           cmake ..
-          cmake --build . --config Release
+          cmake --build . --config Debug
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:

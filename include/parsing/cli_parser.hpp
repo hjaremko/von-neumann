@@ -17,8 +17,9 @@ public:
     cli_parser( int argc, char** argv );
 
     [[nodiscard]] auto make_machine() const -> machine;
-    [[nodiscard]] auto make_printer( const machine& ) const -> std::unique_ptr<printer_interface>;
-    [[nodiscard]] auto get_parse_result() const -> const cxxopts::ParseResult&;
+    [[nodiscard]] auto make_printer( const machine& ) const
+        -> std::unique_ptr<printer_interface>;
+    [[nodiscard]] auto get_parse_result() const -> cxxopts::ParseResult;
 
 private:
     auto get_input_filename() const -> std::filesystem::path;

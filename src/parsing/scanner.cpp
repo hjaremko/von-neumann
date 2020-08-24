@@ -89,7 +89,8 @@ auto scanner::advance() -> char
 
 void scanner::add_token( token::type token_type )
 {
-    tokens_.back().emplace_back( token_type, source_.substr( start_, current_ - start_ ), line_ );
+    tokens_.back().emplace_back(
+        token_type, source_.substr( start_, current_ - start_ ), line_ );
 }
 
 void scanner::add_newline_token( token::type token_type )
@@ -115,8 +116,8 @@ void scanner::number()
         advance();
     }
 
-    const auto snum { source_.substr( start_, current_ - start_ ) };
-    add_token( token::type::number, std::stoi( snum ) );
+    add_token( token::type::number,
+               std::stoi( source_.substr( start_, current_ - start_ ) ) );
 }
 
 void scanner::string()
@@ -134,8 +135,9 @@ void scanner::string()
     }
     else
     {
-        errors_.report( "Invalid instruction",
-                        token { token::type::number, str, static_cast<int>( line_ ) } );
+        errors_.report(
+            "Invalid instruction",
+            token { token::type::number, str, static_cast<int>( line_ ) } );
     }
 }
 

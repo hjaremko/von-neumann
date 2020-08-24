@@ -19,7 +19,8 @@ auto make_halt_message( unsigned int error_count ) -> std::string
 auto read_input( std::istream& istream ) -> std::string
 {
     istream.exceptions( std::ifstream::failbit | std::ifstream::badbit );
-    return { std::istreambuf_iterator<char> { istream }, std::istreambuf_iterator<char> {} };
+    return { std::istreambuf_iterator<char> { istream },
+             std::istreambuf_iterator<char> {} };
 }
 
 } // namespace
@@ -42,7 +43,8 @@ auto interpreter::interpret() -> machine::mem_t
 
     for ( const auto& line : tokens_ )
     {
-        ram[ i++ ] = line_interpreter { line, errors_ }.parse_line().value_or( 0 );
+        ram[ i++ ] =
+            line_interpreter { line, errors_ }.parse_line().value_or( 0 );
     }
 
     check_for_errors();

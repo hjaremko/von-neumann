@@ -23,7 +23,8 @@ auto is_stop( const token& token ) -> bool
 
 } // namespace
 
-line_interpreter::line_interpreter( const std::vector<token>& line, error_reporter& errors )
+line_interpreter::line_interpreter( const std::vector<token>& line,
+                                    error_reporter& errors )
     : line_( line ), errors_( errors )
 {
 }

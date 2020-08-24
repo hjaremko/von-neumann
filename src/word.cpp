@@ -20,5 +20,6 @@ auto vnm::operator>>( std::istream& os, vnm::word& rhs ) -> std::istream&
 
 auto vnm::operator==( const vnm::word& lhs, const vnm::word& rhs ) -> bool
 {
-    return lhs.get() == rhs.get() && lhs.is_instruction() == rhs.is_instruction();
+    return lhs.get() == rhs.get() &&
+           lhs.is_instruction() == rhs.is_instruction();
 }

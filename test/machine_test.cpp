@@ -10,10 +10,11 @@ TEST_CASE( "example codes executed successfully", "[machine]" )
     SECTION( "array sum example" )
     {
         const std::vector<word> code = {
-            { "LOAD", "$", 0 },  { "STORE", "$", 19 }, { "LOAD", "$", 21 },  { "STORE", "$", 18 },
-            { "LOAD", "$", 21 }, { "ADD", "@", 20 },   { "SUB", "@", 18 },   { "JZERO", "$", 15 },
-            { "LOAD", "@", 19 }, { "ADD", "&", 18 },   { "STORE", "$", 19 }, { "LOAD", "@", 18 },
-            { "ADD", "$", 1 },   { "STORE", "$", 18 }, { "JUMP", "$", 4 },
+            { "LOAD", "$", 0 },   { "STORE", "$", 19 }, { "LOAD", "$", 21 },
+            { "STORE", "$", 18 }, { "LOAD", "$", 21 },  { "ADD", "@", 20 },
+            { "SUB", "@", 18 },   { "JZERO", "$", 15 }, { "LOAD", "@", 19 },
+            { "ADD", "&", 18 },   { "STORE", "$", 19 }, { "LOAD", "@", 18 },
+            { "ADD", "$", 1 },    { "STORE", "$", 18 }, { "JUMP", "$", 4 },
         };
 
         auto i { word::type { 0 } };
@@ -180,7 +181,8 @@ TEST_CASE( "SHZ tests", "[machine]" )
     {
         auto w { word::type { 5 } };
         machine.put_to_memory( { "LOAD", "$", w }, 0 );
-        machine.put_to_memory( { "SHZ", "$", static_cast<word::type>( -1 ) }, 1 );
+        machine.put_to_memory( { "SHZ", "$", static_cast<word::type>( -1 ) },
+                               1 );
         machine.put_to_memory( stop, 5 );
 
         while ( machine.execute() )
@@ -219,7 +221,8 @@ TEST_CASE( "SHC tests", "[machine]" )
         auto w { word::type { 0b1100'0000'0000'0010 } };
         machine.put_to_memory( word { w }, 0 );
         machine.put_to_memory( word { "LOAD", "@", 0 }, 1 );
-        machine.put_to_memory( word { "SHC", "$", static_cast<word::type>( -2 ) }, 2 );
+        machine.put_to_memory(
+            word { "SHC", "$", static_cast<word::type>( -2 ) }, 2 );
         machine.put_to_memory( stop, 5 );
 
         while ( machine.execute() )

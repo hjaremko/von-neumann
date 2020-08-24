@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(von-neumann LANGUAGES CXX VERSION 0.1.2)
+project(von-neumann LANGUAGES CXX VERSION 0.2.0)
 
 if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)

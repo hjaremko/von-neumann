@@ -127,8 +127,8 @@ auto machine::execute() -> bool
 
             if ( operand_reg.is_arg_negative() )
             {
-                auto shift =
-                    static_cast<word::type>( -arg { static_cast<int16_t>( *operand_reg ) }.val );
+                auto shift = static_cast<word::type>(
+                    -arg { static_cast<int16_t>( *operand_reg ) }.val );
                 accumulator = word( *accumulator >> shift );
             }
             else if ( !operand_reg.is_arg_negative() )
@@ -153,12 +153,13 @@ auto machine::execute() -> bool
                 return value >> count | value << ( 16U - count );
             };
 
-            accumulator =
-                word( operand_reg.is_arg_negative()
-                          ? rot_right( *accumulator,
-                                       static_cast<uint16_t>(
-                                           -arg { static_cast<int16_t>( *operand_reg ) }.val ) )
-                          : rot_left( *accumulator, *operand_reg ) );
+            accumulator = word(
+                operand_reg.is_arg_negative()
+                    ? rot_right( *accumulator,
+                                 static_cast<uint16_t>( -arg {
+                                     static_cast<int16_t>( *operand_reg ) }
+                                                             .val ) )
+                    : rot_left( *accumulator, *operand_reg ) );
 
             break;
         }

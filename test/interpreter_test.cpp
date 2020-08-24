@@ -37,7 +37,8 @@ TEST_CASE( "interpreter", "[interpreter]" )
         auto ss { std::stringstream { input } };
         auto actual = interpreter { ss }.interpret();
 
-        REQUIRE( actual[ 0 ] == word { "STORE", "$", static_cast<word::type>( -5 ) } );
+        REQUIRE( actual[ 0 ] ==
+                 word { "STORE", "$", static_cast<word::type>( -5 ) } );
         REQUIRE( actual[ 1 ] == word { static_cast<word::type>( -123 ) } );
         REQUIRE( actual[ 2 ] == stop );
     }

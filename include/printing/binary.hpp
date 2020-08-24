@@ -1,11 +1,9 @@
 #ifndef VON_NEUMANN_BINARY_HPP
 #define VON_NEUMANN_BINARY_HPP
 
-#include "machine.hpp"
 #include "word.hpp"
 
-#include <bitset>
-#include <cxxopts.hpp>
+#include <ostream>
 
 namespace vnm::print_policy
 {

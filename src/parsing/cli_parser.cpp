@@ -9,16 +9,20 @@ namespace
 
 auto parse_command_line( int argc, char** argv ) -> cxxopts::ParseResult
 {
-    static auto options { cxxopts::Options { *argv, "Von Neumann Machine emulator" } };
+    static auto options { cxxopts::Options { *argv,
+                                             "Von Neumann Machine emulator" } };
     options.positional_help( "[optional args]" ).show_positional_help();
 
-    options.add_options()( "h,help", "Show help" )(
-        "f,file", "Path to the VNM program file", cxxopts::value<std::string>() )(
-        "c,counter", "Set initial program counter value", cxxopts::value<int>() )(
-        "s,save", "Save output to file" )( "r,register",
-                                           "Print register values before every cycle" )(
-        "m,memory", "Print memory before every cycle" )( "b,binary",
-                                                         "Print instruction arguments in binary" )(
+    options.add_options()( "h,help",
+                           "Show help" )( "f,file",
+                                          "Path to the VNM program file",
+                                          cxxopts::value<std::string>() )(
+        "c,counter",
+        "Set initial program counter value",
+        cxxopts::value<int>() )( "s,save", "Save output to file" )(
+        "r,register", "Print register values before every cycle" )(
+        "m,memory", "Print memory before every cycle" )(
+        "b,binary", "Print instruction arguments in binary" )(
         "d,signed", "Print instruction arguments as 9-bit signed integers" );
 
     auto result = options.parse( argc, argv );
@@ -32,7 +36,8 @@ auto parse_command_line( int argc, char** argv ) -> cxxopts::ParseResult
     return result;
 }
 
-auto open_output_file( std::fstream& out_file, std::string_view filename ) -> std::ostream*
+auto open_output_file( std::fstream& out_file, std::string_view filename )
+    -> std::ostream*
 {
     auto ss { std::stringstream {} };
 
@@ -73,7 +78,9 @@ auto vnm::cli_parser::get_input_filename() const -> std::filesystem::path
 
 auto vnm::cli_parser::get_starting_pc() const -> vnm::word
 {
-    return parse_result.count( "counter" ) ? parse_result[ "counter" ].as<vnm::word::type>() : 0;
+    return parse_result.count( "counter" )
+               ? parse_result[ "counter" ].as<vnm::word::type>()
+               : 0;
 }
 
 auto vnm::cli_parser::make_printer( const vnm::machine& m ) const
@@ -96,14 +103,16 @@ auto vnm::cli_parser::make_printer( const vnm::machine& m ) const
     return std::make_unique<printer<normal>>( *output_stream, m );
 }
 
-auto vnm::cli_parser::get_output_stream( std::fstream& out_file ) const -> std::ostream*
+auto vnm::cli_parser::get_output_stream( std::fstream& out_file ) const
+    -> std::ostream*
 {
     return parse_result.count( "save" )
-               ? open_output_file( out_file, get_input_filename().stem().string() )
+               ? open_output_file( out_file,
+                                   get_input_filename().stem().string() )
                : &std::cout;
 }
 
-auto vnm::cli_parser::get_parse_result() const -> const cxxopts::ParseResult&
+auto vnm::cli_parser::get_parse_result() const -> cxxopts::ParseResult
 {
     return parse_result;
 }
