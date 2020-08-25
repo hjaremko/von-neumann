@@ -1,6 +1,6 @@
 #include "parsing/scanner.hpp"
 
-#include "instruction_mappings.hpp"
+#include "instruction_map.hpp"
 
 #include <cctype>
 

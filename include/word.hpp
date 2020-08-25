@@ -1,7 +1,8 @@
 #ifndef WORD_HPP
 #define WORD_HPP
 
-#include "instruction_mappings.hpp"
+#include "instruction_map.hpp"
+#include "mode_map.hpp"
 
 #include <cstdint>
 
