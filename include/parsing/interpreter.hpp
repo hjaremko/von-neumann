@@ -15,6 +15,7 @@ public:
     [[nodiscard]] auto interpret() -> machine::mem_t;
 
 private:
+    auto interpret_line( const std::vector<token>& line ) -> word;
     void check_for_errors();
 
     std::vector<std::vector<token>> tokens_;

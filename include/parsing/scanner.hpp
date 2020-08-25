@@ -19,11 +19,16 @@ private:
     auto advance() -> char;
     [[nodiscard]] auto peek() const -> char;
     [[nodiscard]] auto at_end() const -> bool;
+    [[nodiscard]] auto make_token_string() const -> std::string;
+    [[nodiscard]] auto make_token( token::type token_type ) const -> token;
+    void add_token( token&& t );
     void add_token( token::type );
-    void add_newline_token( token::type );
-    void add_token( token::type, int );
-    void number();
-    void string();
+    void add_int_token();
+    void add_newline_token();
+    void ignore_comment();
+    void parse_token( char c );
+    void parse_number();
+    void parse_string();
 
     std::string source_;
     error_reporter& errors_;

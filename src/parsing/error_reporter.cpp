@@ -10,13 +10,7 @@ auto get_token_column( const token& invalid_token, const std::string& line )
     -> unsigned int
 {
     auto token_pos = line.find( invalid_token.lexeme );
-
-    if ( token_pos == std::string::npos )
-    {
-        return line.length() - 1;
-    }
-
-    return token_pos + 1;
+    return token_pos == std::string::npos ? line.length() - 1 : token_pos + 1;
 }
 
 } // namespace

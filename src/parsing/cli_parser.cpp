@@ -36,14 +36,19 @@ auto parse_command_line( int argc, char** argv ) -> cxxopts::ParseResult
     return result;
 }
 
-auto open_output_file( std::fstream& out_file, std::string_view filename )
-    -> std::ostream*
+auto make_output_filename( const std::filesystem::path& input_filename )
+    -> std::string
 {
     auto ss { std::stringstream {} };
+    ss << "output-" << input_filename.stem().string() << ".txt";
+    return ss.str();
+}
 
-    ss << "output-" << filename << ".txt";
-    out_file.open( ss.str().c_str(), std::ios::out | std::ios::trunc );
-
+auto open_output_file( std::fstream& out_file,
+                       const std::filesystem::path& filename ) -> std::ostream*
+{
+    out_file.open( make_output_filename( filename ),
+                   std::ios::out | std::ios::trunc );
     return &out_file;
 }
 
@@ -87,7 +92,7 @@ auto vnm::cli_parser::make_printer( const vnm::machine& m ) const
     -> std::unique_ptr<printer_interface>
 {
     using namespace print_policy;
-    auto out_file { std::fstream {} };
+    auto out_file { std::fstream {} }; // TODO: check if this crashes
     auto* output_stream { get_output_stream( out_file ) };
 
     if ( parse_result.count( "binary" ) )
@@ -107,8 +112,7 @@ auto vnm::cli_parser::get_output_stream( std::fstream& out_file ) const
     -> std::ostream*
 {
     return parse_result.count( "save" )
-               ? open_output_file( out_file,
-                                   get_input_filename().stem().string() )
+               ? open_output_file( out_file, get_input_filename() )
                : &std::cout;
 }
 

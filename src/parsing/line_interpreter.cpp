@@ -13,12 +13,7 @@ auto is_number( const token& token ) -> bool
 
 auto is_stop( const token& token ) -> bool
 {
-    if ( token.type_ == token::type::instruction )
-    {
-        return token.lexeme == "STOP";
-    }
-
-    return false;
+    return token.type_ == token::type::instruction && token.lexeme == "STOP";
 }
 
 } // namespace
@@ -36,12 +31,7 @@ auto line_interpreter::parse_line() -> std::optional<word>
         return std::nullopt;
     }
 
-    if ( is_number( *line_.begin() ) )
-    {
-        return parse_number();
-    }
-
-    return parse_instruction();
+    return is_number( *line_.begin() ) ? parse_number() : parse_instruction();
 }
 
 auto line_interpreter::parse_instruction() -> std::optional<word>

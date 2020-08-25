@@ -3,7 +3,6 @@
 #include "parsing/line_interpreter.hpp"
 #include "parsing/scanner.hpp"
 
-#include <algorithm>
 #include <fstream>
 
 namespace
@@ -43,12 +42,16 @@ auto interpreter::interpret() -> machine::mem_t
 
     for ( const auto& line : tokens_ )
     {
-        ram[ i++ ] =
-            line_interpreter { line, errors_ }.parse_line().value_or( 0 );
+        ram[ i++ ] = interpret_line( line );
     }
 
     check_for_errors();
     return ram;
+}
+
+auto interpreter::interpret_line( const std::vector<token>& line ) -> word
+{
+    return line_interpreter { line, errors_ }.parse_line().value_or( 0 );
 }
 
 void interpreter::check_for_errors()

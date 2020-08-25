@@ -15,8 +15,9 @@ auto vnm::error::make_error_message() const -> std::string
 
 auto vnm::error::make_tildes() const -> std::string
 {
-    return std::string( invalid_token.lexeme.length() != 0 ? invalid_token.lexeme.length() - 1 : 0U,
-                        '~' );
+    return std::string(
+        !invalid_token.lexeme.empty() ? invalid_token.lexeme.length() - 1 : 0U,
+        '~' );
 }
 
 auto vnm::error::make_spaces( unsigned int amount ) -> std::string

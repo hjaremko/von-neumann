@@ -30,44 +30,19 @@ void scanner::scan_token()
     case '+':
         add_token( token::type::mode );
         break;
-
     case ' ':
     case '\r':
     case '\t':
         break;
-
     case '\n':
-        add_newline_token( token::type::newline );
-        line_++;
+        add_newline_token();
         break;
     case ';':
-        while ( peek() != '\n' && !at_end() )
-        {
-            advance();
-        }
-
+        ignore_comment();
         break;
-
     default:
-    {
-        if ( std::isdigit( c ) || c == '-' )
-        {
-            number();
-        }
-        else if ( std::isalpha( c ) )
-        {
-            string();
-        }
-        else
-        {
-            errors_.report( "Unexpected character",
-                            token { token::type::number,
-                                    source_.substr( start_, current_ - start_ ),
-                                    static_cast<int>( line_ ) } );
-        }
-
+        parse_token( c );
         break;
-    }
     }
 }
 
@@ -87,21 +62,62 @@ auto scanner::advance() -> char
     return source_.at( current_++ );
 }
 
+auto scanner::make_token_string() const -> std::string
+{
+    return source_.substr( start_, current_ - start_ );
+}
+
+auto scanner::make_token( token::type token_type ) const -> token
+{
+    return { token_type, make_token_string(), static_cast<int>( line_ ) };
+}
+
+void scanner::add_token( token&& t )
+{
+    tokens_.back().push_back( std::move( t ) );
+}
+
 void scanner::add_token( token::type token_type )
 {
+    tokens_.back().push_back( make_token( token_type ) );
+}
+
+void scanner::add_int_token()
+{
     tokens_.back().emplace_back(
-        token_type, source_.substr( start_, current_ - start_ ), line_ );
+        token::type::number, std::stoi( make_token_string() ), line_ );
 }
 
-void scanner::add_newline_token( token::type token_type )
+void scanner::add_newline_token()
 {
-    add_token( token_type );
+    add_token( token::type::newline );
     tokens_.emplace_back();
+    line_++;
 }
 
-void scanner::add_token( token::type token_type, int num )
+void scanner::ignore_comment()
 {
-    tokens_.back().emplace_back( token_type, num, line_ );
+    while ( peek() != '\n' && !at_end() )
+    {
+        advance();
+    }
+}
+
+void scanner::parse_token( char c )
+{
+    if ( std::isdigit( c ) || c == '-' )
+    {
+        parse_number();
+    }
+    else if ( std::isalpha( c ) )
+    {
+        parse_string();
+    }
+    else
+    {
+        errors_.report( "Unexpected character",
+                        make_token( token::type::number ) );
+    }
 }
 
 auto scanner::peek() const -> char
@@ -109,35 +125,32 @@ auto scanner::peek() const -> char
     return at_end() ? '\0' : source_.at( current_ );
 }
 
-void scanner::number()
+void scanner::parse_number()
 {
     while ( std::isdigit( peek() ) )
     {
         advance();
     }
 
-    add_token( token::type::number,
-               std::stoi( source_.substr( start_, current_ - start_ ) ) );
+    add_int_token();
 }
 
-void scanner::string()
+void scanner::parse_string()
 {
     while ( std::isalpha( peek() ) && !std::isspace( peek() ) && !at_end() )
     {
         advance();
     }
 
-    const auto str { source_.substr( start_, current_ - start_ ) };
+    auto string_token = make_token( token::type::instruction );
 
-    if ( instructions_from_str.count( str ) )
+    if ( instructions_from_str.count( string_token.lexeme ) )
     {
-        add_token( token::type::instruction );
+        add_token( std::move( string_token ) );
     }
     else
     {
-        errors_.report(
-            "Invalid instruction",
-            token { token::type::number, str, static_cast<int>( line_ ) } );
+        errors_.report( "Invalid instruction", string_token );
     }
 }
 
