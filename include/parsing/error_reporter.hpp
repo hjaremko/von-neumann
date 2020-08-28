@@ -22,13 +22,14 @@ public:
     ~error_reporter() = default;
 
     void report( const std::string& error_message, const token& invalid_token );
+    void report( error&& );
     void print_errors() const;
     void clear();
     [[nodiscard]] auto has_errors() const -> bool;
     [[nodiscard]] auto count() const -> unsigned int;
 
 private:
-    auto get_line_containing_token( const token& invalid_token ) -> std::string;
+//    auto get_line_containing_token( const token& invalid_token ) -> std::string;
 
     std::string source_;
     std::vector<error> errors_;

@@ -4,6 +4,7 @@
 #include "token.hpp"
 
 #include <string>
+#include <string_view>
 
 namespace vnm
 {
@@ -14,6 +15,8 @@ struct error
     unsigned int column { 0 };
     std::string line { 0 };
     std::string message;
+
+    error( token, std::string, std::string_view );
 
     [[nodiscard]] auto make_error_message() const -> std::string;
     [[nodiscard]] auto make_tildes() const -> std::string;
