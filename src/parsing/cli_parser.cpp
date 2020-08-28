@@ -1,7 +1,5 @@
 #include "parsing/cli_parser.hpp"
 
-#include "printing/printer.hpp"
-
 #include <fstream>
 
 namespace
@@ -9,8 +7,8 @@ namespace
 
 auto parse_command_line( int argc, char** argv ) -> cxxopts::ParseResult
 {
-    static auto options { cxxopts::Options { *argv,
-                                             "Von Neumann Machine emulator" } };
+    static auto options { cxxopts::Options {
+        *argv, "Von Neumann Machine emulator v0.2.0" } };
     options.positional_help( "[optional args]" ).show_positional_help();
 
     options.add_options()( "h,help",
@@ -36,22 +34,6 @@ auto parse_command_line( int argc, char** argv ) -> cxxopts::ParseResult
     return result;
 }
 
-auto make_output_filename( const std::filesystem::path& input_filename )
-    -> std::string
-{
-    auto ss { std::stringstream {} };
-    ss << "output-" << input_filename.stem().string() << ".txt";
-    return ss.str();
-}
-
-auto open_output_file( std::fstream& out_file,
-                       const std::filesystem::path& filename ) -> std::ostream*
-{
-    out_file.open( make_output_filename( filename ),
-                   std::ios::out | std::ios::trunc );
-    return &out_file;
-}
-
 } // namespace
 
 vnm::cli_parser::cli_parser( int argc, char** argv )
@@ -61,8 +43,7 @@ vnm::cli_parser::cli_parser( int argc, char** argv )
 
 auto vnm::cli_parser::make_machine() const -> vnm::machine
 {
-    auto input_path { get_input_filename() };
-    auto input_file { std::fstream { input_path } };
+    auto input_file { std::fstream { get_input_filename() } };
     auto pmc { vnm::machine {} };
 
     pmc.ram = vnm::interpreter { input_file }.interpret();
@@ -92,28 +73,18 @@ auto vnm::cli_parser::make_printer( const vnm::machine& m ) const
     -> std::unique_ptr<printer_interface>
 {
     using namespace print_policy;
-    auto out_file { std::fstream {} }; // TODO: check if this crashes
-    auto* output_stream { get_output_stream( out_file ) };
 
     if ( parse_result.count( "binary" ) )
     {
-        return std::make_unique<printer<binary>>( *output_stream, m );
+        return make_base_printer<binary>( m );
     }
 
     if ( parse_result.count( "signed" ) )
     {
-        return std::make_unique<printer<with_sign>>( *output_stream, m );
+        return make_base_printer<with_sign>( m );
     }
 
-    return std::make_unique<printer<normal>>( *output_stream, m );
-}
-
-auto vnm::cli_parser::get_output_stream( std::fstream& out_file ) const
-    -> std::ostream*
-{
-    return parse_result.count( "save" )
-               ? open_output_file( out_file, get_input_filename() )
-               : &std::cout;
+    return make_base_printer<normal>( m );
 }
 
 auto vnm::cli_parser::get_parse_result() const -> cxxopts::ParseResult

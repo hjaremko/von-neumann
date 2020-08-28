@@ -8,6 +8,8 @@
 #include "with_sign.hpp"
 #include "word.hpp"
 
+#include <iomanip>
+
 namespace vnm
 {
 
