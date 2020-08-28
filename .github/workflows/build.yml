@@ -21,8 +21,8 @@ jobs:
         uses: actions/cache@v2
         with:
           path: build
-          key: ${{ runner.os }}-cmake--${{ hashFiles('*') }}
-          restore-keys: ${{ runner.os }}-cmake--
+          key: ${{ runner.os }}-cmake---${{ hashFiles('*') }}
+          restore-keys: ${{ runner.os }}-cmake---
       - name: Build
         if: runner.os != 'Windows'
         run: |
