@@ -1,16 +1,18 @@
 #include "parsing/error.hpp"
 
-#include <sstream>
+#include <fmt/format.h>
 
 auto vnm::error::make_error_message() const -> std::string
 {
-    auto ss { std::stringstream {} };
-
-    ss << invalid_token.line << ":" << column << ": " << message << std::endl;
-    ss << "\t" << line << std::endl;
-    ss << "\t" << make_spaces( column - 1 ) << "^" << make_tildes();
-
-    return ss.str();
+    return fmt::format( "{}:{}: {}\n"
+                        "\t{}\n"
+                        "\t{}^{}",
+                        invalid_token.line,
+                        column,
+                        message,
+                        line,
+                        make_spaces( column - 1 ),
+                        make_tildes() );
 }
 
 auto vnm::error::make_tildes() const -> std::string

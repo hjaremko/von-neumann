@@ -1,39 +1,33 @@
 #include "printing/binary.hpp"
 
 #include <bitset>
-#include <iomanip>
-#include <sstream>
+#include <fmt/format.h>
 
-namespace vnm::print_policy
+namespace vnm::format_policy
 {
 
-void binary::print_word( std::ostream& os_, const word& rhs )
+auto binary::format( const word& rhs ) -> std::string
 {
-    constexpr auto WORD_WIDTH { 6 };
     constexpr auto ARGUMENT_SIZE { 9 };
     constexpr auto WORD_SIZE { 16 };
-    std::stringstream ss;
 
     if ( rhs.is_instruction() )
     {
-        if ( rhs.get_code() == vnm::instruction::STOP )
-        {
-            ss << "STOP";
-        }
-        else
-        {
-            ss << std::left << std::setw( WORD_WIDTH )
-               << instruction_to_str( rhs.get_code() )
-               << mode_to_str( rhs.get_mode() ) << ' ';
-            ss << std::bitset<ARGUMENT_SIZE>( *rhs.get_arg() );
-        }
-    }
-    else if ( *rhs != 0 )
-    {
-        ss << std::bitset<WORD_SIZE>( *rhs );
+        return rhs.get_code() == vnm::instruction::STOP
+                   ? "STOP"
+                   : fmt::format( "{:<5} {} {}",
+                                  instruction_to_str( rhs.get_code() ),
+                                  mode_to_str( rhs.get_mode() ),
+                                  std::bitset<ARGUMENT_SIZE>( *rhs.get_arg() )
+                                      .to_string() );
     }
 
-    os_ << ss.str();
+    if ( *rhs )
+    {
+        return fmt::format( "{}", std::bitset<WORD_SIZE>( *rhs ).to_string() );
+    }
+
+    return "";
 }
 
-} // namespace vnm::print_policy
+} // namespace vnm::format_policy

@@ -2,31 +2,29 @@
 
 #include "word.hpp"
 
-#include <iomanip>
-#include <sstream>
+#include <fmt/format.h>
 
-namespace vnm::print_policy
+namespace vnm::format_policy
 {
 
-void normal::print_word( std::ostream& os_, const word& rhs )
+auto normal::format( const word& rhs ) -> std::string
 {
-    constexpr auto WORD_WIDTH { 6 };
-    std::stringstream ss;
-
     if ( rhs.is_instruction() )
     {
-        rhs.get_code() == instruction::STOP
-            ? ss << "STOP"
-            : ss << std::left << std::setw( WORD_WIDTH )
-                 << instruction_to_str( rhs.get_code() )
-                 << mode_to_str( rhs.get_mode() ) << ' ' << *rhs.get_arg();
-    }
-    else if ( *rhs != 0 )
-    {
-        ss << *rhs;
+        return rhs.get_code() == instruction::STOP
+                   ? "STOP"
+                   : fmt::format( "{:<5} {} {}",
+                                  instruction_to_str( rhs.get_code() ),
+                                  mode_to_str( rhs.get_mode() ),
+                                  *rhs.get_arg() );
     }
 
-    os_ << ss.str();
+    if ( *rhs != 0 )
+    {
+        return fmt::format( "{}", *rhs );
+    }
+
+    return "";
 }
 
-} // namespace vnm::print_policy
+} // namespace vnm::format_policy

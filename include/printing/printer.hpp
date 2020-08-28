@@ -8,12 +8,12 @@
 #include "with_sign.hpp"
 #include "word.hpp"
 
-#include <iomanip>
+#include <fmt/ostream.h>
 
 namespace vnm
 {
 
-template <typename word_printer>
+template <typename word_formatter>
 class printer : public printer_interface
 {
 public:
@@ -24,53 +24,57 @@ public:
 
     void print_registers_table() const override
     {
-        os_ << "--------------------------------------------------\n";
-        os_ << "|         IR          |    |    |    |           |\n";
-        os_ << "----------------------| PC | OR | AC |   next    |\n";
-        os_ << "| code  | mode | arg  |    |    |    |           |\n";
-        os_ << "--------------------------------------------------\n";
+        // todo: dynamic
+        fmt::print( os_,
+                    "--------------------------------------------------\n"
+                    "|         IR          |    |    |    |           |\n"
+                    "----------------------| PC | OR | AC |   next    |\n"
+                    "| code  | mode | arg  |    |    |    |           |\n"
+                    "--------------------------------------------------\n" );
     }
 
     void print_registers() const override
     {
-        os_ << std::left;
-        os_ << "| " << std::setw( 6 );
-
         const auto& ir { machine_.instruction_reg };
         const auto& next { machine_.ram[ machine_.program_counter ] };
 
-        os_ << ( ir.is_instruction() ? instruction_to_str( ir.get_code() )
-                                     : " " );
-        os_ << "|  " << std::setw( 4 ) << mode_to_str( ir.get_mode() );
-        os_ << "| " << std::setw( 5 );
-        word_printer::print_word( os_, ir.get_arg() );
-        os_ << "| " << std::setw( 3 ) << *machine_.program_counter;
-        os_ << "| " << std::setw( 3 ) << *machine_.operand_reg;
-        os_ << "| " << std::setw( 3 ) << *machine_.accumulator;
-        os_ << "| " << std::setw( 10 );
-        word_printer::print_word( os_, next );
-        os_ << "|\n";
-        os_ << "--------------------------------------------------\n";
+        fmt::print( os_,
+                    "| {:<6}| {:<5}| {:<5}| {:<3}| {:<3}| {:<3}| {:<10}|\n"
+                    "--------------------------------------------------\n",
+                    ir.is_instruction() ? instruction_to_str( ir.get_code() )
+                                        : " ",
+                    mode_to_str( ir.get_mode() ),
+                    word_formatter::format( ir.get_arg() ),
+                    *machine_.program_counter,
+                    *machine_.operand_reg,
+                    *machine_.accumulator,
+                    word_formatter::format( next ) );
     }
 
     void print_memory() const override
     {
-        os_ << "--------------------------------------------------\n";
+        const auto print_bar = [ this ]() {
+            fmt::print(
+                os_, "--------------------------------------------------\n" );
+        };
+
+        print_bar();
 
         for ( word::type i = 0; i <= get_size(); ++i )
         {
             print_memory_cell( i );
         }
 
-        os_ << "--------------------------------------------------\n";
+        print_bar();
     }
 
 private:
     void print_memory_cell( word::type i ) const
     {
-        os_ << "[ " << std::left << std::setw( 3 ) << i << " ]: ";
-        word_printer::print_word( os_, machine_.ram[ i ] );
-        os_ << std::endl;
+        fmt::print( os_,
+                    "[ {:<3}]: {}\n",
+                    i,
+                    word_formatter::format( machine_.ram[ i ] ) );
     }
 
     [[nodiscard]] auto get_size() const -> word::type

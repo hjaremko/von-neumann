@@ -5,7 +5,7 @@
 #include "machine.hpp"
 #include "printing/file_printer.hpp"
 
-#include <cxxopts.hpp>
+#include <cxxopts/cxxopts.hpp>
 #include <filesystem>
 #include <fstream>
 
@@ -30,10 +30,8 @@ private:
     auto make_base_printer( const vnm::machine& m ) const
         -> std::unique_ptr<printer_interface>
     {
-        const auto make_output_filename = []( const auto& input_filename ) {
-            auto ss { std::stringstream {} };
-            ss << "output-" << input_filename.stem().string() << ".txt";
-            return ss.str();
+        const auto make_output_filename = []( const auto& input_path ) {
+            return fmt::format( "output-{}.txt", input_path.stem().string() );
         };
 
         if ( parse_result.count( "save" ) )

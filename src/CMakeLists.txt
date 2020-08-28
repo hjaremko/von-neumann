@@ -13,6 +13,8 @@ set(TARGET_SOURCES
         printing/normal.cpp
         printing/with_sign.cpp
         printing/binary.cpp
+        ${FMT_SOURCE_DIR}/format.cc
+        ${FMT_SOURCE_DIR}/os.cc
         )
 
 add_executable(${PROJECT_NAME}

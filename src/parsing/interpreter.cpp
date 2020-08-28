@@ -10,9 +10,7 @@ namespace
 
 auto make_halt_message( unsigned int error_count ) -> std::string
 {
-    auto ss { std::stringstream {} };
-    ss << "Execution halted: " << error_count << " errors";
-    return ss.str();
+    return fmt::format( "Execution halted: {} errors", error_count );
 }
 
 auto read_input( std::istream& istream ) -> std::string

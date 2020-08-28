@@ -1,6 +1,7 @@
 #include "machine.hpp"
 #include "parsing/cli_parser.hpp"
 
+#include <fmt/color.h>
 #include <fstream>
 
 void run_machine( vnm::machine& pmc,
@@ -33,6 +34,12 @@ void run_machine( vnm::machine& pmc,
     printer.print_memory();
 }
 
+void print_error( std::string_view error_msg )
+{
+    fmt::print( fg( fmt::color::crimson ) | fmt::emphasis::bold, "Error: " );
+    fmt::print( "{}\n", error_msg );
+}
+
 auto main( int argc, char** argv ) -> int
 {
     try
@@ -46,11 +53,11 @@ auto main( int argc, char** argv ) -> int
     }
     catch ( std::ifstream::failure& /*e*/ )
     {
-        std::cout << "Error: Can't open/read file!" << std::endl;
+        print_error( "Can't open/read file!" );
     }
     catch ( std::exception& e )
     {
-        std::cout << "Error: " << e.what() << std::endl;
+        print_error( e.what() );
     }
 
     return 1;

@@ -4,7 +4,6 @@
 #include "memory.hpp"
 
 #include <functional>
-#include <iostream>
 
 namespace vnm
 {

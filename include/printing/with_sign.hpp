@@ -3,13 +3,15 @@
 
 #include "word.hpp"
 
-namespace vnm::print_policy
+#include <string>
+
+namespace vnm::format_policy
 {
 
 class with_sign
 {
 public:
-    static void print_word( std::ostream& os_, const word& rhs );
+    static auto format( const word& rhs ) -> std::string;
 
 private:
     struct s
@@ -18,6 +20,6 @@ private:
     };
 };
 
-} // namespace vnm::print_policy
+} // namespace vnm::format_policy
 
 #endif

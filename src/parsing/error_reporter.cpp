@@ -1,6 +1,6 @@
 #include "parsing/error_reporter.hpp"
 
-#include <iostream>
+#include <fmt/core.h>
 #include <sstream>
 
 namespace
@@ -32,7 +32,7 @@ void vnm::error_reporter::print_errors() const
 {
     for ( const auto& error : errors_ )
     {
-        std::cout << error.make_error_message() << std::endl;
+        fmt::print( "{}\n", error.make_error_message() );
     }
 }
 

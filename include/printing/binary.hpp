@@ -3,17 +3,17 @@
 
 #include "word.hpp"
 
-#include <ostream>
+#include <string>
 
-namespace vnm::print_policy
+namespace vnm::format_policy
 {
 
 class binary
 {
 public:
-    static void print_word( std::ostream& os_, const word& rhs );
+    static auto format( const word& rhs ) -> std::string;
 };
 
-} // namespace vnm::print_policy
+} // namespace vnm::format_policy
 
 #endif

@@ -8,7 +8,7 @@ namespace
 auto parse_command_line( int argc, char** argv ) -> cxxopts::ParseResult
 {
     static auto options { cxxopts::Options {
-        *argv, "Von Neumann Machine emulator v0.2.0" } };
+        *argv, "Von Neumann Machine emulator v0.3.0" } };
     options.positional_help( "[optional args]" ).show_positional_help();
 
     options.add_options()( "h,help",
@@ -27,7 +27,7 @@ auto parse_command_line( int argc, char** argv ) -> cxxopts::ParseResult
 
     if ( result.count( "help" ) || result.arguments().empty() )
     {
-        std::cout << options.help( { "", "Group" } ) << std::endl;
+        fmt::print( "{}\n", options.help( { "", "Group" } ) );
         std::exit( 0 );
     }
 
@@ -72,7 +72,7 @@ auto vnm::cli_parser::get_starting_pc() const -> vnm::word
 auto vnm::cli_parser::make_printer( const vnm::machine& m ) const
     -> std::unique_ptr<printer_interface>
 {
-    using namespace print_policy;
+    using namespace format_policy;
 
     if ( parse_result.count( "binary" ) )
     {

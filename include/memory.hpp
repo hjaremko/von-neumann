@@ -4,7 +4,7 @@
 #include "word.hpp"
 
 #include <array>
-#include <sstream>
+#include <fmt/format.h>
 
 namespace vnm
 {
@@ -43,12 +43,9 @@ private:
     [[nodiscard]] auto make_exception_message( const word& addr ) const
         -> std::string
     {
-        std::stringstream ss;
-
-        ss << "Address " << *addr << " exceeds device memory!"
-           << ( *addr == size ? " Missing STOP perhaps?" : "" );
-
-        return ss.str();
+        return fmt::format( "Address {} exceeds device memory!{}",
+                            *addr,
+                            ( *addr == size ? " Missing STOP perhaps?" : "" ) );
     }
 
     std::array<word, S> memory_;

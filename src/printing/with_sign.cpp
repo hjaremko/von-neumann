@@ -1,37 +1,29 @@
 #include "printing/with_sign.hpp"
 
-#include <iomanip>
-#include <sstream>
+#include <fmt/format.h>
 
-namespace vnm::print_policy
+namespace vnm::format_policy
 {
 
-void with_sign::print_word( std::ostream& os_, const word& rhs )
+auto with_sign::format( const word& rhs ) -> std::string
 {
-    std::stringstream ss;
-    constexpr auto WORD_WIDTH { 6 };
-
     if ( rhs.is_instruction() )
     {
-        if ( rhs.get_code() == vnm::instruction::STOP )
-        {
-            ss << "STOP";
-        }
-        else
-        {
-            ss << std::left << std::setw( WORD_WIDTH )
-               << instruction_to_str( rhs.get_code() )
-               << mode_to_str( rhs.get_mode() ) << ' ';
-            const auto t { s { *rhs.get_arg() } };
-            ss << t.val;
-        }
-    }
-    else if ( *rhs != 0 )
-    {
-        ss << static_cast<int16_t>( *rhs );
+        const auto t { s { *rhs.get_arg() } };
+        return rhs.get_code() == vnm::instruction::STOP
+                   ? "STOP"
+                   : fmt::format( "{:<5} {} {}",
+                                  instruction_to_str( rhs.get_code() ),
+                                  mode_to_str( rhs.get_mode() ),
+                                  t.val );
     }
 
-    os_ << ss.str();
+    if ( *rhs != 0 )
+    {
+        return fmt::format( "{}", static_cast<int16_t>( *rhs ) );
+    }
+
+    return "";
 }
 
-} // namespace vnm::print_policy
+} // namespace vnm::format_policy
