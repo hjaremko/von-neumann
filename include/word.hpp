@@ -1,5 +1,5 @@
-#ifndef WORD_HPP
-#define WORD_HPP
+#ifndef VON_NEUMANN_WORD_HPP
+#define VON_NEUMANN_WORD_HPP
 
 #include "instruction_map.hpp"
 #include "mode_map.hpp"
@@ -27,11 +27,11 @@ public:
     {
     }
 
-    word( const std::string& code, const std::string& mode, type arg )
+    word( std::string_view code, std::string_view mode, type arg )
         : word_( arg & static_cast<type>( mask::arg ) ), is_instruction_( true )
     {
-        word_ |= static_cast<type>( instructions_from_str.at( code ) );
-        word_ |= static_cast<type>( mode_from_str.at( mode ) );
+        word_ |= static_cast<type>( str_to_instruction( code ) );
+        word_ |= static_cast<type>( str_to_mode( mode ) );
     }
 
     constexpr void set( const type raw_value )

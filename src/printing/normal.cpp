@@ -18,8 +18,8 @@ void normal::print_word( std::ostream& os_, const word& rhs )
         rhs.get_code() == instruction::STOP
             ? ss << "STOP"
             : ss << std::left << std::setw( WORD_WIDTH )
-                 << instructions_to_str.at( rhs.get_code() )
-                 << mode_to_str.at( rhs.get_mode() ) << ' ' << *rhs.get_arg();
+                 << instruction_to_str( rhs.get_code() )
+                 << mode_to_str( rhs.get_mode() ) << ' ' << *rhs.get_arg();
     }
     else if ( *rhs != 0 )
     {

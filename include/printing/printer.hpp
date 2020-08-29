@@ -39,9 +39,9 @@ public:
         const auto& ir { machine_.instruction_reg };
         const auto& next { machine_.ram[ machine_.program_counter ] };
 
-        os_ << ( ir.is_instruction() ? instructions_to_str.at( ir.get_code() )
+        os_ << ( ir.is_instruction() ? instruction_to_str( ir.get_code() )
                                      : " " );
-        os_ << "|  " << std::setw( 4 ) << mode_to_str.at( ir.get_mode() );
+        os_ << "|  " << std::setw( 4 ) << mode_to_str( ir.get_mode() );
         os_ << "| " << std::setw( 5 );
         word_printer::print_word( os_, ir.get_arg() );
         os_ << "| " << std::setw( 3 ) << *machine_.program_counter;

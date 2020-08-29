@@ -23,8 +23,8 @@ void binary::print_word( std::ostream& os_, const word& rhs )
         else
         {
             ss << std::left << std::setw( WORD_WIDTH )
-               << instructions_to_str.at( rhs.get_code() )
-               << mode_to_str.at( rhs.get_mode() ) << ' ';
+               << instruction_to_str( rhs.get_code() )
+               << mode_to_str( rhs.get_mode() ) << ' ';
             ss << std::bitset<ARGUMENT_SIZE>( *rhs.get_arg() );
         }
     }

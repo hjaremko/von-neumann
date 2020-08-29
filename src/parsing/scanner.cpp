@@ -144,7 +144,7 @@ void scanner::parse_string()
 
     auto string_token = make_token( token::type::instruction );
 
-    if ( instructions_from_str.count( string_token.lexeme ) )
+    if ( str_instructions_map.count( string_token.lexeme ) )
     {
         add_token( std::move( string_token ) );
     }
