@@ -23,7 +23,8 @@ constexpr const std::array<std::string_view, 4> mode_str_map {
 
 constexpr auto mode_to_str( mode m ) -> std::string_view
 {
-    return mode_str_map.at( static_cast<uint16_t>( m ) );
+    constexpr auto OFFSET = 9U;
+    return mode_str_map.at( static_cast<uint16_t>( m ) >> OFFSET );
 }
 
 inline auto str_to_mode( std::string_view str ) -> mode

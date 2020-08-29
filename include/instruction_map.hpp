@@ -43,7 +43,8 @@ constexpr const std::array<std::string_view, 16> instructions_str_map {
 
 constexpr auto instruction_to_str( instruction m ) -> std::string_view
 {
-    return instructions_str_map.at( static_cast<uint16_t>( m ) );
+    constexpr auto OFFSET = 11U;
+    return instructions_str_map.at( static_cast<uint16_t>( m ) >> OFFSET );
 }
 
 inline auto str_to_instruction( std::string_view str ) -> instruction

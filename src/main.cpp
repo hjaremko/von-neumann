@@ -42,6 +42,7 @@ auto main( int argc, char** argv ) -> int
         auto printer { cli_parser.make_printer( pmc ) };
 
         run_machine( pmc, *printer, cli_parser.get_parse_result() );
+        return 0;
     }
     catch ( std::ifstream::failure& /*e*/ )
     {
@@ -52,5 +53,5 @@ auto main( int argc, char** argv ) -> int
         std::cout << "Error: " << e.what() << std::endl;
     }
 
-    return 0;
+    return 1;
 }
