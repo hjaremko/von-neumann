@@ -157,6 +157,11 @@ public:
         return tmp;
     }
 
+    constexpr auto operator~() const -> word
+    {
+        return word( get() ^ 0xFFFF );
+    }
+
 private:
     type word_ { 0 };
     bool is_instruction_ { false }; // not sure if necessary

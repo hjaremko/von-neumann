@@ -186,8 +186,7 @@ TEST_CASE( "word operators test", "[word]" )
 
     SECTION( "negation" )
     {
-        auto w { word::type { 0b0100'0100'0010'1110u } };
-        REQUIRE( *( !word { w } ) == !w );
+        REQUIRE( *( ~word { lhs } ) == word::type { 0b1111'1111'0000'0101u } );
     }
 
     SECTION( "increment" )
