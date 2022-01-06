@@ -52,7 +52,7 @@ $ ./von-neumann -rmf example/array_sum.vnm
 * **`DIV  `**, code: `1001`, operation: `AC = AC / OR`
 * **`AND  `**, code: `1010`, operation: `AC = AC & OR`
 * **`OR   `**, code: `1011`, operation: `AC = AC | OR`
-* **`NOT  `**, code: `1100`, operation: `AC = !OR`
+* **`NOT  `**, code: `1100`, operation: `AC = ~OR`
 * **`CMP  `**, code: `1101`, operation: `AC == OR => AC = -1`,`AC != OR => AC = 0`
 * **`SHZ  `**, code: `1110`, operation: `OR < 0 => AC >> |OR|`, `OR > 0 => AC << |OR|`
 * **`SHC  `**, code: `1111`, circular shift left or right, depending on the sign of the operand

@@ -65,7 +65,7 @@ private:
         [ & ]() { accumulator = accumulator / operand_reg; },
         [ & ]() { accumulator = accumulator & operand_reg; },
         [ & ]() { accumulator = accumulator | operand_reg; },
-        [ & ]() { accumulator = !operand_reg; },
+        [ & ]() { accumulator = ~operand_reg; },
         [ & ]() {
             accumulator = *accumulator == *operand_reg
                               ? static_cast<word::type>( -1 )
